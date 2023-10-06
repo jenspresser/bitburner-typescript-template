@@ -48,5 +48,5 @@ export async function main(ns: NS) {
 
 	let matrix = servers.map(it => it.toArray(ns));
 
-	printTable(ns, matrix, ServerHackData.toHeaderArray(), "|");
+	printTable(ns, matrix, {header: ServerHackData.toHeaderArray()});
 }

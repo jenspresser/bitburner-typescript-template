@@ -8,7 +8,7 @@ import { printTable } from "table";
 export async function main(ns: NS) {
     let pserverCost = ns.formatNumber(ns.getPurchasedServerCost(TARGET_PURCHASE_RAM));
 
-    printTable(ns, [["Next Server Cost"], [pserverCost]], [], "first", "right");
+    printTable(ns, [["Next Server Cost"], [pserverCost]], {horizontalSeparator: "first", align: "right"});
 
     /** @type {ServerData[]} */
     let servers = getPurchasedServerNames(ns)
@@ -16,5 +16,5 @@ export async function main(ns: NS) {
 
     let matrix = servers.map(it => it.toArray(ns));
 
-    printTable(ns, matrix, ServerData.toHeaderArray(), "");
+    printTable(ns, matrix, {header: ServerData.toHeaderArray()});
 }

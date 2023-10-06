@@ -41,25 +41,28 @@ function createTerminalLine(value: string) {
  * @param {string} value
  */
 export function terminalInput(value: string) {
+
     // Acquire a reference to the terminal text field
     const terminalInput = getDocument().getElementById("terminal-input");
 
     if(terminalInput === null) {
         return;
     }
-    if(!(terminalInput instanceof HTMLFormElement)) {
+    if(!(terminalInput instanceof HTMLInputElement)) {
         return;
     }
 
+    let inputElement : HTMLInputElement = terminalInput;
+
     // Set the value to the command you want to run.
-    terminalInput.value = value;
+    inputElement.value = value;
 
     // Get a reference to the React event handler.
-    const handler = Object.keys(terminalInput)[1];
+    const handler = Object.keys(inputElement)[1];
 
     // Perform an onChange event to set some internal values.
-    terminalInput[handler].onChange({ target: terminalInput });
+    eval("inputElement[handler].onChange({ target: inputElement });");
 
     // Simulate an enter press
-    terminalInput[handler].onKeyDown({ key: 'Enter', preventDefault: () => null });
+    eval("inputElement[handler].onKeyDown({ key: 'Enter', preventDefault: () => null });")
 }

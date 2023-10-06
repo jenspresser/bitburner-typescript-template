@@ -1,4 +1,4 @@
-import { NS, Server } from "@ns";
+import { NS } from "@ns";
 import { getServerInfo, ServerInfo } from "libserver";
 import { printTable } from "table";
 
@@ -60,5 +60,5 @@ export async function main(ns: NS) {
 
     let matrix : any[][] = servers.map(it => it.toArray(ns));
 
-    printTable(ns, matrix, ServerInfo.toHeaderArray(), "|");
+    printTable(ns, matrix, {header: ServerInfo.toHeaderArray()});
 }

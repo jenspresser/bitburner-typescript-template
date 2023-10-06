@@ -107,5 +107,9 @@ function doPrintStatus(ns: NS) {
 			["Script Gain (Exp)", ns.formatNumber(ns.getTotalScriptExpGain())]
 		]
 
-		printTable(ns, matrix, ["Action","State"], "first", ["left", "right"]);
+		printTable(ns, matrix, {
+			header: ["Action", "State"],
+			horizontalSeparator: "first",
+			align: ["left", "right"]
+		});
 }

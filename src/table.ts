@@ -22,23 +22,29 @@ export const rightBlock: string = '▐'
 export const leftBlock: string = '▌'
 export const downBlock: string = '▄';
 
+type TableOptions = {
+    header?: string[],
+    horizontalSeparator?: string|string[],
+    align?: string|string[],
+}
+
 /**
  * @param {NS} ns
  * @param {string[][]} matrix
  * @param {string} horizontalSeparator: both, first, last, all
- * @param {string} aline: left, right, center
+ * @param {string} align: left, right, center
  */
-export function printTable(ns: NS, matrix: any[][], header: string[] = [], horizontalSeparator: string | string[] = "", aline: string | string[] = "left") {
-    ns.tprint(table(matrix, header, horizontalSeparator, aline));
+export function printTable(ns: NS, matrix: any[][], {header, horizontalSeparator, align}: TableOptions = {}) {
+    ns.tprint(createTableString(matrix, {header: header, horizontalSeparator: horizontalSeparator, align: align}));
 }
 
 /**
  * @param {string[][]} matrix
  * @param {string} horizontalSeparator: both, first, last, all
- * @param {string} aline: left, right, center
+ * @param {string} align: left, right, center
  * @returns {string}
  */
-export function table(matrix: any[][], header: string[] = [], horizontalSeparator: string | string[] = "", aline: string | string[] = "left"): string {
+export function createTableString(matrix: any[][], {header, horizontalSeparator, align}: TableOptions = {}): string {
     let line = "\n"
     let all = false;
     let rows = matrix.length;
@@ -47,15 +53,27 @@ export function table(matrix: any[][], header: string[] = [], horizontalSeparato
         return "no data in matrix";
     }
 
+    if(!header) {
+        header = [];
+    }
+    if(!horizontalSeparator) {
+        horizontalSeparator = "";
+    }
+    if(!align) {
+        align = "left";
+    }
+
+    
     let columns = matrix[0].length;
     let lengthPerColumn = new Array(columns).fill(0);
-    let alinePerColumn;
-    let separatorPerRow = [];
-    let separator;
+    let alignPerColumn : string[] = Array.isArray(align) ? align : new Array(columns).fill(align);
+    let separatorPerRow: number[] = [];
+    let separator = Array.isArray(horizontalSeparator) ? horizontalSeparator : [horizontalSeparator];
     let hasHeader = header && Array.isArray(header) && header.length > 0;
 
     if (hasHeader) {
-        matrix = [header].concat(matrix);
+        let headerMatrix = [header];
+        matrix = headerMatrix.concat(matrix);
         rows++;
     }
 
@@ -67,16 +85,6 @@ export function table(matrix: any[][], header: string[] = [], horizontalSeparato
         }
     }
 
-    if (Array.isArray(aline)) {
-        alinePerColumn = aline;
-    } else {
-        alinePerColumn = new Array(columns).fill(aline);
-    }
-    if (Array.isArray(horizontalSeparator)) {
-        separator = horizontalSeparator;
-    } else {
-        separator = [horizontalSeparator];
-    }
     for (let i = 0; i < separator.length; i++) {
         if (typeof (separator[i]) == "string")
             separator[i] = separator[i].toLowerCase()
@@ -119,7 +127,7 @@ export function table(matrix: any[][], header: string[] = [], horizontalSeparato
     for (let i = 0; i < rows; i++) {
         line += vertical;
         for (let j = 0; j < matrix[i].length; j++) {
-            line += alineString(matrix[i][j], lengthPerColumn[j], alinePerColumn[j]) + vertical;
+            line += alineString(matrix[i][j], lengthPerColumn[j], alignPerColumn[j]) + vertical;
         }
         line += "\n"
         if (i < rows - 1) {
