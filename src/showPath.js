@@ -5,8 +5,8 @@ import { findPath, PathResult, printHelp } from "/libpath";
 export async function main(ns) {
 	const executable = "path";
 	let shouldBackdoor = ns.args.filter(it => ["backdoor", "bd", "b"].indexOf(it) > -1).length > 0;
-	
-	if(ns.args.length === 0 || ns.args[0] === "list") {
+
+	if (ns.args.length === 0 || ns.args[0] === "list") {
 		printHelp(ns, executable);
 		return;
 	}
@@ -18,7 +18,7 @@ export async function main(ns) {
 		printHelp(ns, executable);
 		return;
 	}
-	
+
 	let result = findPath(ns, target, startServer, [], [], false);
 	if (!result.isFound) {
 		ns.alert('Server not found!');

@@ -50,8 +50,8 @@ export function getServerInfo(ns, filter = () => true) {
  * @return string[]
 */
 export function getNodeServerNames(ns) {
-    return getServerNames(ns)
-        .filter(it => !it.startsWith(PURCHASE_SERVER_PREFIX));
+  return getServerNames(ns)
+    .filter(it => !it.startsWith(PURCHASE_SERVER_PREFIX));
 }
 
 /** 
@@ -59,8 +59,8 @@ export function getNodeServerNames(ns) {
  * @return string[]
 */
 export function getPurchasedServerNames(ns) {
-    return getServerNames(ns)
-        .filter(it => it.startsWith(PURCHASE_SERVER_PREFIX));
+  return getServerNames(ns)
+    .filter(it => it.startsWith(PURCHASE_SERVER_PREFIX));
 }
 
 /** 
@@ -68,9 +68,9 @@ export function getPurchasedServerNames(ns) {
  * @return {string[]}
 */
 export function getServersWithRootAccess(ns) {
-    return getServerInfo(ns)
-        .filter(ServerInfoFilters.SERVER_INFO_FILTER_HASROOT)
-        .map(it => it.hostname);
+  return getServerInfo(ns)
+    .filter(ServerInfoFilters.SERVER_INFO_FILTER_HASROOT)
+    .map(it => it.hostname);
 }
 
 /** 
@@ -78,10 +78,10 @@ export function getServersWithRootAccess(ns) {
  * @return {ServerInfo[]}
 */
 export function getNodeServersWithRootAccess(ns) {
-    return getServerInfo(ns)
-        .filter(ServerInfoFilters.SERVER_INFO_FILTER_HASROOT)
-        .filter(it => !it.hostname.startsWith(PURCHASE_SERVER_PREFIX))
-        .map(it => it.hostname);
+  return getServerInfo(ns)
+    .filter(ServerInfoFilters.SERVER_INFO_FILTER_HASROOT)
+    .filter(it => !it.hostname.startsWith(PURCHASE_SERVER_PREFIX))
+    .map(it => it.hostname);
 }
 
 /** 
@@ -89,10 +89,10 @@ export function getNodeServersWithRootAccess(ns) {
  * @return string[]
 */
 export function getServersWithoutRootAccess(ns) {
-    return getServerInfo(ns)
-        .filter(ServerInfoFilters.SERVER_INFO_FILTER_NONPURCHASED)
-        .filter(ServerInfoFilters.SERVER_INFO_FILTER_NOT_HASROOT)
-        .map(it => it.hostname);
+  return getServerInfo(ns)
+    .filter(ServerInfoFilters.SERVER_INFO_FILTER_NONPURCHASED)
+    .filter(ServerInfoFilters.SERVER_INFO_FILTER_NOT_HASROOT)
+    .map(it => it.hostname);
 }
 
 export class ServerInfoFilters {
@@ -139,9 +139,9 @@ export class ServerInfo {
     return this.hostname.startsWith(PURCHASE_SERVER_PREFIX);
   }
 
-/**
-   * @returns {boolean}
-   */
+  /**
+     * @returns {boolean}
+     */
   isNodeServer() {
     return !this.isPurchasedServer();
   }

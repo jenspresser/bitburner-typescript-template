@@ -43,13 +43,13 @@ export function table(matrix, header = [], horizontalSeparator = "", aline = "le
     let all = false;
     let rows = matrix.length;
 
-    if(rows == 0) {
+    if (rows == 0) {
         return "no data in matrix";
     }
 
     let columns = matrix[0].length;
     let lengthPerColumn = new Array(columns).fill(0);
-    let alinePerColumn; 
+    let alinePerColumn;
     let separatorPerRow = [];
     let separator;
     let hasHeader = header && Array.isArray(header) && header.length > 0;
@@ -104,9 +104,9 @@ export function table(matrix, header = [], horizontalSeparator = "", aline = "le
     }
 
     let hasAnySeparatorFirst = separatorPerRow.filter(it => it === 0).length > 0;
-    if(hasHeader && !hasAnySeparatorFirst) {
+    if (hasHeader && !hasAnySeparatorFirst) {
         let headerSeperatorArray = [];
-        for(var colLength of lengthPerColumn) {
+        for (var colLength of lengthPerColumn) {
             headerSeperatorArray.push(new Array(colLength).fill(horizontal).join(""));
         }
 

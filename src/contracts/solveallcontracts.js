@@ -82,7 +82,7 @@ export async function main(ns) {
 
 		// Display results from solving script to this script's tail window
 		// Note: Log is returned as an array, so we have to loop through it
-		for (let line of scriptLog){
+		for (let line of scriptLog) {
 			ns.print(line);
 		}
 

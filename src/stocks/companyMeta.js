@@ -31,7 +31,7 @@ export const companyMeta = [
 	},
 	{
 		'companyName': 'Bachman & Associates',
-		'stockSymbol': '', 
+		'stockSymbol': '',
 		'serverName': 'b-and-a'
 	},
 	{

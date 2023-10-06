@@ -16,7 +16,7 @@ export async function main(ns) {
 
         while (currentSecurityLevel > securityLevelMin + 5) {
             await ns.weaken(target);
-            
+
             currentSecurityLevel = ns.getServerSecurityLevel(target);
         }
 
@@ -30,11 +30,10 @@ export async function main(ns) {
             serverMoneyAvailable = ns.getServerMoneyAvailable(target);
             serverMaxMoney = ns.getServerMaxMoney(target);
         }
-        else
-        {
+        else {
             ns.print('threadsUsedForStocks:' + threadsUsedForStocks)
 
-            await ns.grow(target, { stock: true, threads: threadsUsedForStocks});
+            await ns.grow(target, { stock: true, threads: threadsUsedForStocks });
         }
 
         await ns.sleep(2000);

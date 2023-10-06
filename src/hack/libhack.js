@@ -3,7 +3,7 @@ import { getNodeServersWithRootAccess, getServersWithoutRootAccess } from "/libs
 import { distributeScripts } from "/library"
 import { isPortEmpty, PORT_NEXT_TARGET_INDEX, PORT_NEXT_TARGET_MODE } from "/PORTS";
 
-export const MODE_FILE_NAME="hack/_mode.txt";
+export const MODE_FILE_NAME = "hack/_mode.txt";
 
 export const SCRIPTNAME_MASTERHACK = "hack/masterHack.js";
 export const SCRIPT_MASTERHACK = "/" + SCRIPTNAME_MASTERHACK;
@@ -45,16 +45,16 @@ export const TARGET_MODES = [
  */
 export async function getNextHackTarget(ns) {
 	let targetMode = readTargetMode(ns);
-	
-	if(targetMode === TARGET_MODE_ROUNDROBIN) {
+
+	if (targetMode === TARGET_MODE_ROUNDROBIN) {
 		return await nextHackTargetRoundRobin(ns);
-	} else if(targetMode === TARGET_MODE_SINGLE) {
+	} else if (targetMode === TARGET_MODE_SINGLE) {
 		return await nextHackTargetSingle(ns);
-	} else if(targetMode.startsWith(TARGET_MODE_FAST)) {
-		let num = parseInt(targetMode.replace(TARGET_MODE_FAST,""));
+	} else if (targetMode.startsWith(TARGET_MODE_FAST)) {
+		let num = parseInt(targetMode.replace(TARGET_MODE_FAST, ""));
 		return await nextHackTargetFast(ns, num);
-	} else if(targetMode.startsWith(TARGET_MODE_MONEY)) {
-		let num = parseInt(targetMode.replace(TARGET_MODE_MONEY,""));
+	} else if (targetMode.startsWith(TARGET_MODE_MONEY)) {
+		let num = parseInt(targetMode.replace(TARGET_MODE_MONEY, ""));
 		return await nextHackTargetMoney(ns, num);
 	}
 
@@ -69,7 +69,7 @@ export async function getNextHackTarget(ns) {
 async function nextHackTargetRoundRobin(ns) {
 	let rootServers = getSortedRootedServers(ns);
 
-	const maxIndex = (rootServers.length-1);
+	const maxIndex = (rootServers.length - 1);
 
 	let currentIndex = readTargetIndex(ns);
 	currentIndex = (currentIndex + 1) % maxIndex;
@@ -87,8 +87,8 @@ async function nextHackTargetRoundRobin(ns) {
  * @param {number?} num
  * @returns {string}
  */
-async function nextHackTargetFast(ns, num=3) {
-	let rootServers = getSortedRootedServers(ns, (a,b) => a.weakenTime - b.weakenTime);
+async function nextHackTargetFast(ns, num = 3) {
+	let rootServers = getSortedRootedServers(ns, (a, b) => a.weakenTime - b.weakenTime);
 
 	const maxIndex = Math.min(num, rootServers.length);
 
@@ -98,7 +98,7 @@ async function nextHackTargetFast(ns, num=3) {
 
 	let nextHackTarget = rootServers[currentIndex];
 
-	ns.print("Hack Fast"+num+" Target Index ", currentIndex, ", next target [", nextHackTarget, "] port data ", ns.peek(1));
+	ns.print("Hack Fast" + num + " Target Index ", currentIndex, ", next target [", nextHackTarget, "] port data ", ns.peek(1));
 
 	return nextHackTarget;
 }
@@ -108,8 +108,8 @@ async function nextHackTargetFast(ns, num=3) {
  * @param {number?} num
  * @returns {string}
  */
-async function nextHackTargetMoney(ns, num=3) {
-	let rootServers = getSortedRootedServers(ns, (a,b) => b.money - a.money);
+async function nextHackTargetMoney(ns, num = 3) {
+	let rootServers = getSortedRootedServers(ns, (a, b) => b.money - a.money);
 
 	const maxIndex = Math.min(num, rootServers.length);
 
@@ -119,7 +119,7 @@ async function nextHackTargetMoney(ns, num=3) {
 
 	let nextHackTarget = rootServers[currentIndex];
 
-	ns.print("Hack Fast"+num+" Target Index ", currentIndex, ", next target [", nextHackTarget, "] port data ", ns.peek(1));
+	ns.print("Hack Fast" + num + " Target Index ", currentIndex, ", next target [", nextHackTarget, "] port data ", ns.peek(1));
 
 	return nextHackTarget;
 }
@@ -138,26 +138,26 @@ function nextHackTargetSingle(ns) {
  * @param {NS} ns
  */
 export async function keepAutoDistributing(ns) {
-    await ns.sleep(1000);
+	await ns.sleep(1000);
 
-		if(ns.fileExists(MODE_FILE_NAME)) {
-			let initialTargetMode = ns.read(MODE_FILE_NAME);
-			setTargetMode(ns, initialTargetMode);
+	if (ns.fileExists(MODE_FILE_NAME)) {
+		let initialTargetMode = ns.read(MODE_FILE_NAME);
+		setTargetMode(ns, initialTargetMode);
 
-			ns.tprint("Mode initialised to " + initialTargetMode);
+		ns.tprint("Mode initialised to " + initialTargetMode);
+	}
+
+	while (true) {
+		await crawlRootAccess(ns);
+		await distributeScripts(ns);
+
+		if (!ns.scriptRunning("hack/distributeHack.js", "home")) {
+			await ns.sleep(1000);
+			ns.exec("/hack/distributeHack.js", "home");
 		}
 
-    while (true) {
-        await crawlRootAccess(ns);
-        await distributeScripts(ns);
-        
-				if(!ns.scriptRunning("hack/distributeHack.js", "home")) {
-					await ns.sleep(1000);
-        	ns.exec("/hack/distributeHack.js", "home");
-				}
-
-        await ns.sleep(2000);
-    }
+		await ns.sleep(2000);
+	}
 }
 
 /** 
@@ -172,7 +172,7 @@ export async function keepAutoDistributing(ns) {
  * @param {rootedServerOrderBy} [orderBy]
  * @returns {string[]}
  */
-function getSortedRootedServers(ns, orderBy=(a,b) => a.hackTime - b.hackTime ) {
+function getSortedRootedServers(ns, orderBy = (a, b) => a.hackTime - b.hackTime) {
 	ns.disableLog("ALL");
 	let rootedServers = getServerHackDataList(ns)
 		.filter(it => "home" !== it.hostname)
@@ -189,7 +189,7 @@ function getSortedRootedServers(ns, orderBy=(a,b) => a.hackTime - b.hackTime ) {
  * @returns {number}
  */
 export function readTargetIndex(ns) {
-	if(isPortEmpty(ns, PORT_NEXT_TARGET_INDEX)) {
+	if (isPortEmpty(ns, PORT_NEXT_TARGET_INDEX)) {
 		return 0;
 	}
 	return ns.peek(PORT_NEXT_TARGET_INDEX);
@@ -240,7 +240,7 @@ export async function persistTargetMode(ns, targetMode) {
  * @param {NS} ns 
  * */
 export async function initializeTargetMode(ns) {
-	if(!ns.fileExists(MODE_FILE_NAME)) {
+	if (!ns.fileExists(MODE_FILE_NAME)) {
 		persistTargetMode(ns, TARGET_MODE_DEFAULT);
 	}
 }
@@ -250,10 +250,10 @@ export async function initializeTargetMode(ns) {
  * @param {string[]} serverNames
  * @returns {ServerHackData[]}
  */
-export function getServerHackDataList(ns, serverNames=[]) {
-	let useServerNames = (serverNames && serverNames.length > 0 )
-												? serverNames 
-												: getNodeServersWithRootAccess(ns);
+export function getServerHackDataList(ns, serverNames = []) {
+	let useServerNames = (serverNames && serverNames.length > 0)
+		? serverNames
+		: getNodeServersWithRootAccess(ns);
 
 	return useServerNames
 		.map(server => getServerHackData(ns, server));
@@ -266,7 +266,7 @@ export function getServerHackDataList(ns, serverNames=[]) {
  */
 export function getServerHackData(ns, hostname) {
 	ns.disableLog("ALL");
-	
+
 	let playerHackLevel = ns.getHackingLevel();
 
 	let money = ns.getServerMoneyAvailable(hostname);
@@ -411,19 +411,19 @@ export function getProgramCount(ns) {
 	let count = 0;
 
 	if (ns.fileExists("BruteSSH.exe")) {
-			count++
+		count++
 	}
 	if (ns.fileExists("FTPCrack.exe")) {
-			count++
+		count++
 	}
 	if (ns.fileExists("relaySMTP.exe")) {
-			count++
+		count++
 	}
 	if (ns.fileExists("HTTPWorm.exe")) {
-			count++
+		count++
 	}
 	if (ns.fileExists("SQLInject.exe")) {
-			count++
+		count++
 	}
 
 	return count;
@@ -434,36 +434,36 @@ export function getProgramCount(ns) {
  * @param {String} hostname
 */
 export function getRootAccess(ns, hostname) {
-    if (!ns.hasRootAccess(hostname)) {
+	if (!ns.hasRootAccess(hostname)) {
 
-        var portsNeeded = ns.getServerNumPortsRequired(hostname);
-        var open = 0
+		var portsNeeded = ns.getServerNumPortsRequired(hostname);
+		var open = 0
 
-        if (ns.fileExists("BruteSSH.exe") && portsNeeded > 0) {
-            ns.brutessh(hostname);
-            open++
-        }
-        if (ns.fileExists("FTPCrack.exe") && portsNeeded > 1) {
-            ns.ftpcrack(hostname);
-            open++
-        }
-        if (ns.fileExists("relaySMTP.exe") && portsNeeded > 2) {
-            ns.relaysmtp(hostname);
-            open++
-        }
-        if (ns.fileExists("HTTPWorm.exe") && portsNeeded > 3) {
-            ns.httpworm(hostname);
-            open++
-        }
-        if (ns.fileExists("SQLInject.exe") && portsNeeded > 4) {
-            ns.sqlinject(hostname);
-            open++
-        }
-        if (portsNeeded <= open) {
-            ns.nuke(hostname);
+		if (ns.fileExists("BruteSSH.exe") && portsNeeded > 0) {
+			ns.brutessh(hostname);
+			open++
+		}
+		if (ns.fileExists("FTPCrack.exe") && portsNeeded > 1) {
+			ns.ftpcrack(hostname);
+			open++
+		}
+		if (ns.fileExists("relaySMTP.exe") && portsNeeded > 2) {
+			ns.relaysmtp(hostname);
+			open++
+		}
+		if (ns.fileExists("HTTPWorm.exe") && portsNeeded > 3) {
+			ns.httpworm(hostname);
+			open++
+		}
+		if (ns.fileExists("SQLInject.exe") && portsNeeded > 4) {
+			ns.sqlinject(hostname);
+			open++
+		}
+		if (portsNeeded <= open) {
+			ns.nuke(hostname);
 
-        }
-    }
+		}
+	}
 }
 
 /** 
@@ -471,11 +471,11 @@ export function getRootAccess(ns, hostname) {
  * @param {String} hostname
 */
 export function crawlRootAccess(ns) {
-    let serversWithoutAccess = getServersWithoutRootAccess(ns);
+	let serversWithoutAccess = getServersWithoutRootAccess(ns);
 
-    ns.print("Try getting root on " + serversWithoutAccess);
+	ns.print("Try getting root on " + serversWithoutAccess);
 
-    for (var i = 0; i < serversWithoutAccess.length; i++) {
-        getRootAccess(ns, serversWithoutAccess[i]);
-    }
+	for (var i = 0; i < serversWithoutAccess.length; i++) {
+		getRootAccess(ns, serversWithoutAccess[i]);
+	}
 }

@@ -8,23 +8,23 @@ export async function main(ns) {
 
   let scripts = PURCHASE_SCRIPTS;
 
-  if("hacknet" === type) {
+  if ("hacknet" === type) {
     scripts = HACKNET_SCRIPTS;
-  } else if("pserv" === type) {
+  } else if ("pserv" === type) {
     scripts = PURCHASE_SERVER_SCRIPTS;
   }
 
-  if(action === "stop") {
+  if (action === "stop") {
     ns.tprint("Stop Purchasing! ", (type || ""));
-    for(var script of scripts) {
-      if(ns.scriptRunning(script, "home")) {
+    for (var script of scripts) {
+      if (ns.scriptRunning(script, "home")) {
         ns.scriptKill(script, "home");
       }
     }
-  } else if(action === "start") {
+  } else if (action === "start") {
     ns.tprint("Start Purchasing! ", (type || ""));
-    for(var script of scripts) {
-      if(!ns.scriptRunning(script, "home")) {
+    for (var script of scripts) {
+      if (!ns.scriptRunning(script, "home")) {
         ns.exec(script, "home");
       }
     }

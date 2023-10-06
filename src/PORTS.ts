@@ -1,6 +1,6 @@
 import { NS } from "@ns";
-export const PORT_NEXT_TARGET_INDEX=1;
-export const PORT_NEXT_TARGET_MODE=2;
+export const PORT_NEXT_TARGET_INDEX = 1;
+export const PORT_NEXT_TARGET_MODE = 2;
 
 /**
  * @param {NS} ns

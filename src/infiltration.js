@@ -2,25 +2,25 @@ import { NS } from "@ns";
 const state = {
     // Name of the company that's infiltrated.
     company: "",
- 
+
     // Whether infiltration started. False means, we're
     // waiting to arrive on the infiltration screen.
     started: false,
- 
+
     // Details/state of the current mini game.
     // Is reset after every game.
     game: {},
 };
- 
+
 // Speed of game actions, in milliseconds.
 const speed = 22;
- 
+
 // Small hack to save RAM.
 // This will work smoothly, because the script does not use
 // any "ns" functions, it's a pure browser automation tool.
 const wnd = eval("window");
 const doc = wnd["document"];
- 
+
 // List of all games and an automated solver.
 const infiltrationGames = [
     {
@@ -34,7 +34,7 @@ const infiltrationGames = [
                 delete state.game.data;
                 return;
             }
- 
+
             pressKey(state.game.data.shift());
         },
     },
@@ -44,7 +44,7 @@ const infiltrationGames = [
         play: function (screen) {
             const h4 = getEl(screen, "h4");
             const code = h4[1].textContent;
- 
+
             switch (code) {
                 case "↑":
                     pressKey("w");
@@ -67,10 +67,10 @@ const infiltrationGames = [
             const data = getLines(getEl(screen, "p"));
             const brackets = data.join("").split("");
             state.game.data = [];
- 
+
             for (let i = brackets.length - 1; i >= 0; i--) {
                 const char = brackets[i];
- 
+
                 if ("<" == char) {
                     state.game.data.push(">");
                 } else if ("(" == char) {
@@ -87,7 +87,7 @@ const infiltrationGames = [
                 delete state.game.data;
                 return;
             }
- 
+
             pressKey(state.game.data.shift());
         },
     },
@@ -98,12 +98,12 @@ const infiltrationGames = [
         },
         play: function (screen) {
             const data = getLines(getEl(screen, "h4"));
- 
+
             if ("attack" === state.game.data) {
                 pressKey(" ");
                 state.game.data = "done";
             }
- 
+
             // Attack in next frame - instant attack sometimes
             // ends in failure.
             if ('wait' === state.game.data && -1 !== data.indexOf("ATTACKING!")) {
@@ -139,7 +139,7 @@ const infiltrationGames = [
                 "based",
             ];
             const word = getLines(getEl(screen, "h5"))[1];
- 
+
             if (-1 !== correct.indexOf(word)) {
                 pressKey(" ");
             } else {
@@ -206,14 +206,14 @@ const infiltrationGames = [
         },
         play: function (screen) {
             let { data, x, y, cols, dir } = state.game;
- 
+
             if (data[y][x]) {
                 pressKey(" ");
                 data[y][x] = false;
             }
- 
+
             x += dir;
- 
+
             if (x < 0 || x >= cols) {
                 x = Math.max(0, Math.min(cols - 1, x));
                 y++;
@@ -222,7 +222,7 @@ const infiltrationGames = [
             } else {
                 pressKey(dir > 0 ? "d" : "a");
             }
- 
+
             state.game.data = data;
             state.game.x = x;
             state.game.y = y;
@@ -268,7 +268,7 @@ const infiltrationGames = [
             for (let i = 0; i < gridSize[1]; i++) {
                 keypad[i] = [];
                 for (let y = 0; y < gridSize[0]; y++) {
- 
+
                     keypad[i].push(rows[index]);
                     index += 1;
                 }
@@ -279,7 +279,7 @@ const infiltrationGames = [
                 //for each keypad entry
                 for (let j = 0; j < keypad.length; j++) {
                     const k = keypad[j].indexOf(symbol);
- 
+
                     if (-1 !== k) {
                         targets.push([j, k]);
                         break;
@@ -293,14 +293,14 @@ const infiltrationGames = [
         play: function (screen) {
             const target = state.game.data[0];
             let { x, y } = state.game;
- 
+
             if (!target) {
                 return;
             }
- 
+
             const to_y = target[0];
             const to_x = target[1];
- 
+
             if (to_y < y) {
                 y--;
                 pressKey("w");
@@ -317,7 +317,7 @@ const infiltrationGames = [
                 pressKey(" ");
                 state.game.data.shift();
             }
- 
+
             state.game.x = x;
             state.game.y = y;
         },
@@ -325,7 +325,7 @@ const infiltrationGames = [
     {
         name: "cut the wires with the following properties",
         init: function (screen) {
-            let numberHack = ["1","2","3","4","5","6","7","8","9"];
+            let numberHack = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
             const colors = {
                 red: "red",
                 white: "white",
@@ -364,14 +364,14 @@ const infiltrationGames = [
                         index += 1;
                         continue;
                     }
-                    wireColor[color].push(j+1);
+                    wireColor[color].push(j + 1);
                     index += 1;
                 }
             }
- 
+
             for (let i = 0; i < instructions.length; i++) {
                 const line = instructions[i].trim().toLowerCase();
- 
+
                 if (!line || line.length < 10) {
                     continue;
                 }
@@ -382,16 +382,16 @@ const infiltrationGames = [
                 if (-1 !== line.indexOf("cut all wires colored")) {
                     const parts = line.split(/(colored\s*|\.)/);
                     const color = parts[2];
- 
+
                     if (!wireColor[color]) {
                         // should never happen.
                         continue;
                     }
- 
+
                     wireColor[color].forEach((num) => wires.push(num));
                 }
             }
- 
+
             // new Set() removes duplicate elements.
             state.game.data = [...new Set(wires)];
         },
@@ -401,13 +401,13 @@ const infiltrationGames = [
             if (!wire) {
                 return;
             }
-            for (let i=0;i<wire.length;i++) {
+            for (let i = 0; i < wire.length; i++) {
                 pressKey(wire[i].toString());
             }
         },
     },
 ];
- 
+
 /** @param {NS} ns **/
 export async function main(ns) {
     const args = ns.flags([
@@ -416,13 +416,13 @@ export async function main(ns) {
         ["status", false],
         ["quiet", false],
     ]);
- 
+
     function print(msg) {
         if (!args.quiet) {
             ns.tprint(`\n${msg}\n`);
         }
     }
- 
+
     if (args.status) {
         if (wnd.tmrAutoInf) {
             print("Automated infiltration is active");
@@ -431,31 +431,31 @@ export async function main(ns) {
         }
         return;
     }
- 
+
     if (wnd.tmrAutoInf) {
         print("Stopping automated infiltration...");
         clearInterval(wnd.tmrAutoInf);
         delete wnd.tmrAutoInf;
     }
- 
+
     if (args.stop) {
         return;
     }
- 
+
     print(
         "Automated infiltration is enabled...\nVWhen you visit the infiltration screen of any company, all tasks are completed automatically."
     );
- 
+
     endInfiltration();
- 
+
     // Monitor the current screen and start infiltration once a
     // valid screen is detected.
     wnd.tmrAutoInf = setInterval(infLoop, speed);
- 
+
     // Modify the addEventListener logic.
     wrapEventListeners();
 }
- 
+
 /**
  * The infiltration loop, which is called at a rapid interval
  */
@@ -466,20 +466,20 @@ function infLoop() {
         playGame();
     }
 }
- 
+
 /**
  * Returns a list of DOM elements from the main game
  * container.
  */
 function getEl(parent, selector) {
     let prefix = ":scope";
- 
+
     if ("string" === typeof parent) {
         selector = parent;
         parent = doc;
- 
+
         prefix = ".MuiBox-root>.MuiBox-root>.MuiBox-root";
- 
+
         if (!doc.querySelectorAll(prefix).length) {
             prefix = ".MuiBox-root>.MuiBox-root>.MuiGrid-root";
         }
@@ -490,31 +490,31 @@ function getEl(parent, selector) {
             return [];
         }
     }
- 
+
     selector = selector.split(",");
     selector = selector.map((item) => `${prefix} ${item}`);
     selector = selector.join(",");
- 
+
     return parent.querySelectorAll(selector);
 }
- 
+
 /**
  * Returns the first element with matching text content.
  */
 function filterByText(elements, text) {
     text = text.toLowerCase();
- 
+
     for (let i = 0; i < elements.length; i++) {
         const content = elements[i].textContent.toLowerCase();
- 
+
         if (-1 !== content.indexOf(text)) {
             return elements[i];
         }
     }
- 
+
     return null;
 }
- 
+
 /**
  * Returns an array with the text-contents of the given elements.
  *
@@ -524,10 +524,10 @@ function filterByText(elements, text) {
 function getLines(elements) {
     const lines = [];
     elements.forEach((el) => lines.push(el.textContent));
- 
+
     return lines;
 }
- 
+
 /**
  * Reset the state after infiltration is done.
  */
@@ -536,7 +536,7 @@ function endInfiltration() {
     state.company = "";
     state.started = false;
 }
- 
+
 /**
  * Simulate a keyboard event (keydown + keyup).
  *
@@ -545,7 +545,7 @@ function endInfiltration() {
 function pressKey(keyOrCode) {
     let keyCode = 0;
     let key = "";
- 
+
     if ("string" === typeof keyOrCode && keyOrCode.length > 0) {
         key = keyOrCode.toLowerCase().substr(0, 1);
         keyCode = key.charCodeAt(0);
@@ -553,23 +553,23 @@ function pressKey(keyOrCode) {
         keyCode = keyOrCode;
         key = String.fromCharCode(keyCode);
     }
- 
+
     if (!keyCode || key.length !== 1) {
         return;
     }
- 
+
     function sendEvent(event) {
         const keyboardEvent = new KeyboardEvent(event, {
             key,
             keyCode,
         });
- 
+
         doc.dispatchEvent(keyboardEvent);
     }
- 
+
     sendEvent("keydown");
 }
- 
+
 /**
  * Infiltration monitor to start automatic infiltration.
  *
@@ -580,9 +580,9 @@ function waitForStart() {
     if (state.started) {
         return;
     }
- 
+
     const h4 = getEl("h4");
- 
+
     if (!h4.length) {
         return;
     }
@@ -590,26 +590,26 @@ function waitForStart() {
     if (0 !== title.indexOf("Infiltrating")) {
         return;
     }
- 
+
     const btnStart = filterByText(getEl("button"), "Start");
     if (!btnStart) {
         return;
     }
- 
+
     state.company = title.substr(13);
     state.started = true;
     wrapEventListeners();
- 
+
     console.log("Start automatic infiltration of", state.company);
     btnStart.click();
 }
- 
+
 /**
  * Identify the current infiltration game.
  */
 function playGame() {
     const screens = doc.querySelectorAll(".MuiContainer-root");
- 
+
     if (!screens.length) {
         endInfiltration();
         return;
@@ -617,40 +617,40 @@ function playGame() {
     if (screens[0].children.length < 3) {
         return;
     }
- 
+
     const screen = screens[0].children[2];
     const h4 = getEl(screen, "h4");
- 
+
     if (!h4.length) {
         endInfiltration();
         return;
     }
- 
+
     const title = h4[0].textContent.trim().toLowerCase().split(/[!.(]/)[0];
- 
+
     if ("infiltration successful" === title) {
         endInfiltration();
         return;
     }
- 
+
     if ("get ready" === title) {
         return;
     }
- 
+
     const game = infiltrationGames.find((game) => game.name === title);
- 
+
     if (game) {
         if (state.game.current !== title) {
             state.game.current = title;
             game.init(screen);
         }
- 
+
         game.play(screen);
     } else {
         console.error("Unknown game:", title);
     }
 }
- 
+
 /**
  * Wrap all event listeners with a custom function that injects
  * the "isTrusted" flag.
@@ -661,19 +661,19 @@ function playGame() {
 function wrapEventListeners() {
     if (!doc._addEventListener) {
         doc._addEventListener = doc.addEventListener;
- 
+
         doc.addEventListener = function (type, callback, options) {
             if ("undefined" === typeof options) {
                 options = false;
             }
             let handler = false;
- 
+
             // For this script, we only want to modify "keydown" events.
             if ("keydown" === type) {
                 handler = function (...args) {
                     if (!args[0].isTrusted) {
                         const hackedEv = {};
- 
+
                         for (const key in args[0]) {
                             if ("isTrusted" === key) {
                                 hackedEv.isTrusted = true;
@@ -683,13 +683,13 @@ function wrapEventListeners() {
                                 hackedEv[key] = args[0][key];
                             }
                         }
- 
+
                         args[0] = hackedEv;
                     }
- 
+
                     return callback.apply(callback, args);
                 };
- 
+
                 for (const prop in callback) {
                     if ("function" === typeof callback[prop]) {
                         handler[prop] = callback[prop].bind(callback);
@@ -698,7 +698,7 @@ function wrapEventListeners() {
                     }
                 }
             }
- 
+
             if (!this.eventListeners) {
                 this.eventListeners = {};
             }
@@ -710,7 +710,7 @@ function wrapEventListeners() {
                 useCapture: options,
                 wrapped: handler,
             });
- 
+
             return this._addEventListener(
                 type,
                 handler ? handler : callback,
@@ -718,22 +718,22 @@ function wrapEventListeners() {
             );
         };
     }
- 
+
     if (!doc._removeEventListener) {
         doc._removeEventListener = doc.removeEventListener;
- 
+
         doc.removeEventListener = function (type, callback, options) {
             if ("undefined" === typeof options) {
                 options = false;
             }
- 
+
             if (!this.eventListeners) {
                 this.eventListeners = {};
             }
             if (!this.eventListeners[type]) {
                 this.eventListeners[type] = [];
             }
- 
+
             for (let i = 0; i < this.eventListeners[type].length; i++) {
                 if (
                     this.eventListeners[type][i].listener === callback &&
@@ -742,21 +742,21 @@ function wrapEventListeners() {
                     if (this.eventListeners[type][i].wrapped) {
                         callback = this.eventListeners[type][i].wrapped;
                     }
- 
+
                     this.eventListeners[type].splice(i, 1);
                     break;
                 }
             }
- 
+
             if (this.eventListeners[type].length == 0) {
                 delete this.eventListeners[type];
             }
- 
+
             return this._removeEventListener(type, callback, options);
         };
     }
 }
- 
+
 /**
  * Revert the "wrapEventListeners" changes.
  */

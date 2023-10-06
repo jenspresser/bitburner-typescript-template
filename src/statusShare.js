@@ -7,15 +7,15 @@ export const SHARE_SCRIPT = "/share/share.js";
 export async function main(ns) {
   let servers = ["home"].concat(getServersWithRootAccess(ns));
 
-  if("start" === ns.args[0]) {
-    for(var server of servers) {
+  if ("start" === ns.args[0]) {
+    for (var server of servers) {
       startSharing(ns, server);
     }
-  } else if("stop" === ns.args[0]) {
-    for(var server of servers) {
+  } else if ("stop" === ns.args[0]) {
+    for (var server of servers) {
       stopSharing(ns, server);
     }
-  } else if("status" === ns.args[0]) {
+  } else if ("status" === ns.args[0]) {
     let isRunning = ns.scriptRunning(SHARE_SCRIPT, "home");
 
     ns.tprint("\tSharing: ", isRunning);
@@ -35,7 +35,7 @@ export function isRunningSharing(ns) {
  * @param {string} server
  */
 function stopSharing(ns, server) {
-  if(ns.scriptRunning(SHARE_SCRIPT, server)) {
+  if (ns.scriptRunning(SHARE_SCRIPT, server)) {
     ns.scriptKill(SHARE_SCRIPT, server);
   }
 }
@@ -50,7 +50,7 @@ function startSharing(ns, server) {
 
   let threads = Math.floor(availRam / shareRam);
 
-  if(threads > 0) {
+  if (threads > 0) {
     ns.exec(SHARE_SCRIPT, server, threads);
   }
 }

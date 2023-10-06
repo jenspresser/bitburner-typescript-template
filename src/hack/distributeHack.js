@@ -38,10 +38,10 @@ async function distributeOnHome(ns) {
 
   let availableRam = homeMaxRam - reserveRAM;
 
-  if(availableRam <= 0) {
+  if (availableRam <= 0) {
     return;
   }
-  
+
   await setupMasterHack(ns, "home");
 }
 
@@ -56,7 +56,7 @@ async function setupMasterHack(ns, masterServerName) {
 
   ns.print("masterServerName=", masterServerName, " - already running? ", alreadyRunning);
 
-  if(!alreadyRunning) {
+  if (!alreadyRunning) {
     ns.print("setup masterHack on [", masterServerName, "]");
     ns.exec(SCRIPT_MASTERHACK, masterServerName, 1);
   }
