@@ -19,7 +19,7 @@ const ALL_SCRIPTS = PURCHASE_SCRIPTS.concat([SCRIPT_AUTODISTRIBUTE]);
  * @param {NS} ns
  * @returns {number}
  */
-export function calcHomeReserveRam(ns) {
+export function calcHomeReserveRam(ns: NS) {
 	let reserveRAM = 0;
 
   for (var script of ALL_SCRIPTS) {
@@ -34,7 +34,7 @@ export function calcHomeReserveRam(ns) {
 const HOME = "home";
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
 	let preventPurchase = ns.args[0] === "nopurchase" || ns.args[0] === "no";	
 	let shouldPurchase = !preventPurchase;
 
@@ -44,7 +44,7 @@ export async function main(ns) {
 	let printStatus = ns.args[0] === "status";
 
 	const MODE_PREFIX="mode=";
-	if(ns.args[0] && (typeof ns.args[0] === 'string' || ns.args[0] instanceof String) && ns.args[0].startsWith(MODE_PREFIX)) {
+	if(ns.args[0] && (typeof ns.args[0] === 'string') && ns.args[0].startsWith(MODE_PREFIX)) {
 		let mode = ns.args[0].substring(MODE_PREFIX.length);
 
 		ns.tprint("set target mode to ", mode, ", restart Hacking");
@@ -76,24 +76,24 @@ export async function main(ns) {
 }
 
 /** @param {NS} ns */
-function stopHacking(ns) {
+function stopHacking(ns: NS) {
 	ns.exec(SCRIPT_STATUSHACKING, HOME, 1, "stop");
 }
 /** @param {NS} ns */
-function startHacking(ns) {
+function startHacking(ns: NS) {
 	ns.exec(SCRIPT_STATUSHACKING, HOME, 1, "start");
 }
 /** @param {NS} ns */
-function stopPurchase(ns) {
+function stopPurchase(ns: NS) {
 	ns.exec(SCRIPT_STATUSPURCHASE, HOME, 1, "stop");
 }
 /** @param {NS} ns */
-function startPurchase(ns) {
+function startPurchase(ns: NS) {
 	ns.exec(SCRIPT_STATUSPURCHASE, HOME, 1, "start");
 }
 
 /** @param {NS} ns */
-function doPrintStatus(ns) {
+function doPrintStatus(ns: NS) {
 	let matrix = [
 			["Hacking", isRunningHacking(ns)],
 			["Target Mode", readTargetMode(ns)],

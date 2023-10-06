@@ -8,7 +8,7 @@ import { NS } from "@ns";
  * @param {boolean} isFound
  * @return {PathResult}
  */
-export function findPath(ns, target, serverName, serverList, ignore, isFound) {
+export function findPath(ns: NS, target: string, serverName: string, serverList: string[], ignore: string[], isFound: boolean) : PathResult {
 	ignore.push(serverName);
 	let scanResults = ns.scan(serverName);
 	for (let server of scanResults) {
@@ -32,11 +32,13 @@ export function findPath(ns, target, serverName, serverList, ignore, isFound) {
 
 
 export class PathResult {
+	serverList: string[];
+	isFound: boolean;
 	/**
 	 * @param {string[]} serverList
 	 * @param {boolean} isFound
 	 */
-	constructor(serverList, isFound) {
+	constructor(serverList: string[], isFound: boolean) {
 		this.serverList = serverList;
 		this.isFound = isFound;
 	}
@@ -45,7 +47,7 @@ export class PathResult {
 	 * @param {boolean} shouldBackdoor
 	 * @returns {string}
 	 */
-	format(shouldBackdoor) {
+	format(shouldBackdoor: boolean) {
 		let connectString = this.serverList.map(s => "connect " + s + ";").join(" ");
 
 		if (shouldBackdoor) {
@@ -59,7 +61,7 @@ export class PathResult {
  * @param {NS} ns
  * @param {string} executable
  */
-export function printHelp(ns, executable) {
+export function printHelp(ns: NS, executable: string) {
 	ns.tprint(executable + " CSEC");
 	ns.tprint(executable + " avmnite-02h");
 	ns.tprint(executable + " I.I.I.I");

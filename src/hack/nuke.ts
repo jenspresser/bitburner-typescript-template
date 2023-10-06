@@ -1,8 +1,9 @@
 import { NS } from "@ns";
 
 /** @param {NS} ns **/
-export async function main(ns) {
-	var serv = ns.args[0];
+export async function main(ns: NS) {
+	var serv = ns.args[0] as string;
+
 	if (ns.fileExists("/BruteSSH.exe"))
 		ns.brutessh(serv);
 

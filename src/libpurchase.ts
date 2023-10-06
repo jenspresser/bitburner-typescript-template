@@ -2,7 +2,8 @@ import { NS } from "@ns";
 import {
     ServerRam,
     getServerData,
-    getHomeServerMoney
+    getHomeServerMoney,
+    ServerData
 } from "library";
 import {
     getPurchasedServerNames,
@@ -22,23 +23,10 @@ export const PURCHASE_SERVER_SCRIPTS = [
 
 export const PURCHASE_SCRIPTS = PURCHASE_SERVER_SCRIPTS.concat(HACKNET_SCRIPTS);
 
-/**
- * @param {NS} ns
- */
-export function showPurchasedServers(ns) {
-    let servers = getPurchasedServerNames(ns);
-
-    for (var serverName of servers) {
-        let server = getServerData(ns, serverName);
-
-        ns.tprint(server.toString(ns));
-    }
-}
-
 /** 
  * @param {NS} ns
 */
-export async function upgradeServers(ns) {
+export async function upgradeServers(ns: NS) {
     const targetMaxRam = ns.getPurchasedServerMaxRam();
 
     let initialCount = getPurchasedServerNames(ns).length;
@@ -77,7 +65,7 @@ export async function upgradeServers(ns) {
  * @param {Number} targetMaxRam
  * @returns {ServerRam}
  */
-export function getNextUpgradeableServer(ns, targetMaxRam) {
+export function getNextUpgradeableServer(ns: NS, targetMaxRam: number) {
     return getUpgradeableServers(ns, targetMaxRam)
         .sort((a, b) => a.upgradeRamCost - b.upgradeRamCost)
     [0];
@@ -88,7 +76,7 @@ export function getNextUpgradeableServer(ns, targetMaxRam) {
  * @param {Number} targetMaxRam
  * @returns {Boolean}
  */
-export function hasUpgradeableServer(ns, targetMaxRam) {
+export function hasUpgradeableServer(ns: NS, targetMaxRam: number) {
     return getUpgradeableServers(ns, targetMaxRam).length > 0;
 }
 
@@ -97,7 +85,7 @@ export function hasUpgradeableServer(ns, targetMaxRam) {
  * @param {Number} targetMaxRam
  * @returns {PurchasedServerRam[]}
  */
-export function getUpgradeableServers(ns, targetMaxRam) {
+export function getUpgradeableServers(ns: NS, targetMaxRam: number) {
     return getPurchasedServerRams(ns, targetMaxRam)
         .filter(serverRam => serverRam.ram < targetMaxRam);
 }
@@ -107,7 +95,7 @@ export function getUpgradeableServers(ns, targetMaxRam) {
  * @param {Number} targetMaxRam
  * @returns {PurchasedServerRam[]}
  */
-export function getPurchasedServerRams(ns, targetMaxRam) {
+export function getPurchasedServerRams(ns: NS, targetMaxRam: number) {
     return getPurchasedServerNames(ns)
         .filter(name => ns.getServerMaxRam(name) < targetMaxRam)
         .map(name => {
@@ -118,7 +106,9 @@ export function getPurchasedServerRams(ns, targetMaxRam) {
 }
 
 export class PurchasedServerRam extends ServerRam {
-    constructor(hostname, ram, nextRam, upgradeRamCost) {
+    upgradeRamCost: number;
+    nextRam: number;
+    constructor(hostname: string, ram: number, nextRam: number, upgradeRamCost: number) {
         super(hostname, ram);
         this.nextRam = nextRam;
         this.upgradeRamCost = upgradeRamCost;
@@ -128,7 +118,7 @@ export class PurchasedServerRam extends ServerRam {
 /** 
  * @param {NS} ns
 */
-export async function purchaseServers(ns) {
+export async function purchaseServers(ns: NS) {
     // How much RAM each purchased server will have. In this case, it'll
     // be 8GB.
     var purchaseRam = TARGET_PURCHASE_RAM;
@@ -162,7 +152,7 @@ export async function purchaseServers(ns) {
  * @param {NS} ns
  * @returns {String}
  */
-export function getNextPurchaseServerName(ns) {
+export function getNextPurchaseServerName(ns: NS) : string {
     let pservers = getPurchasedServerNames(ns);
 
     // Since the length value is one greater than the highest index (due to 0-based array)

@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { NS, PortData } from "@ns";
 import { getNodeServersWithRootAccess, getServersWithoutRootAccess } from "/libserver";
 import { distributeScripts } from "/library"
 import { isPortEmpty, PORT_NEXT_TARGET_INDEX, PORT_NEXT_TARGET_MODE } from "/PORTS";
@@ -43,7 +43,7 @@ export const TARGET_MODES = [
  * @param {NS} ns
  * @returns {string}
  */
-export async function getNextHackTarget(ns) {
+export async function getNextHackTarget(ns: NS) : Promise<string> {
 	let targetMode = readTargetMode(ns);
 
 	if (targetMode === TARGET_MODE_ROUNDROBIN) {
@@ -66,7 +66,7 @@ export async function getNextHackTarget(ns) {
  * @param {NS} ns 
  * @returns {string}
  */
-async function nextHackTargetRoundRobin(ns) {
+async function nextHackTargetRoundRobin(ns: NS) {
 	let rootServers = getSortedRootedServers(ns);
 
 	const maxIndex = (rootServers.length - 1);
@@ -87,7 +87,7 @@ async function nextHackTargetRoundRobin(ns) {
  * @param {number?} num
  * @returns {string}
  */
-async function nextHackTargetFast(ns, num = 3) {
+async function nextHackTargetFast(ns: NS, num = 3) {
 	let rootServers = getSortedRootedServers(ns, (a, b) => a.weakenTime - b.weakenTime);
 
 	const maxIndex = Math.min(num, rootServers.length);
@@ -108,7 +108,7 @@ async function nextHackTargetFast(ns, num = 3) {
  * @param {number?} num
  * @returns {string}
  */
-async function nextHackTargetMoney(ns, num = 3) {
+async function nextHackTargetMoney(ns: NS, num = 3) {
 	let rootServers = getSortedRootedServers(ns, (a, b) => b.money - a.money);
 
 	const maxIndex = Math.min(num, rootServers.length);
@@ -128,7 +128,7 @@ async function nextHackTargetMoney(ns, num = 3) {
  * @param {NS} ns 
  * @returns {string}
  */
-function nextHackTargetSingle(ns) {
+function nextHackTargetSingle(ns: NS) {
 	let rootServers = getSortedRootedServers(ns);
 
 	return rootServers[0];
@@ -137,7 +137,7 @@ function nextHackTargetSingle(ns) {
 /**
  * @param {NS} ns
  */
-export async function keepAutoDistributing(ns) {
+export async function keepAutoDistributing(ns: NS) {
 	await ns.sleep(1000);
 
 	if (ns.fileExists(MODE_FILE_NAME)) {
@@ -172,7 +172,7 @@ export async function keepAutoDistributing(ns) {
  * @param {rootedServerOrderBy} [orderBy]
  * @returns {string[]}
  */
-function getSortedRootedServers(ns, orderBy = (a, b) => a.hackTime - b.hackTime) {
+function getSortedRootedServers(ns: NS, orderBy = (a: ServerHackData, b: ServerHackData) => a.hackTime - b.hackTime) {
 	ns.disableLog("ALL");
 	let rootedServers = getServerHackDataList(ns)
 		.filter(it => "home" !== it.hostname)
@@ -188,24 +188,31 @@ function getSortedRootedServers(ns, orderBy = (a, b) => a.hackTime - b.hackTime)
  * @param {NS} ns
  * @returns {number}
  */
-export function readTargetIndex(ns) {
+export function readTargetIndex(ns: NS) : number {
 	if (isPortEmpty(ns, PORT_NEXT_TARGET_INDEX)) {
 		return 0;
 	}
-	return ns.peek(PORT_NEXT_TARGET_INDEX);
+
+	let result = ns.peek(PORT_NEXT_TARGET_INDEX);
+
+	if(typeof result === "string") {
+		return -1;
+	}
+
+	return result;
 }
 
 /**
  * @param {NS} ns
  * @param {number} index
  */
-export async function writeTargetIndex(ns, index) {
+export async function writeTargetIndex(ns: NS, index: number) {
 	resetTargetIndex(ns);
 	ns.writePort(PORT_NEXT_TARGET_INDEX, index);
 	await ns.sleep(10);
 }
 
-export function resetTargetIndex(ns) {
+export function resetTargetIndex(ns: NS) {
 	ns.clearPort(PORT_NEXT_TARGET_INDEX);
 }
 
@@ -213,15 +220,15 @@ export function resetTargetIndex(ns) {
  * @param {NS} ns
  * @returns {string}
  */
-export function readTargetMode(ns) {
-	return ns.peek(PORT_NEXT_TARGET_MODE);
+export function readTargetMode(ns: NS) : string{
+	return ns.peek(PORT_NEXT_TARGET_MODE).toString();
 }
 
 /**
  * @param {NS} ns
  * @param {string} targetMode
  */
-export function setTargetMode(ns, targetMode) {
+export function setTargetMode(ns: NS, targetMode: string) {
 	ns.clearPort(PORT_NEXT_TARGET_MODE);
 	ns.writePort(PORT_NEXT_TARGET_MODE, targetMode);
 	resetTargetIndex(ns);
@@ -231,7 +238,7 @@ export function setTargetMode(ns, targetMode) {
  * @param {NS} ns 
  * @param {string} targetMode
  */
-export async function persistTargetMode(ns, targetMode) {
+export async function persistTargetMode(ns: NS, targetMode: string) {
 	ns.write(MODE_FILE_NAME, targetMode, "w");
 	setTargetMode(ns, targetMode);
 }
@@ -239,7 +246,7 @@ export async function persistTargetMode(ns, targetMode) {
 /** 
  * @param {NS} ns 
  * */
-export async function initializeTargetMode(ns) {
+export async function initializeTargetMode(ns: NS) {
 	if (!ns.fileExists(MODE_FILE_NAME)) {
 		persistTargetMode(ns, TARGET_MODE_DEFAULT);
 	}
@@ -250,7 +257,7 @@ export async function initializeTargetMode(ns) {
  * @param {string[]} serverNames
  * @returns {ServerHackData[]}
  */
-export function getServerHackDataList(ns, serverNames = []) {
+export function getServerHackDataList(ns: NS, serverNames: string[] = []) : ServerHackData[] {
 	let useServerNames = (serverNames && serverNames.length > 0)
 		? serverNames
 		: getNodeServersWithRootAccess(ns);
@@ -264,7 +271,7 @@ export function getServerHackDataList(ns, serverNames = []) {
  * @param {String} hostname
  * @returns {ServerHackData}
  */
-export function getServerHackData(ns, hostname) {
+export function getServerHackData(ns: NS, hostname: string) : ServerHackData {
 	ns.disableLog("ALL");
 
 	let playerHackLevel = ns.getHackingLevel();
@@ -286,6 +293,16 @@ export const SERVER_MONEY_THRESH_RATIO = 0.5;
 export const SERVER_SECURITY_THRESH_PAD = 3;
 
 export class ServerHackData {
+	hostname: string;
+	maxMoney: number;
+	money: number;
+	meetsHackLevel: boolean;
+	securityLevel: number;
+	minSecurityLevel: number;
+	requiredHackLevel: number;
+	hackTime: number;
+	weakenTime: number;
+	growTime: number;
 	/**
 	 * @param {String} hostname
 	 * @param {Number} money
@@ -298,7 +315,7 @@ export class ServerHackData {
 	 * @param {Number} weakenTime
 	 * @param {Number} growTime
 	 */
-	constructor(hostname, money, maxMoney, securityLevel, minSecurityLevel, requiredHackLevel, meetsHackLevel, hackTime, weakenTime, growTime) {
+	constructor(hostname: string, money: number, maxMoney: number, securityLevel: number, minSecurityLevel: number, requiredHackLevel: number, meetsHackLevel: boolean, hackTime: number, weakenTime: number, growTime: number) {
 		this.hostname = hostname;
 		this.money = money
 		this.maxMoney = maxMoney;
@@ -316,7 +333,7 @@ export class ServerHackData {
 	 * @param {NS} ns
 	 * @returns {String[]}
 	 */
-	toArray(ns) {
+	toArray(ns: NS) {
 		let fmtMoney = ns.formatNumber(this.money);
 		let fmtMaxMoney = ns.formatNumber(this.maxMoney);
 		let fmtSecurityLevel = ns.formatNumber(this.securityLevel);
@@ -407,7 +424,7 @@ export class ServerHackData {
  * @param {NS} ns 
  * @returns {number}
 */
-export function getProgramCount(ns) {
+export function getProgramCount(ns: NS) {
 	let count = 0;
 
 	if (ns.fileExists("BruteSSH.exe")) {
@@ -433,7 +450,7 @@ export function getProgramCount(ns) {
  * @param {NS} ns 
  * @param {String} hostname
 */
-export function getRootAccess(ns, hostname) {
+export function getRootAccess(ns: NS, hostname: string) {
 	if (!ns.hasRootAccess(hostname)) {
 
 		var portsNeeded = ns.getServerNumPortsRequired(hostname);
@@ -470,7 +487,7 @@ export function getRootAccess(ns, hostname) {
  * @param {NS} ns 
  * @param {String} hostname
 */
-export function crawlRootAccess(ns) {
+export function crawlRootAccess(ns: NS) {
 	let serversWithoutAccess = getServersWithoutRootAccess(ns);
 
 	ns.print("Try getting root on " + serversWithoutAccess);
