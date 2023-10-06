@@ -2,7 +2,7 @@ import { NS } from "@ns";
 import { PURCHASE_SCRIPTS, PURCHASE_SERVER_SCRIPTS, HACKNET_SCRIPTS } from "/libpurchase";
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   let action = ns.args[0];
   let type = ns.args[1];
 
@@ -37,20 +37,20 @@ export async function main(ns) {
  * @param {NS} ns 
  * @returns {boolean}
 */
-export function isRunningPurchasing(ns) {
+export function isRunningPurchasing(ns: NS) {
   return isRunningHacknet(ns) || isRunningPurchasingServers(ns);
 }
 
-export function isRunningHacknet(ns) {
+export function isRunningHacknet(ns: NS) {
   return HACKNET_SCRIPTS.filter(it => ns.scriptRunning(it, "home")).length > 0;
 }
 
-export function isRunningPurchasingServers(ns) {
+export function isRunningPurchasingServers(ns: NS) {
   return PURCHASE_SERVER_SCRIPTS.filter(it => ns.scriptRunning(it, "home")).length > 0;
 }
 
 /** @param {NS} ns */
-function showHelp(ns) {
+function showHelp(ns: NS) {
   ns.tprint("usage:");
   ns.tprint("  run statusPurchase stop");
   ns.tprint("  run statusPurchase start");

@@ -11,7 +11,7 @@ import {
 import { getServersWithRootAccess } from "/libserver";
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   let action = ns.args[0];
 
   if (action === "stop") {
@@ -29,7 +29,7 @@ export async function main(ns) {
 /**
  * @param {NS} ns
  */
-export function restartHacking(ns) {
+export function restartHacking(ns: NS) {
   stopHacking(ns);
   startHacking(ns);
 }
@@ -37,7 +37,7 @@ export function restartHacking(ns) {
 /**
  * @param {NS} ns
  */
-export function startHacking(ns) {
+export function startHacking(ns: NS) {
   ns.tprint("Start Hacking!");
 
   if (!ns.scriptRunning(SCRIPTNAME_AUTODISTRIBUTE, "home")) {
@@ -48,7 +48,7 @@ export function startHacking(ns) {
 /**
  * @param {NS} ns
  */
-export function stopHacking(ns) {
+export function stopHacking(ns: NS) {
   ns.tprint("Stop Hacking!");
 
   if (ns.scriptRunning(SCRIPTNAME_AUTODISTRIBUTE, "home")) {
@@ -74,12 +74,12 @@ export function stopHacking(ns) {
  * @param {NS} ns 
  * @returns {boolean}
 */
-export function isRunningHacking(ns) {
+export function isRunningHacking(ns: NS) {
   return ns.scriptRunning(SCRIPTNAME_AUTODISTRIBUTE, "home");
 }
 
 /** @param {NS} ns */
-function showHelp(ns) {
+function showHelp(ns: NS) {
   ns.tprint("usage:");
   ns.tprint("  run statusHacking stop");
   ns.tprint("  run statusHacking start");

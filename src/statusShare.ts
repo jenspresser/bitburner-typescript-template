@@ -4,7 +4,7 @@ import { getServersWithRootAccess } from "/libserver";
 export const SHARE_SCRIPT = "/share/share.js";
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   let servers = ["home"].concat(getServersWithRootAccess(ns));
 
   if ("start" === ns.args[0]) {
@@ -26,7 +26,7 @@ export async function main(ns) {
  * @param {NS} ns 
  * @returns {boolean}
 */
-export function isRunningSharing(ns) {
+export function isRunningSharing(ns: NS) {
   return ns.scriptRunning(SHARE_SCRIPT, "home");
 }
 
@@ -34,7 +34,7 @@ export function isRunningSharing(ns) {
  * @param {NS} ns
  * @param {string} server
  */
-function stopSharing(ns, server) {
+function stopSharing(ns: NS, server: string) {
   if (ns.scriptRunning(SHARE_SCRIPT, server)) {
     ns.scriptKill(SHARE_SCRIPT, server);
   }
@@ -44,7 +44,7 @@ function stopSharing(ns, server) {
  * @param {NS} ns 
  * @param {string} server
 */
-function startSharing(ns, server) {
+function startSharing(ns: NS, server: string) {
   let shareRam = ns.getScriptRam(SHARE_SCRIPT);
   let availRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
 
