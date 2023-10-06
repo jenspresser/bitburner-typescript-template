@@ -8,7 +8,7 @@ import { PORT_NEXT_TARGET_INDEX } from "/PORTS";
 
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   await distributeScripts(ns);
 
   await distributeOnRootServers(ns);
@@ -19,7 +19,7 @@ export async function main(ns) {
 /**
  * @param {NS} ns
  */
-async function distributeOnRootServers(ns) {
+async function distributeOnRootServers(ns: NS) {
   let masters = getRootServers(ns);
 
   for (var master of masters) {
@@ -32,7 +32,7 @@ async function distributeOnRootServers(ns) {
  * @param {NS} ns
  * @param {string} nextHackTarget
  */
-async function distributeOnHome(ns) {
+async function distributeOnHome(ns: NS) {
   let homeMaxRam = ns.getServerMaxRam("home");
   let reserveRAM = calcHomeReserveRam(ns);
 
@@ -51,7 +51,7 @@ async function distributeOnHome(ns) {
  * @param {string} masterServerName
  * @param {string} slaveServerName
  */
-async function setupMasterHack(ns, masterServerName) {
+async function setupMasterHack(ns: NS, masterServerName: string) {
   let alreadyRunning = ns.scriptRunning(SCRIPTNAME_MASTERHACK, masterServerName);
 
   ns.print("masterServerName=", masterServerName, " - already running? ", alreadyRunning);
@@ -66,7 +66,7 @@ async function setupMasterHack(ns, masterServerName) {
  * @param {NS} ns
  * @returns {string[]}
  */
-function getRootServers(ns) {
+function getRootServers(ns: NS) {
   return getServersWithRootAccess(ns)
     .filter(server => server !== "home")
     .filter(server => ns.getServerMaxRam(server) >= 16);

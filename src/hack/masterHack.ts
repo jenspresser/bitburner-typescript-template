@@ -4,7 +4,7 @@ import { PURCHASE_SERVER_PREFIX } from "/libserver";
 import { getNextHackTarget, SCRIPT_HACK, SCRIPT_GROW, SCRIPT_WEAKEN } from "/hack/libhack";
 
 /** @param {NS} ns **/
-export async function main(ns) {
+export async function main(ns: NS) {
 	// Parameters
 	// param 1: Server you want to hack
 	// param 2: OPTIONAL - Server you want to start the hack from, i.e. any public servers, purchased servers or 'home'
@@ -215,7 +215,7 @@ export async function main(ns) {
  * @param {string} serverToHackFrom
  * @returns {number}
  */
-function getServerRam(ns, serverToHackFrom) {
+function getServerRam(ns: NS, serverToHackFrom: string): number {
 	let serverMaxRAM = ns.getServerMaxRam(serverToHackFrom);
 
 	if ("home" === serverToHackFrom) {
@@ -230,6 +230,6 @@ function getServerRam(ns, serverToHackFrom) {
  * @param {string} serverToHackFrom
  * @returns {number}
  */
-function getAvailableRam(ns, serverToHackFrom) {
+function getAvailableRam(ns: NS, serverToHackFrom: string): number {
 	return Math.max(0, getServerRam(ns, serverToHackFrom) - ns.getServerUsedRam(serverToHackFrom));
 }
