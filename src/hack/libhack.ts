@@ -1,6 +1,5 @@
 import { NS, PortData } from "@ns";
 import { getNodeServersWithRootAccess, getServersWithoutRootAccess } from "/libserver";
-import { distributeScripts } from "/library"
 import { isPortEmpty, PORT_NEXT_TARGET_INDEX, PORT_NEXT_TARGET_MODE } from "/PORTS";
 
 export const MODE_FILE_NAME = "hack/_mode.txt";
@@ -18,9 +17,6 @@ export const SCRIPTNAME_WEAKEN = "hack/weaken.js";
 export const SCRIPT_WEAKEN = "/" + SCRIPTNAME_WEAKEN;
 
 export const ALL_HACK_SCRIPTS = [SCRIPTNAME_MASTERHACK, SCRIPTNAME_HACK, SCRIPTNAME_GROW, SCRIPTNAME_WEAKEN];
-
-export const SCRIPTNAME_AUTODISTRIBUTE = "hack/keepAutoDistributing.js";
-export const SCRIPT_AUTODISTRIBUTE = "/" + SCRIPTNAME_AUTODISTRIBUTE;
 
 export const SCRIPTNAME_DISTRIBUTEHACK = "hack/distributeHack.js";
 export const SCRIPT_DISTRIBUTEHACK = "/" + SCRIPTNAME_DISTRIBUTEHACK;
@@ -138,26 +134,7 @@ function nextHackTargetSingle(ns: NS) {
  * @param {NS} ns
  */
 export async function keepAutoDistributing(ns: NS) {
-	await ns.sleep(1000);
-
-	if (ns.fileExists(MODE_FILE_NAME)) {
-		let initialTargetMode = ns.read(MODE_FILE_NAME);
-		setTargetMode(ns, initialTargetMode);
-
-		ns.tprint("Mode initialised to " + initialTargetMode);
-	}
-
-	while (true) {
-		await crawlRootAccess(ns);
-		await distributeScripts(ns);
-
-		if (!ns.scriptRunning("hack/distributeHack.js", "home")) {
-			await ns.sleep(1000);
-			ns.exec("/hack/distributeHack.js", "home");
-		}
-
-		await ns.sleep(2000);
-	}
+	ns.tprint("NO-OP");
 }
 
 /** 

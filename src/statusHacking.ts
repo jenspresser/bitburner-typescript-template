@@ -1,7 +1,5 @@
 import { NS } from "@ns";
 import {
-  SCRIPT_AUTODISTRIBUTE,
-  SCRIPTNAME_AUTODISTRIBUTE,
   SCRIPTNAME_MASTERHACK,
   SCRIPT_MASTERHACK,
   SCRIPTNAME_DISTRIBUTEHACK,
@@ -40,8 +38,8 @@ export function restartHacking(ns: NS) {
 export function startHacking(ns: NS) {
   ns.tprint("Start Hacking!");
 
-  if (!ns.scriptRunning(SCRIPTNAME_AUTODISTRIBUTE, "home")) {
-    ns.exec(SCRIPT_AUTODISTRIBUTE, "home");
+  if (!ns.scriptRunning(SCRIPTNAME_DISTRIBUTEHACK, "home")) {
+    ns.exec(SCRIPT_DISTRIBUTEHACK, "home");
   }
 }
 
@@ -51,9 +49,6 @@ export function startHacking(ns: NS) {
 export function stopHacking(ns: NS) {
   ns.tprint("Stop Hacking!");
 
-  if (ns.scriptRunning(SCRIPTNAME_AUTODISTRIBUTE, "home")) {
-    ns.scriptKill(SCRIPT_AUTODISTRIBUTE, "home");
-  }
   if (ns.scriptRunning(SCRIPTNAME_DISTRIBUTEHACK, "home")) {
     ns.scriptKill(SCRIPT_DISTRIBUTEHACK, "home");
   }
@@ -75,7 +70,7 @@ export function stopHacking(ns: NS) {
  * @returns {boolean}
 */
 export function isRunningHacking(ns: NS) {
-  return ns.scriptRunning(SCRIPTNAME_AUTODISTRIBUTE, "home");
+  return ns.scriptRunning(SCRIPTNAME_DISTRIBUTEHACK, "home");
 }
 
 /** @param {NS} ns */

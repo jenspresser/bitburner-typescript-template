@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { PURCHASE_SCRIPTS } from "/libpurchase";
-import { SCRIPT_AUTODISTRIBUTE, readTargetMode, initializeTargetMode, persistTargetMode, getProgramCount } from "/hack/libhack";
+import { readTargetMode, initializeTargetMode, persistTargetMode, getProgramCount, SCRIPT_DISTRIBUTEHACK } from "/hack/libhack";
 import { getPurchasedServerNames } from "/libserver";
 import { isRunningHacking } from "/statusHacking";
 import { isRunningHacknet, isRunningPurchasingServers } from "/statusPurchase";
@@ -13,7 +13,7 @@ export const SCRIPT_STATUSPURCHASE = "/statusPurchase.js";
 export const SCRIPT_STATUSHACKING = "/statusHacking.js";
 export const SCRIPT_STATUSSHARING = "/statusShare.js";
 
-const ALL_SCRIPTS = PURCHASE_SCRIPTS.concat([SCRIPT_AUTODISTRIBUTE]);
+const ALL_SCRIPTS = PURCHASE_SCRIPTS.concat([SCRIPT_DISTRIBUTEHACK]);
 
 /**
  * @param {NS} ns

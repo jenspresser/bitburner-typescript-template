@@ -2,13 +2,37 @@ import { NS } from "@ns";
 import { getServersWithRootAccess } from "/libserver";
 import { distributeScripts } from "/library";
 import { calcHomeReserveRam } from "/initHome";
-import { SCRIPTNAME_MASTERHACK, SCRIPT_MASTERHACK } from "/hack/libhack"
-import { PORT_NEXT_TARGET_INDEX } from "/PORTS";
-
+import { MODE_FILE_NAME, SCRIPTNAME_MASTERHACK, SCRIPT_MASTERHACK, crawlRootAccess, setTargetMode } from "/hack/libhack"
 
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
+  ns.tprint("Start distributeHack!");
+  await ns.sleep(1000);
+
+	if (ns.fileExists(MODE_FILE_NAME)) {
+		let initialTargetMode = ns.read(MODE_FILE_NAME);
+		setTargetMode(ns, initialTargetMode);
+
+		ns.tprint("Mode initialised to " + initialTargetMode);
+	}
+
+	while (true) {
+    ns.print("crawlRootAccess");
+		await crawlRootAccess(ns);
+    ns.print("distributeScripts");
+		await distributeScripts(ns);
+
+    await ns.sleep(1000);
+    ns.print("distributeHack");
+    await distributeHack(ns);
+
+		await ns.sleep(2000);
+	}
+}
+
+/** @param {NS} ns */
+export async function distributeHack(ns: NS) {
   await distributeScripts(ns);
 
   await distributeOnRootServers(ns);
