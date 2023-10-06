@@ -1,26 +1,26 @@
 import { NS } from "@ns";
 
-export const heavy = 1
-export const tripleDash = 4
-export const horizontal = '─' // U+2500
-export const vertical = '│' // U+2502
-export const upLeft = '┌'//U+250C
-export const upRight = '┐'//U+2510
-export const downLeft = '└'//U+2514
-export const downRight = '┘'//U+2518
-export const verticalLeft = '├'
-export const verticalRight = '┤'
-export const horizontalDown = '┴'
-export const horizontalUp = '┬'
-export const center = '┼'
-export const upLeftCurve = '╭'
-export const upRightCurve = '╮'
-export const downLeftCurve = '╰'
-export const downRightCurve = '╯'
-export const block = '█'
-export const rightBlock = '▐'
-export const leftBlock = '▌'
-export const downBlock = '▄';
+export const heavy: number = 1
+export const tripleDash: number = 4
+export const horizontal: string = '─' // U+2500
+export const vertical: string = '│' // U+2502
+export const upLeft: string = '┌'//U+250C
+export const upRight: string = '┐'//U+2510
+export const downLeft: string = '└'//U+2514
+export const downRight: string = '┘'//U+2518
+export const verticalLeft: string = '├'
+export const verticalRight: string = '┤'
+export const horizontalDown: string = '┴'
+export const horizontalUp: string = '┬'
+export const center: string = '┼'
+export const upLeftCurve: string = '╭'
+export const upRightCurve: string = '╮'
+export const downLeftCurve: string = '╰'
+export const downRightCurve: string = '╯'
+export const block: string = '█'
+export const rightBlock: string = '▐'
+export const leftBlock: string = '▌'
+export const downBlock: string = '▄';
 
 /**
  * @param {NS} ns
@@ -28,7 +28,7 @@ export const downBlock = '▄';
  * @param {string} horizontalSeparator: both, first, last, all
  * @param {string} aline: left, right, center
  */
-export function printTable(ns, matrix, header = [], horizontalSeparator = "", aline = "left") {
+export function printTable(ns: NS, matrix: string[][], header: string[] = [], horizontalSeparator: string = "", aline: string = "left") {
     ns.tprint(table(matrix, header, horizontalSeparator, aline));
 }
 
@@ -36,9 +36,9 @@ export function printTable(ns, matrix, header = [], horizontalSeparator = "", al
  * @param {string[][]} matrix
  * @param {string} horizontalSeparator: both, first, last, all
  * @param {string} aline: left, right, center
- * @returns {String}
+ * @returns {string}
  */
-export function table(matrix, header = [], horizontalSeparator = "", aline = "left") {
+export function table(matrix: string[][], header: string[] = [], horizontalSeparator: string = "", aline: string = "left"): string {
     let line = "\n"
     let all = false;
     let rows = matrix.length;
@@ -132,12 +132,18 @@ export function table(matrix, header = [], horizontalSeparator = "", aline = "le
     return line;
 }
 
-export function lineHorizontal(char, h, char2 = null) {
+/**
+ * @param {string[]} char 
+ * @param {number[]} h 
+ * @param {string} char2 
+ * @returns 
+ */
+export function lineHorizontal(char: string[], h: number[], char2: string | null = null) {
     //let debug = 1;
     let line = char[0]
     if (char2 == null) {
         //debug += h
-        for (let i = 0; i < h; i++) {
+        for (let i = 0; i < h.length; i++) {
             line += horizontal
         }
     } else {
@@ -155,13 +161,25 @@ export function lineHorizontal(char, h, char2 = null) {
     return line;
 }
 
-export function stringToMatrix(string, firstSplit = '\n', secondSplit = ',') {
-    let matrix = [];
+/**
+ * @param {string} string 
+ * @param {string} firstSplit 
+ * @param {string} secondSplit 
+ * @returns {string[][]}
+ */
+export function stringToMatrix(string: string, firstSplit: string = '\n', secondSplit: string = ','): string[][] {
+    let matrix: string[][] = [];
     string.split(firstSplit).forEach((l) => matrix.push(l.split(secondSplit)))
     return matrix
 }
 
-export function alineString(input, length, aline) {
+/**
+ * @param {string} input 
+ * @param {number} length 
+ * @param {string} aline 
+ * @returns {string}
+ */
+export function alineString(input: string, length: number, aline: string): string {
     let output = input.toString();
 
     switch (aline.toLowerCase()) {
