@@ -37,8 +37,8 @@ export class PathResult {
 	 * @param {boolean} isFound
 	 */
 	constructor(serverList, isFound) {
-		this.serverList=serverList;
-		this.isFound=isFound;
+		this.serverList = serverList;
+		this.isFound = isFound;
 	}
 
 	/**
@@ -46,9 +46,9 @@ export class PathResult {
 	 * @returns {string}
 	 */
 	format(shouldBackdoor) {
-		let connectString = this.serverList.map(s => "connect " + s +";").join(" ");
+		let connectString = this.serverList.map(s => "connect " + s + ";").join(" ");
 
-		if(shouldBackdoor) {
+		if (shouldBackdoor) {
 			connectString += " backdoor;";
 		}
 		return connectString;

@@ -71,7 +71,7 @@ export function canKeepUpgradingHacknet(hacknet) {
  */
 export function canBuyHacknetNode(hacknet) {
     //
-    if(hacknet.numNodes() < MAX_HACKNET_NODES) {
+    if (hacknet.numNodes() < MAX_HACKNET_NODES) {
         return true;
     }
 
