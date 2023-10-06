@@ -1,12 +1,11 @@
 import { NS } from "@ns";
-import { printTable } from "/table";
 import { getServersWithRootAccess } from "/libserver";
 
 /**
  * @param {NS} ns
  * @returns {string}
  */
-export function getNextHackTarget(ns) {
+export function getNextHackTarget(ns: NS) {
     let hackLevel = ns.getHackingLevel();
 
     if (hackLevel < 50) {
@@ -17,52 +16,39 @@ export function getNextHackTarget(ns) {
 
 /** 
  * @param {NS} ns
- * @return {Number}
+ * @return {number}
  */
-export function getHomeServerMoney(ns) {
+export function getHomeServerMoney(ns: NS) {
     return ns.getServerMoneyAvailable("home");
 }
 
 /** 
  * @param {NS} ns 
- * @param {String} hostname
+ * @param {string} hostname
 */
-export async function uploadScripts(ns, hostname) {
+export function uploadScripts(ns: NS, hostname: string) {
     let scripts = ns.ls("home", ".js");
 
-    await ns.scp(scripts, hostname);
+    ns.scp(scripts, hostname);
 }
 
 /** 
  * @param {NS} ns
 */
-export async function distributeScripts(ns) {
+export function distributeScripts(ns: NS) {
     let serverNames = getServersWithRootAccess(ns);
 
     for (var i = 0; i < serverNames.length; i++) {
-        await uploadScripts(ns, serverNames[i]);
+        uploadScripts(ns, serverNames[i]);
     }
 }
 
 /**
  * @param {NS} ns
- */
-export function showHackData(ns) {
-    let servers = getServerHackDataList(ns);
-    let nextHackTarget = getNextHackTarget(ns);
-
-    let matrix = servers.map(it => it.toArray(ns));
-
-    ns.tprint("Next Hack Target: ", nextHackTarget);
-    printTable(ns, matrix, ServerHackData.toHeaderArray(), "|");
-}
-
-/**
- * @param {NS} ns
- * @param {String} hostname
+ * @param {string} hostname
  * @returns {ServerData}
  */
-export function getServerData(ns, hostname) {
+export function getServerData(ns: NS, hostname: string): ServerData {
     let serverMoney = ns.getServerMoneyAvailable(hostname);
     let serverMaxMoney = ns.getServerMaxMoney(hostname);
     let serverRam = ns.getServerMaxRam(hostname);
@@ -80,15 +66,21 @@ export function getServerData(ns, hostname) {
 }
 
 export class ServerData {
+    hostname: string;
+    money: number;
+    maxMoney: number;
+    ram: number;
+    maxRam: number;
+    nextUpgradeCost: number;
     /**
-     * @param {String} hostname
-     * @param {Number} money
-     * @param {Number} maxMoney
-     * @param {Number} ram
-     * @param {Number} maxRam
-     * @param {Number} nextUpgradeCost
+     * @param {string} hostname
+     * @param {number} money
+     * @param {number} maxMoney
+     * @param {number} ram
+     * @param {number} maxRam
+     * @param {number} nextUpgradeCost
      */
-    constructor(hostname, money, maxMoney, ram, maxRam, nextUpgradeCost) {
+    constructor(hostname: string, money: number, maxMoney: number, ram: number, maxRam: number, nextUpgradeCost: number) {
         this.hostname = hostname;
         this.money = money;
         this.maxMoney = maxMoney;
@@ -102,7 +94,7 @@ export class ServerData {
     }
 
     /** {NS} ns */
-    toArray(ns) {
+    toArray(ns: NS) {
         let fmtUpgradeCost = ns.formatNumber(this.nextUpgradeCost);
         let fmtRam = ns.formatRam(this.ram);
         let fmtMaxRam = ns.formatRam(this.maxRam);
@@ -111,13 +103,14 @@ export class ServerData {
 }
 
 /**
- * @param {String} hostname
- * @param {Number} ram
- * @param {Number} nextRam
- * @param {Number} upgradeRamCost
+ * @param {string} hostname
+ * @param {number} ram
  */
 export class ServerRam {
-    constructor(hostname, ram) {
+    hostname: string;
+    ram: number;
+
+    constructor(hostname: string, ram: number) {
         this.hostname = hostname;
         this.ram = ram;
     }

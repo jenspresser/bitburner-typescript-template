@@ -5,7 +5,7 @@ import { TARGET_PURCHASE_RAM } from "libpurchase";
 import { printTable } from "table";
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
     let pserverCost = ns.formatNumber(ns.getPurchasedServerCost(TARGET_PURCHASE_RAM));
 
     printTable(ns, [["Next Server Cost"], [pserverCost]], [], "first", "right");

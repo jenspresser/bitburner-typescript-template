@@ -3,7 +3,7 @@ import { getServerHackDataList, ServerHackData } from "/hack/libhack";
 import { printTable } from "/table";
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
 	let servers = getServerHackDataList(ns);
 
 	if (ns.args.length > 0) {

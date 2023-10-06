@@ -28,7 +28,7 @@ export const downBlock: string = '▄';
  * @param {string} horizontalSeparator: both, first, last, all
  * @param {string} aline: left, right, center
  */
-export function printTable(ns: NS, matrix: string[][], header: string[] = [], horizontalSeparator: string = "", aline: string = "left") {
+export function printTable(ns: NS, matrix: any[][], header: string[] = [], horizontalSeparator: string = "", aline: string = "left") {
     ns.tprint(table(matrix, header, horizontalSeparator, aline));
 }
 
@@ -38,7 +38,7 @@ export function printTable(ns: NS, matrix: string[][], header: string[] = [], ho
  * @param {string} aline: left, right, center
  * @returns {string}
  */
-export function table(matrix: string[][], header: string[] = [], horizontalSeparator: string = "", aline: string = "left"): string {
+export function table(matrix: any[][], header: string[] = [], horizontalSeparator: string = "", aline: string = "left"): string {
     let line = "\n"
     let all = false;
     let rows = matrix.length;

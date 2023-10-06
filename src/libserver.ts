@@ -5,7 +5,7 @@ export const PURCHASE_SERVER_PREFIX = "pserv-";
  * @param {NS} ns
  * @return string[]
 */
-export function getServerNames(ns) {
+export function getServerNames(ns: NS) {
   let serversSeen = ns.scan();
 
   for (var i = 0; i < serversSeen.length; i++) {
@@ -34,7 +34,7 @@ export function getServerNames(ns) {
  * @param {serverInfoFilter} [filter]
  * @returns  ServerInfo[]
 */
-export function getServerInfo(ns, filter = () => true) {
+export function getServerInfo(ns: NS, filter = () => true) {
   let serverNames = getServerNames(ns);
 
   return serverNames.map(serverName => {
@@ -49,7 +49,7 @@ export function getServerInfo(ns, filter = () => true) {
  * @param {NS} ns
  * @return string[]
 */
-export function getNodeServerNames(ns) {
+export function getNodeServerNames(ns: NS) {
   return getServerNames(ns)
     .filter(it => !it.startsWith(PURCHASE_SERVER_PREFIX));
 }
@@ -58,7 +58,7 @@ export function getNodeServerNames(ns) {
  * @param {NS} ns
  * @return string[]
 */
-export function getPurchasedServerNames(ns) {
+export function getPurchasedServerNames(ns: NS) {
   return getServerNames(ns)
     .filter(it => it.startsWith(PURCHASE_SERVER_PREFIX));
 }
@@ -67,7 +67,7 @@ export function getPurchasedServerNames(ns) {
  * @param {NS} ns
  * @return {string[]}
 */
-export function getServersWithRootAccess(ns) {
+export function getServersWithRootAccess(ns: NS) {
   return getServerInfo(ns)
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_HASROOT)
     .map(it => it.hostname);
@@ -77,7 +77,7 @@ export function getServersWithRootAccess(ns) {
  * @param {NS} ns
  * @return {ServerInfo[]}
 */
-export function getNodeServersWithRootAccess(ns) {
+export function getNodeServersWithRootAccess(ns: NS) {
   return getServerInfo(ns)
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_HASROOT)
     .filter(it => !it.hostname.startsWith(PURCHASE_SERVER_PREFIX))
@@ -88,7 +88,7 @@ export function getNodeServersWithRootAccess(ns) {
  * @param {NS} ns
  * @return string[]
 */
-export function getServersWithoutRootAccess(ns) {
+export function getServersWithoutRootAccess(ns: NS) {
   return getServerInfo(ns)
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_NONPURCHASED)
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_NOT_HASROOT)
@@ -100,33 +100,37 @@ export class ServerInfoFilters {
    * @param {ServerInfo} serverInfo
    * @returns {boolean}
    */
-  static SERVER_INFO_FILTER_NONPURCHASED = (serverInfo) => serverInfo.hostname !== "home" && !serverInfo.hostname.startsWith("pserv");
+  static SERVER_INFO_FILTER_NONPURCHASED = (serverInfo: ServerInfo) => serverInfo.hostname !== "home" && !serverInfo.hostname.startsWith(PURCHASE_SERVER_PREFIX);
 
   /**
    * @param {ServerInfo} serverInfo
    * @returns {boolean}
    */
-  static SERVER_INFO_FILTER_PURCHASED = (serverInfo) => serverInfo.hostname !== "home" && serverInfo.hostname.startsWith("pserv");
+  static SERVER_INFO_FILTER_PURCHASED = (serverInfo: ServerInfo) => serverInfo.hostname !== "home" && serverInfo.hostname.startsWith(PURCHASE_SERVER_PREFIX);
 
   /**
    * @param {ServerInfo} serverInfo
    * @returns {boolean}
    */
-  static SERVER_INFO_FILTER_HASROOT = (serverInfo) => serverInfo.hasRoot;
+  static SERVER_INFO_FILTER_HASROOT = (serverInfo: ServerInfo) => serverInfo.hasRoot;
 
   /**
    * @param {ServerInfo} serverInfo
    * @returns {boolean}
    */
-  static SERVER_INFO_FILTER_NOT_HASROOT = (serverInfo) => !serverInfo.hasRoot;
+  static SERVER_INFO_FILTER_NOT_HASROOT = (serverInfo: ServerInfo) => !serverInfo.hasRoot;
 }
 
 export class ServerInfo {
+  hostname: string;
+  hasRoot: boolean;
+  maxRam: number;
   /**
    * @param {string} hostname
    * @param {boolean} hasRoot
+   * @param {number} maxRam
    */
-  constructor(hostname, hasRoot, maxRam) {
+  constructor(hostname: string, hasRoot: boolean, maxRam: number) {
     this.hostname = hostname;
     this.hasRoot = hasRoot;
     this.maxRam = maxRam;
@@ -153,7 +157,7 @@ export class ServerInfo {
   /**
    * @param {NS} ns
    */
-  toArray(ns) {
+  toArray(ns: NS) {
     return [this.hostname, this.hasRoot, ns.formatRam(this.maxRam)];
   }
 }
