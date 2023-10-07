@@ -38,7 +38,7 @@ export function uploadScripts(ns: NS, hostname: string) {
 export function distributeScripts(ns: NS) {
     let serverNames = getServersWithRootAccess(ns);
 
-    for (var i = 0; i < serverNames.length; i++) {
+    for (let i = 0; i < serverNames.length; i++) {
         uploadScripts(ns, serverNames[i]);
     }
 }

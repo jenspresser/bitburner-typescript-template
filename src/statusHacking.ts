@@ -53,8 +53,8 @@ export function stopHacking(ns: NS) {
     ns.scriptKill(SCRIPT_DISTRIBUTEHACK, "home");
   }
 
-  for (var server of getServersWithRootAccess(ns)) {
-    for (var hackScript of ALL_HACK_SCRIPTS) {
+  for (let server of getServersWithRootAccess(ns)) {
+    for (let hackScript of ALL_HACK_SCRIPTS) {
       if (ns.scriptRunning(hackScript, server)) {
         ns.scriptKill(hackScript, server);
       }

@@ -5,7 +5,7 @@ import { getServerNames } from "libserver";
 export async function main(ns: NS) {
   let servernames = getServerNames(ns);
 
-  for (var server of servernames) {
+  for (let server of servernames) {
     ns.killall(server);
   }
 }

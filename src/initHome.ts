@@ -22,7 +22,7 @@ const ALL_SCRIPTS = PURCHASE_SCRIPTS.concat([SCRIPT_DISTRIBUTEHACK]);
 export function calcHomeReserveRam(ns: NS) {
 	let reserveRAM = 0;
 
-  for (var script of ALL_SCRIPTS) {
+  for (let script of ALL_SCRIPTS) {
     reserveRAM += ns.getScriptRam(script);
   }
 

@@ -16,7 +16,7 @@ export async function main(ns: NS) {
         return;
     }
 
-    for (var arg of ns.args) {
+    for (let arg of ns.args) {
         if (arg === "root") {
             servers = servers.filter(it => it.hasRoot);
         }
@@ -42,7 +42,7 @@ export async function main(ns: NS) {
             servers = servers.filter(it => it.maxRam >= 128);
         }
     }
-    for (var arg of ns.args) {
+    for (let arg of ns.args) {
         if (arg === "byroot") {
             servers.sort((a, b) => {
                 let rootA = a.hasRoot ? 1 : 0;

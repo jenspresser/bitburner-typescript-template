@@ -8,10 +8,10 @@ export const PURCHASE_SERVER_PREFIX = "pserv-";
 export function getServerNames(ns: NS) {
   let serversSeen = ns.scan();
 
-  for (var i = 0; i < serversSeen.length; i++) {
+  for (let i = 0; i < serversSeen.length; i++) {
     let serverName = serversSeen[i];
     let thisScan = ns.scan(serverName);
-    for (var j = 0; j < thisScan.length; j++) {
+    for (let j = 0; j < thisScan.length; j++) {
       let thisScanServer = thisScan[j];
       if (serversSeen.indexOf(thisScanServer) === -1) {
         serversSeen.push(thisScanServer);

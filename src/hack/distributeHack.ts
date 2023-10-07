@@ -46,7 +46,7 @@ export async function distributeHack(ns: NS) {
 async function distributeOnRootServers(ns: NS) {
   let masters = getRootServers(ns);
 
-  for (var master of masters) {
+  for (let master of masters) {
     await setupMasterHack(ns, master);
     await ns.sleep(Math.random() * 1000);
   }

@@ -16,14 +16,14 @@ export async function main(ns: NS) {
 
   if (action === "stop") {
     ns.tprint("Stop Purchasing! ", (type || ""));
-    for (var script of scripts) {
+    for (let script of scripts) {
       if (ns.scriptRunning(script, "home")) {
         ns.scriptKill(script, "home");
       }
     }
   } else if (action === "start") {
     ns.tprint("Start Purchasing! ", (type || ""));
-    for (var script of scripts) {
+    for (let script of scripts) {
       if (!ns.scriptRunning(script, "home")) {
         ns.exec(script, "home");
       }

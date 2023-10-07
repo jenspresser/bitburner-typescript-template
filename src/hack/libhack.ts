@@ -469,7 +469,7 @@ export function crawlRootAccess(ns: NS) {
 
 	ns.print("Try getting root on " + serversWithoutAccess);
 
-	for (var i = 0; i < serversWithoutAccess.length; i++) {
+	for (let i = 0; i < serversWithoutAccess.length; i++) {
 		getRootAccess(ns, serversWithoutAccess[i]);
 	}
 }

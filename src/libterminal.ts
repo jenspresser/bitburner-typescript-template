@@ -17,7 +17,7 @@ export function terminalOutput(value: string | string[]) {
     const listEl = getDocument().getElementById("terminal");
 
     if (listEl !== null) {
-        for (var line of lines) {
+        for (let line of lines) {
             listEl.insertAdjacentHTML('beforeend', createTerminalLine(line));
         }
     }

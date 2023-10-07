@@ -84,7 +84,7 @@ export function canBuyHacknetNode(hacknet: Hacknet) {
  * @return {Boolean}
  */
 export function canUpgradeAnyHacknetNode(hacknet: Hacknet) {
-    for (var index = 0; index < hacknet.numNodes(); index++) {
+    for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNode(hacknet, index)) {
             return true;
         }
@@ -98,7 +98,7 @@ export function canUpgradeAnyHacknetNode(hacknet: Hacknet) {
  * @return {Number}
  */
 export function getUpgradeableHacknetNode(hacknet: Hacknet) {
-    for (var index = 0; index < hacknet.numNodes(); index++) {
+    for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNode(hacknet, index)) {
             return index;
         }
@@ -114,7 +114,7 @@ export function getUpgradeableHacknetNode(hacknet: Hacknet) {
  * @return {Number}
  */
 export function getUpgradeableHacknetNodeLevel(hacknet: Hacknet, ns: NS) {
-    for (var index = 0; index < hacknet.numNodes(); index++) {
+    for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNodeLevel(hacknet, index) && hacknet.getLevelUpgradeCost(index) < getHomeServerMoney(ns)) {
             return index;
         }
@@ -128,7 +128,7 @@ export function getUpgradeableHacknetNodeLevel(hacknet: Hacknet, ns: NS) {
  * @return {Number}
  */
 export function getUpgradeableHacknetNodeRam(hacknet: Hacknet, ns: NS) {
-    for (var index = 0; index < hacknet.numNodes(); index++) {
+    for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNodeRam(hacknet, index) && hacknet.getRamUpgradeCost(index) < getHomeServerMoney(ns)) {
             return index;
         }
@@ -142,7 +142,7 @@ export function getUpgradeableHacknetNodeRam(hacknet: Hacknet, ns: NS) {
  * @return {Number}
  */
 export function getUpgradeableHacknetNodeCore(hacknet: Hacknet, ns: NS) {
-    for (var index = 0; index < hacknet.numNodes(); index++) {
+    for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNodeCore(hacknet, index) && hacknet.getCoreUpgradeCost(index) < getHomeServerMoney(ns)) {
             return index;
         }

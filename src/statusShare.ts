@@ -8,11 +8,11 @@ export async function main(ns: NS) {
   let servers = ["home"].concat(getServersWithRootAccess(ns));
 
   if ("start" === ns.args[0]) {
-    for (var server of servers) {
+    for (let server of servers) {
       startSharing(ns, server);
     }
   } else if ("stop" === ns.args[0]) {
-    for (var server of servers) {
+    for (let server of servers) {
       stopSharing(ns, server);
     }
   } else if ("status" === ns.args[0]) {
