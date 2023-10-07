@@ -68,9 +68,11 @@ export async function main(ns: NS) {
 	}
 
 	ns.tprint("Purchase set to: ", shouldPurchase);
+	await ns.sleep(100);
 	startHacking(ns);
 
 	if(shouldPurchase) {
+		await ns.sleep(100);
 		startPurchase(ns);
 	}
 }
