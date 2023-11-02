@@ -42,7 +42,7 @@ function territoryWar(ns) {
 		}
 		if (lowestWinChance > minWinChanceToStartWar) {
 			if (!gangInfo.territoryWarfareEngaged) {
-				ns.print("WARN start territory warfate");
+				ns.print("WARN start territory warfare");
 				ns.toast("Start territory warfare");
 				ns.gang.setTerritoryWarfare(true);
 			}
@@ -122,8 +122,9 @@ function assignMembers(ns, territoryWinChance) {
 		else if (workJobs > 0 && memberCombatStats(ns, member) > 50) {
 			workJobs--;
 			for (const task of tasks) {
-				if (taskValue(ns, gangInfo, member, task) > highestTaskValue) {
-					highestTaskValue = taskValue(ns, gangInfo, member, task)
+				let valueOfTask = taskValue(ns, gangInfo, member, task);
+				if (valueOfTask > highestTaskValue) {
+					highestTaskValue = valueOfTask;
 					highestValueTask = task;
 				}
 			}
@@ -175,7 +176,7 @@ function memberCombatStats(ns, member) {
 function recruit(ns) {
 	if (ns.gang.canRecruitMember()) {
 		let members = ns.gang.getMemberNames();
-		let memberName = "Thug-" + members.length;
+		let memberName = "m" + members.length;
 		ns.print("Recruit new gang member " + memberName);
 		ns.gang.recruitMember(memberName);
 	}
