@@ -1,5 +1,7 @@
+import { GangGenInfo, NS } from "@ns";
+
 /** @param {NS} ns **/
-export async function main(ns) {
+export async function main(ns: NS) {
 	ns.disableLog("ALL");
 	if (!ns.gang.inGang()) {
 		joinGang(ns);
@@ -16,7 +18,7 @@ export async function main(ns) {
 	}
 }
 
-function territoryWar(ns) {
+function territoryWar(ns: NS) {
 	const minWinChanceToStartWar = 0.8;
 	let gangInfo = ns.gang.getGangInformation();
 	// ns.print("Territory: " + gangInfo.territory);
@@ -59,14 +61,10 @@ function territoryWar(ns) {
 	return 1;
 }
 
-function ascend(ns) {
+function ascend(ns: NS) {
 	let members = ns.gang.getMemberNames();
 	for (let member of members) {
 		let memberInfo = ns.gang.getMemberInformation(member);
-		let memberCombatStats = (memberInfo.str + memberInfo.def + memberInfo.dex + memberInfo.agi) / 4;
-		//ns.print("Member combat stats: " + memberCombatStats);
-		let memberAscensionMultiplier = (memberInfo.agi_asc_mult + memberInfo.def_asc_mult + memberInfo.dex_asc_mult + memberInfo.str_asc_mult) / 4;
-		//ns.print("Member ascension multiplier: " + memberAscensionMultiplier);
 		let memberAscensionResult = ns.gang.getAscensionResult(member);
 		if (memberAscensionResult != undefined) {
 			let memberAscensionResultMultiplier = (memberAscensionResult.agi + memberAscensionResult.def + memberAscensionResult.dex + memberAscensionResult.str) / 4;
@@ -79,7 +77,7 @@ function ascend(ns) {
 	}
 }
 
-function equipMembers(ns) {
+function equipMembers(ns: NS) {
 	let members = ns.gang.getMemberNames();
 	for (let member of members) {
 		let memberInfo = ns.gang.getMemberInformation(member);
@@ -94,7 +92,7 @@ function equipMembers(ns) {
 	}
 }
 
-function assignMembers(ns, territoryWinChance) {
+function assignMembers(ns: NS, territoryWinChance: number) {
 	let members = ns.gang.getMemberNames();
 	members.sort((a, b) => memberCombatStats(ns, b) - memberCombatStats(ns, a));
 	let gangInfo = ns.gang.getGangInformation();
@@ -140,7 +138,7 @@ function assignMembers(ns, territoryWinChance) {
 	}
 }
 
-function taskValue(ns, gangInfo, member, task) {
+function taskValue(ns: NS, gangInfo: GangGenInfo, member: string, task: string) {
 	// determine money and reputation gain for a task
 	let respectGain = ns.formulas.gang.respectGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats(task));
 	let moneyGain = ns.formulas.gang.moneyGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats(task));
@@ -167,13 +165,13 @@ function taskValue(ns, gangInfo, member, task) {
 	return respectGain * moneyGain;
 }
 
-function memberCombatStats(ns, member) {
+function memberCombatStats(ns: NS, member: string) {
 	let memberInfo = ns.gang.getMemberInformation(member);
 	return (memberInfo.str + memberInfo.def + memberInfo.dex + memberInfo.agi) / 4;
 }
 
 
-function recruit(ns) {
+function recruit(ns: NS) {
 	if (ns.gang.canRecruitMember()) {
 		let members = ns.gang.getMemberNames();
 		let memberName = "m" + members.length;
@@ -182,7 +180,7 @@ function recruit(ns) {
 	}
 }
 
-function joinGang(ns) {
+function joinGang(ns: NS) {
 	for (const myGang of combatGangs) {
 		if (ns.gang.createGang(myGang)) {
 			return;
