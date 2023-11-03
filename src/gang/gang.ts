@@ -85,7 +85,7 @@ function equipMembers(ns: NS) {
 
 		if (memberInfo.augmentations.length < augmentationNames.length) {
 			for (let augmentation of augmentationNames) {
-				if (ns.gang.getEquipmentCost(augmentation) < (0.01 * getHomeServerMoney(ns))) {
+				if (ns.gang.getEquipmentCost(augmentation) < ((0.7) * getHomeServerMoney(ns))) {
 					ns.print("Purchase augmentation for " + member + ": " + augmentation);
 					ns.gang.purchaseEquipment(member, augmentation);
 				}
@@ -96,7 +96,7 @@ function equipMembers(ns: NS) {
 		let pendingUpgrades = equipmentNames.filter(it => !memberUpgrades.includes(it))
 
 		for(let upgrade of pendingUpgrades) {
-			if(ns.gang.getEquipmentCost(upgrade) < (0.7) * getHomeServerMoney(ns)) {
+			if(ns.gang.getEquipmentCost(upgrade) < ((0.7) * getHomeServerMoney(ns))) {
 				ns.print("Purchase upgrade for " + member + ": " + upgrade);
 				ns.gang.purchaseEquipment(member, upgrade);
 			}
@@ -108,7 +108,7 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 	let members = ns.gang.getMemberNames();
 	members.sort((a, b) => memberCombatStats(ns, b) - memberCombatStats(ns, a));
 	let gangInfo = ns.gang.getGangInformation();
-	let workJobs = Math.floor((members.length) / 2);
+	let workJobs = Math.floor((members.length) / 2); 
 	let wantedLevelIncrease = 0;
 	for (let member of members) {
 		let highestTaskValue = 0;
