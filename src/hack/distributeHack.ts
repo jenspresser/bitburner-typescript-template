@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { getServersWithRootAccess } from "/libserver";
-import { distributeScripts } from "/library";
+import { distributeScripts, getHomeMaxRam } from "/library";
 import { calcHomeReserveRam } from "/initHome";
 import { MODE_FILE_NAME, SCRIPTNAME_MASTERHACK, SCRIPT_MASTERHACK, crawlRootAccess, setTargetMode } from "/hack/libhack"
 
@@ -57,7 +57,7 @@ async function distributeOnRootServers(ns: NS) {
  * @param {string} nextHackTarget
  */
 async function distributeOnHome(ns: NS) {
-  let homeMaxRam = ns.getServerMaxRam("home");
+  let homeMaxRam = getHomeMaxRam(ns);
   let reserveRAM = calcHomeReserveRam(ns);
 
   let availableRam = homeMaxRam - reserveRAM;

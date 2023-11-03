@@ -51,7 +51,7 @@ export async function main(ns: NS) {
             });
         }
         if (arg === "byram") {
-            servers.sort((a, b) => { return b.maxRam - a.maxRam; });
+            servers.sort(ServerInfo.sortByRamDesc());
         }
         if (arg === "byname") {
             servers.sort((a, b) => a.hostname.localeCompare(b.hostname));

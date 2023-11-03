@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { BitNodeMultipliers, NS } from "@ns";
 import { getServersWithRootAccess } from "/libserver";
 
 /**
@@ -41,6 +41,18 @@ export function distributeScripts(ns: NS) {
     for (let i = 0; i < serverNames.length; i++) {
         uploadScripts(ns, serverNames[i]);
     }
+}
+
+export function hasFormulaAPI(ns: NS) : boolean {
+    return ns.fileExists("Formulas.exe", "home");
+}
+
+export function getBitNodeMultipliers(ns: NS) : BitNodeMultipliers {
+    return ns.getBitNodeMultipliers();
+}
+
+export function getHomeMaxRam(ns: NS) {
+    return ns.getServerMaxRam("home");
 }
 
 /**

@@ -1,4 +1,5 @@
-import { GangGenInfo, NS } from "@ns";
+import { GangGenInfo, GangMemberInfo, GangTaskStats, NS } from "@ns";
+import { getHomeServerMoney, hasFormulaAPI } from "/library";
 
 /** @param {NS} ns **/
 export async function main(ns: NS) {
@@ -83,7 +84,7 @@ function equipMembers(ns: NS) {
 		let memberInfo = ns.gang.getMemberInformation(member);
 		if (memberInfo.augmentations.length < augmentationNames.length) {
 			for (let augmentation of augmentationNames) {
-				if (ns.gang.getEquipmentCost(augmentation) < (0.01 * ns.getServerMoneyAvailable("home"))) {
+				if (ns.gang.getEquipmentCost(augmentation) < (0.01 * getHomeServerMoney(ns))) {
 					ns.print("Purchase augmentation for " + member + ": " + augmentation);
 					ns.gang.purchaseEquipment(member, augmentation);
 				}
@@ -104,7 +105,6 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 		let memberInfo = ns.gang.getMemberInformation(member);
 
 		if (workJobs > 0 && gangInfo.territory < 1 && members.length >= 12 && territoryWinChance < 0.95) {
-			// support territory warfare if max team size, not at max territory yet and win chance not high enough yet
 			workJobs--;
 			highestValueTask = "Territory Warfare";
 		}
@@ -114,8 +114,7 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 		else if (workJobs >= 0 && wantedLevelIncrease > 0) {
 			workJobs--;
 			highestValueTask = "Vigilante Justice";
-			//ns.print("Wanted Level for Vigilante: " + ns.formulas.gang.wantedLevelGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats(highestValueTask)))
-			wantedLevelIncrease += ns.formulas.gang.wantedLevelGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats(highestValueTask));
+			wantedLevelIncrease += calcWantedChange(ns, gangInfo, member, highestValueTask);
 		}
 		else if (workJobs > 0 && memberCombatStats(ns, member) > 50) {
 			workJobs--;
@@ -126,8 +125,7 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 					highestValueTask = task;
 				}
 			}
-			wantedLevelIncrease += ns.formulas.gang.wantedLevelGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats(highestValueTask));
-			//ns.print("Wanted Level for Increase: " + ns.formulas.gang.wantedLevelGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats(highestValueTask)))
+			wantedLevelIncrease += calcWantedChange(ns, gangInfo, member, highestValueTask);
 		}
 
 
@@ -138,12 +136,47 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 	}
 }
 
-function taskValue(ns: NS, gangInfo: GangGenInfo, member: string, task: string) {
+function calcWantedChange(ns: NS, gangInfo: GangGenInfo, member: string, task: string) : number {
+	let taskStats = ns.gang.getTaskStats(task);
+
+	if(hasFormulaAPI(ns)) {
+		let memberInfo = ns.gang.getMemberInformation(member);
+		
+		return ns.formulas.gang.wantedLevelGain(gangInfo, memberInfo, taskStats);
+	} else {
+		return taskStats.baseWanted;
+	}
+}
+
+function taskValue(ns: NS, gangInfo: GangGenInfo, member: string, task: string) : number {
+	if(hasFormulaAPI(ns)) {
+		return taskValueWithFormula(ns, gangInfo, member, task);
+	} else {
+		return taskValueNoFormula(ns, gangInfo, member, task);
+	}
+}
+
+function taskValueNoFormula(ns: NS, gangInfo: GangGenInfo, member: string, task: string) : number {
+	let tasks = ns.gang.getTaskNames()
+		.map(it => ns.gang.getTaskStats(it))
+		.filter(it => it.isCombat);
+
+	let taskValues = tasks.map(it => calcTaskStatValue(it));
+
+	return Math.max(...taskValues);
+}
+
+function calcTaskStatValue(task: GangTaskStats) : number {
+	return task.baseMoney * task.baseRespect;
+}
+
+function taskValueWithFormula(ns: NS, gangInfo: GangGenInfo, member: string, task: string) : number {
 	// determine money and reputation gain for a task
 	let respectGain = ns.formulas.gang.respectGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats(task));
 	let moneyGain = ns.formulas.gang.moneyGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats(task));
 	let wantedLevelIncrease = ns.formulas.gang.wantedLevelGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats(task));
 	let vigilanteWantedDecrease = ns.formulas.gang.wantedLevelGain(gangInfo, ns.gang.getMemberInformation(member), ns.gang.getTaskStats("Vigilante Justice"));
+	
 	if ( wantedLevelIncrease + vigilanteWantedDecrease > 0){
 		// avoid tasks where more than one vigilante justice is needed to compensate
 		return 0;
@@ -191,6 +224,25 @@ function joinGang(ns: NS) {
 const tasks = ["Mug People", "Deal Drugs", "Strongarm Civilians", "Run a Con", "Armed Robbery", "Traffick Illegal Arms", "Threaten & Blackmail", "Human Trafficking", "Terrorism"];
 
 const augmentationNames = ["Bionic Arms", "Bionic Legs", "Bionic Spine", "BrachiBlades", "Nanofiber Weave", "Synthetic Heart", "Synfibril Muscle", "Graphene Bone Lacings", "BitWire", "Neuralstimulator", "DataJack"];
+
+const equipmentNames = [
+	"Baseball Bat",
+	"Katana",
+	"Glock 18C",
+	"P90C",
+	"Steyr AUG",
+	"AK-47",
+	"M15A10 Assault Rifle",
+	"AWM Sniper Rifle",
+	"Bulletproof Vest",
+	"Full Body Armor",
+	"Liquid Body Armor",
+	"Graphene Plating Armor",
+	"Ford Flex V20",
+	"ATX1070 Superbike",
+	"Mercedes-Benz S9001",
+	"White Ferrari"
+]
 
 const combatGangs = ["Speakers for the Dead", "The Dark Army", "The Syndicate", "Tetrads", "Slum Snakes"]
 

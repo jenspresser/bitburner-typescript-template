@@ -38,7 +38,7 @@ export function restartHacking(ns: NS) {
 export function startHacking(ns: NS) {
   ns.tprint("Start Hacking!");
 
-  if (!ns.scriptRunning(SCRIPTNAME_DISTRIBUTEHACK, "home")) {
+  if (!isRunningHacking(ns)) {
     ns.exec(SCRIPT_DISTRIBUTEHACK, "home");
   }
 }
@@ -69,7 +69,7 @@ export function stopHacking(ns: NS) {
  * @param {NS} ns 
  * @returns {boolean}
 */
-export function isRunningHacking(ns: NS) {
+export function isRunningHacking(ns: NS): boolean {
   return ns.scriptRunning(SCRIPTNAME_DISTRIBUTEHACK, "home");
 }
 
@@ -78,4 +78,5 @@ function showHelp(ns: NS) {
   ns.tprint("usage:");
   ns.tprint("  run statusHacking stop");
   ns.tprint("  run statusHacking start");
+  ns.tprint("  run statusHacking restart");
 }

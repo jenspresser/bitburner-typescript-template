@@ -1,10 +1,5 @@
 import { NS } from "@ns";
-import {
-    ServerRam,
-    getServerData,
-    getHomeServerMoney,
-    ServerData
-} from "library";
+import { ServerRam, getHomeServerMoney } from "library";
 import {
     getPurchasedServerNames,
     PURCHASE_SERVER_PREFIX
@@ -152,7 +147,7 @@ export async function purchaseServers(ns: NS) {
  * @param {NS} ns
  * @returns {String}
  */
-export function getNextPurchaseServerName(ns: NS) : string {
+export function getNextPurchaseServerName(ns: NS): string {
     let pservers = getPurchasedServerNames(ns);
 
     // Since the length value is one greater than the highest index (due to 0-based array)
