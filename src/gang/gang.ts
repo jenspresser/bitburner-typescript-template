@@ -9,6 +9,7 @@ export async function main(ns: NS) {
 	}
 
 	var territoryWinChance = 1;
+
 	while (true) {
 		recruit(ns);
 		equipMembers(ns);
@@ -155,6 +156,9 @@ function calcWantedChange(ns: NS, gangInfo: GangGenInfo, member: string, task: s
 		
 		return ns.formulas.gang.wantedLevelGain(gangInfo, memberInfo, taskStats);
 	} else {
+		if(task === "Vigilante Justice") {
+			return -5;
+		}
 		return taskStats.baseWanted;
 	}
 }
@@ -168,17 +172,8 @@ function taskValue(ns: NS, gangInfo: GangGenInfo, member: string, task: string) 
 }
 
 function taskValueNoFormula(ns: NS, gangInfo: GangGenInfo, member: string, task: string) : number {
-	let tasks = ns.gang.getTaskNames()
-		.map(it => ns.gang.getTaskStats(it))
-		.filter(it => it.isCombat);
-
-	let taskValues = tasks.map(it => calcTaskStatValue(it));
-
-	return Math.max(...taskValues);
-}
-
-function calcTaskStatValue(task: GangTaskStats) : number {
-	return task.baseMoney * task.baseRespect;
+	let taskStats = ns.gang.getTaskStats(task);
+	return taskStats.baseMoney * taskStats.baseRespect;
 }
 
 function taskValueWithFormula(ns: NS, gangInfo: GangGenInfo, member: string, task: string) : number {
