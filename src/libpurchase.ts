@@ -7,17 +7,6 @@ import {
 
 export const TARGET_PURCHASE_RAM = 16;
 
-export const HACKNET_SCRIPTS = [
-    "keepBuyingHacknet.js"
-]
-
-export const PURCHASE_SERVER_SCRIPTS = [
-    "purchaseServers.js",
-    "upgradeServers.js",
-];
-
-export const PURCHASE_SCRIPTS = PURCHASE_SERVER_SCRIPTS.concat(HACKNET_SCRIPTS);
-
 /** 
  * @param {NS} ns
 */

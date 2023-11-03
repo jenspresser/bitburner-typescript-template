@@ -4,23 +4,6 @@ import { isPortEmpty, PORT_NEXT_TARGET_INDEX, PORT_NEXT_TARGET_MODE } from "/POR
 
 export const MODE_FILE_NAME = "hack/_mode.txt";
 
-export const SCRIPTNAME_MASTERHACK = "hack/masterHack.js";
-export const SCRIPT_MASTERHACK = "/" + SCRIPTNAME_MASTERHACK;
-
-export const SCRIPTNAME_HACK = "hack/hack.js";
-export const SCRIPT_HACK = "/" + SCRIPTNAME_HACK;
-
-export const SCRIPTNAME_GROW = "hack/grow.js";
-export const SCRIPT_GROW = "/" + SCRIPTNAME_GROW;
-
-export const SCRIPTNAME_WEAKEN = "hack/weaken.js";
-export const SCRIPT_WEAKEN = "/" + SCRIPTNAME_WEAKEN;
-
-export const ALL_HACK_SCRIPTS = [SCRIPTNAME_MASTERHACK, SCRIPTNAME_HACK, SCRIPTNAME_GROW, SCRIPTNAME_WEAKEN];
-
-export const SCRIPTNAME_DISTRIBUTEHACK = "hack/distributeHack.js";
-export const SCRIPT_DISTRIBUTEHACK = "/" + SCRIPTNAME_DISTRIBUTEHACK;
-
 // TARGET MODES
 export const TARGET_MODE_ROUNDROBIN = "roundrobin";
 export const TARGET_MODE_SINGLE = "single";

@@ -1,55 +1,17 @@
 import { NS } from "@ns";
-import { PURCHASE_SCRIPTS } from "/libpurchase";
-import { readTargetMode, initializeTargetMode, persistTargetMode, getProgramCount, SCRIPT_DISTRIBUTEHACK } from "/hack/libhack";
+import { readTargetMode, initializeTargetMode, persistTargetMode, getProgramCount } from "/hack/libhack";
 import { getPurchasedServerNames } from "/libserver";
 import { isRunningHacking } from "/statusHacking";
 import { isRunningHacknet, isRunningPurchasingServers } from "/statusPurchase";
 import { isRunningSharing } from "/statusShare";
 import { isRunningStock } from "/statusStocks";
 import { printTable } from "/table";
-import { getGangScriptRam } from "/gang/libgang";
-import { getHomeMaxRam } from "/library";
+import { isRunningGang } from "./statusGang";
 
 export const HOME_RESERVE_RAM = 32;
 export const SCRIPT_STATUSPURCHASE = "/statusPurchase.js";
 export const SCRIPT_STATUSHACKING = "/statusHacking.js";
 export const SCRIPT_STATUSSHARING = "/statusShare.js";
-
-const ALL_SCRIPTS = PURCHASE_SCRIPTS.concat([SCRIPT_DISTRIBUTEHACK]);
-
-/**
- * @param {NS} ns
- * @returns {number}
- */
-export function calcHomeReserveRam(ns: NS): number {
-	let homeBaseReserveRam = calcHomeBaseReserveRam(ns);
-
-	if(canRunGangOnHome(ns)) {
-		homeBaseReserveRam += getGangScriptRam(ns);
-	}
-
-	return homeBaseReserveRam;
-}
-
-/**
- * @param {NS} ns
- * @returns {number}
- */
-export function calcHomeBaseReserveRam(ns: NS): number {
-	let reserveRAM = 0;
-
-	for (let script of ALL_SCRIPTS) {
-		reserveRAM += ns.getScriptRam(script);
-	}
-
-	reserveRAM += HOME_RESERVE_RAM;
-
-	return reserveRAM;
-}
-
-export function canRunGangOnHome(ns: NS) : boolean {
-	return calcHomeBaseReserveRam(ns) + getGangScriptRam(ns) < getHomeMaxRam(ns);
-}
 
 const HOME = "home";
 

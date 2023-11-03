@@ -58,7 +58,7 @@ export function getNodeServerNames(ns: NS) {
  * @param {NS} ns
  * @return string[]
 */
-export function getPurchasedServerNames(ns: NS) : string[] {
+export function getPurchasedServerNames(ns: NS): string[] {
   return getServerNames(ns)
     .filter(it => it.startsWith(PURCHASE_SERVER_PREFIX));
 }
@@ -67,7 +67,7 @@ export function getPurchasedServerNames(ns: NS) : string[] {
  * @param {NS} ns
  * @return {string[]}
 */
-export function getServersWithRootAccess(ns: NS) : string[] {
+export function getServersWithRootAccess(ns: NS): string[] {
   return getServerInfo(ns)
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_HASROOT)
     .map(it => it.hostname);
@@ -77,7 +77,7 @@ export function getServersWithRootAccess(ns: NS) : string[] {
  * @param {NS} ns
  * @return {ServerInfo[]}
 */
-export function getNodeServersWithRootAccess(ns: NS) : string[] {
+export function getNodeServersWithRootAccess(ns: NS): string[] {
   return getServerInfo(ns)
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_HASROOT)
     .filter(it => !it.hostname.startsWith(PURCHASE_SERVER_PREFIX))
@@ -88,7 +88,7 @@ export function getNodeServersWithRootAccess(ns: NS) : string[] {
  * @param {NS} ns
  * @return string[]
 */
-export function getServersWithoutRootAccess(ns: NS) : string[] {
+export function getServersWithoutRootAccess(ns: NS): string[] {
   return getServerInfo(ns)
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_NONPURCHASED)
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_NOT_HASROOT)

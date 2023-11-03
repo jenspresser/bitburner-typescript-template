@@ -1,5 +1,7 @@
 import { NS } from "@ns";
-import { PURCHASE_SCRIPTS, PURCHASE_SERVER_SCRIPTS, HACKNET_SCRIPTS } from "/libpurchase";
+import { PURCHASE_SCRIPTS } from "./libscripts";
+import { PURCHASE_SERVER_SCRIPTS } from "./libscripts";
+import { HACKNET_SCRIPTS } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

@@ -1,7 +1,6 @@
 import { NS } from "@ns";
 import { getServersWithRootAccess } from "/libserver";
-
-export const SHARE_SCRIPT = "/share/share.js";
+import { SHARE_SCRIPT } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

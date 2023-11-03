@@ -1,5 +1,6 @@
 import { NS } from "@ns";
-import { SCRIPTNAME_GANG, SCRIPT_GANG, getGangScriptServer } from "/gang/libgang";
+import { getGangScriptServer } from "/gang/libgang";
+import { SCRIPT_GANG } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -26,7 +27,7 @@ export function startGang(ns: NS) {
 
     if (gangServer !== undefined) {
         if (!isRunningGangOnServer(ns, gangServer)) {
-            ns.exec(SCRIPT_GANG, gangServer);
+            ns.exec(SCRIPT_GANG.scriptPath(), gangServer);
         }
     }
 }
@@ -36,7 +37,7 @@ export function stopGang(ns: NS) {
 
     if (gangServer !== undefined) {
         if(isRunningGangOnServer(ns, gangServer)) {
-            ns.scriptKill(SCRIPT_GANG, gangServer);
+            ns.scriptKill(SCRIPT_GANG.scriptPath(), gangServer);
         }
     }
 }
@@ -61,7 +62,7 @@ export function isRunningGang(ns: NS): boolean {
  * @returns {boolean}
 */
 export function isRunningGangOnServer(ns: NS, hostname: string): boolean {
-    return ns.scriptRunning(SCRIPTNAME_GANG, hostname);
+    return SCRIPT_GANG.isRunningOnServer(ns, hostname);
 }
 
 /** @param {NS} ns */

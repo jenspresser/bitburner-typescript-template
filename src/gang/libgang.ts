@@ -1,12 +1,10 @@
 import { NS } from "@ns";
-import { calcHomeReserveRam, canRunGangOnHome } from "/initHome";
-import { ServerInfo, getServerInfo, getServersWithRootAccess } from "/libserver";
-
-export const SCRIPTNAME_GANG = "crime_gang/gang.js";
-export const SCRIPT_GANG = "/" + SCRIPTNAME_GANG;
+import { ServerInfo, getServerInfo } from "/libserver";
+import { canRunGangOnHome } from "/libhome";
+import { SCRIPT_GANG } from "/libscripts";
 
 export function getGangScriptRam(ns: NS) : number {
-    return Math.ceil(ns.getScriptRam(SCRIPTNAME_GANG));
+    return Math.ceil(SCRIPT_GANG.ram(ns));
 }
 
 export function canRunGang(ns: NS) : boolean {

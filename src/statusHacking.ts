@@ -1,11 +1,11 @@
 import { NS } from "@ns";
 import {
-  SCRIPTNAME_MASTERHACK,
-  SCRIPT_MASTERHACK,
-  SCRIPTNAME_DISTRIBUTEHACK,
-  SCRIPT_DISTRIBUTEHACK,
-  ALL_HACK_SCRIPTS
-} from "/hack/libhack";
+	SCRIPTNAME_MASTERHACK,
+	SCRIPT_MASTERHACK,
+	SCRIPTNAME_DISTRIBUTEHACK,
+	SCRIPT_DISTRIBUTEHACK,
+	ALL_HACK_SCRIPTS
+} from "./libscripts";
 import { getServersWithRootAccess } from "/libserver";
 
 /** @param {NS} ns */

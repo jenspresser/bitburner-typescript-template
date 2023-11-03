@@ -1,7 +1,8 @@
 import { NS } from "@ns";
-import { calcHomeReserveRam } from "/initHome.js";
+import { calcHomeReserveRam } from "/libhome";
 import { PURCHASE_SERVER_PREFIX } from "/libserver";
-import { getNextHackTarget, SCRIPT_HACK, SCRIPT_GROW, SCRIPT_WEAKEN } from "/hack/libhack";
+import { getNextHackTarget } from "/hack/libhack";
+import { SCRIPT_HACK, SCRIPT_GROW, SCRIPT_WEAKEN } from "/libscripts";
 
 /** @param {NS} ns **/
 export async function main(ns: NS) {

@@ -1,6 +1,6 @@
 import { NS } from "@ns";
-export const SCRIPTNAME_STOCK = "stocks/stockTrader5.js";
-export const SCRIPT_STOCK = "/" + SCRIPTNAME_STOCK;
+import { SCRIPT_STOCK } from "./libscripts";
+import { SCRIPTNAME_STOCK } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
