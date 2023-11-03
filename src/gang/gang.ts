@@ -82,12 +82,23 @@ function equipMembers(ns: NS) {
 	let members = ns.gang.getMemberNames();
 	for (let member of members) {
 		let memberInfo = ns.gang.getMemberInformation(member);
+
 		if (memberInfo.augmentations.length < augmentationNames.length) {
 			for (let augmentation of augmentationNames) {
 				if (ns.gang.getEquipmentCost(augmentation) < (0.01 * getHomeServerMoney(ns))) {
 					ns.print("Purchase augmentation for " + member + ": " + augmentation);
 					ns.gang.purchaseEquipment(member, augmentation);
 				}
+			}
+		}
+
+		let memberUpgrades = memberInfo.upgrades;
+		let pendingUpgrades = equipmentNames.filter(it => !memberUpgrades.includes(it))
+
+		for(let upgrade of pendingUpgrades) {
+			if(ns.gang.getEquipmentCost(upgrade) < (0.7) * getHomeServerMoney(ns)) {
+				ns.print("Purchase upgrade for " + member + ": " + upgrade);
+				ns.gang.purchaseEquipment(member, upgrade);
 			}
 		}
 	}
