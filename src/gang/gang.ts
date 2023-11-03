@@ -105,28 +105,35 @@ function equipMembers(ns: NS) {
 	}
 }
 
+const VIGILANTE_JUSTICE = "Vigilante Justice";
+const TRAIN_COMBAT = "Train Combat";
+const TERRITORY_WARFARE = "Territory Warfare";
+
 function assignMembers(ns: NS, territoryWinChance: number) {
 	let members = ns.gang.getMemberNames();
 	members.sort((a, b) => memberCombatStats(ns, b) - memberCombatStats(ns, a));
 	let gangInfo = ns.gang.getGangInformation();
 	let workJobs = Math.floor((members.length) / 2); 
 	let wantedLevelIncrease = 0;
+	let hasVigilante=false;
+
 	for (let member of members) {
 		let highestTaskValue = 0;
-		let highestValueTask = "Train Combat";
+		let highestValueTask = TRAIN_COMBAT;
 		let memberInfo = ns.gang.getMemberInformation(member);
 
 		if (workJobs > 0 && gangInfo.territory < 1 && members.length >= 12 && territoryWinChance < 0.95) {
 			workJobs--;
-			highestValueTask = "Territory Warfare";
+			highestValueTask = TERRITORY_WARFARE;
 		}
 		else if (memberCombatStats(ns, member) < 50) {
-			highestValueTask = "Train Combat";
+			highestValueTask = TRAIN_COMBAT;
 		}
-		else if (workJobs >= 0 && wantedLevelIncrease > 0) {
+		else if (workJobs >= 0 && wantedLevelIncrease > 0 && !hasVigilante) {
 			workJobs--;
-			highestValueTask = "Vigilante Justice";
+			highestValueTask = VIGILANTE_JUSTICE;
 			wantedLevelIncrease += calcWantedChange(ns, gangInfo, member, highestValueTask);
+			hasVigilante = true;
 		}
 		else if (workJobs > 0 && memberCombatStats(ns, member) > 50) {
 			workJobs--;
@@ -145,6 +152,17 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 			ns.print("Assign " + member + " to " + highestValueTask);
 			ns.gang.setMemberTask(member, highestValueTask);
 		}
+
+		while(ns.gang.getGangInformation().wantedLevelGainRate > 0) {
+			let memberInfos = ns.gang.getMemberNames().map(member => ns.gang.getMemberInformation(member));
+			let vigilanteCandidates = memberInfos.filter(memberInfo => memberInfo.task !== VIGILANTE_JUSTICE).sort((a, b) => calcMemberCombatStats(b) - calcMemberCombatStats(a));
+
+			let memberName = vigilanteCandidates[0].name;
+
+			ns.tprint("After Task assign, wanted gain was positive => assign additional Vigilante Task for " + memberName );
+
+			ns.gang.setMemberTask(memberName, VIGILANTE_JUSTICE);
+		}
 	}
 }
 
@@ -156,8 +174,8 @@ function calcWantedChange(ns: NS, gangInfo: GangGenInfo, member: string, task: s
 		
 		return ns.formulas.gang.wantedLevelGain(gangInfo, memberInfo, taskStats);
 	} else {
-		if(task === "Vigilante Justice") {
-			return -5;
+		if(task === VIGILANTE_JUSTICE) {
+			return -6;
 		}
 		return taskStats.baseWanted;
 	}
@@ -206,9 +224,13 @@ function taskValueWithFormula(ns: NS, gangInfo: GangGenInfo, member: string, tas
 
 function memberCombatStats(ns: NS, member: string) {
 	let memberInfo = ns.gang.getMemberInformation(member);
-	return (memberInfo.str + memberInfo.def + memberInfo.dex + memberInfo.agi) / 4;
+	return calcMemberCombatStats(memberInfo);
 }
 
+
+function calcMemberCombatStats(memberInfo: GangMemberInfo) {
+	return (memberInfo.str + memberInfo.def + memberInfo.dex + memberInfo.agi) / 4;
+}
 
 function recruit(ns: NS) {
 	if (ns.gang.canRecruitMember()) {
