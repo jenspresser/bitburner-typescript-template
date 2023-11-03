@@ -1,10 +1,8 @@
 import { NS } from "@ns";
 import {
-	SCRIPTNAME_MASTERHACK,
-	SCRIPT_MASTERHACK,
-	SCRIPTNAME_DISTRIBUTEHACK,
-	SCRIPT_DISTRIBUTEHACK,
-	ALL_HACK_SCRIPTS
+	ALL_HACK_SCRIPTS,
+  DISTRIBUTEHACK,
+  MASTERHACK
 } from "./libscripts";
 import { getServersWithRootAccess } from "/libserver";
 
@@ -39,7 +37,7 @@ export function startHacking(ns: NS) {
   ns.tprint("Start Hacking!");
 
   if (!isRunningHacking(ns)) {
-    ns.exec(SCRIPT_DISTRIBUTEHACK, "home");
+    ns.exec(DISTRIBUTEHACK.scriptPath, "home");
   }
 }
 
@@ -49,18 +47,18 @@ export function startHacking(ns: NS) {
 export function stopHacking(ns: NS) {
   ns.tprint("Stop Hacking!");
 
-  if (ns.scriptRunning(SCRIPTNAME_DISTRIBUTEHACK, "home")) {
-    ns.scriptKill(SCRIPT_DISTRIBUTEHACK, "home");
+  if (DISTRIBUTEHACK.isRunningOnHome(ns)) {
+    ns.scriptKill(DISTRIBUTEHACK.scriptPath, "home");
   }
 
   for (let server of getServersWithRootAccess(ns)) {
     for (let hackScript of ALL_HACK_SCRIPTS) {
-      if (ns.scriptRunning(hackScript, server)) {
-        ns.scriptKill(hackScript, server);
+      if (hackScript.isRunningOnServer(ns, server)) {
+        ns.scriptKill(hackScript.scriptPath, server);
       }
     }
-    if (ns.scriptRunning(SCRIPTNAME_MASTERHACK, server)) {
-      ns.scriptKill(SCRIPT_MASTERHACK, server);
+    if (MASTERHACK.isRunningOnServer(ns, server)) {
+      ns.scriptKill(MASTERHACK.scriptPath, server);
     }
   }
 }
@@ -70,7 +68,7 @@ export function stopHacking(ns: NS) {
  * @returns {boolean}
 */
 export function isRunningHacking(ns: NS): boolean {
-  return ns.scriptRunning(SCRIPTNAME_DISTRIBUTEHACK, "home");
+  return DISTRIBUTEHACK.isRunningOnHome(ns);
 }
 
 /** @param {NS} ns */

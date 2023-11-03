@@ -6,13 +6,9 @@ import { isRunningHacknet, isRunningPurchasingServers } from "/statusPurchase";
 import { isRunningSharing } from "/statusShare";
 import { isRunningStock } from "/statusStocks";
 import { printTable } from "/table";
-import { isRunningGang } from "./statusGang";
+import { STATUSHACKING, STATUSPURCHASE } from "./libscripts";
 
 export const HOME_RESERVE_RAM = 32;
-export const SCRIPT_STATUSPURCHASE = "/statusPurchase.js";
-export const SCRIPT_STATUSHACKING = "/statusHacking.js";
-export const SCRIPT_STATUSSHARING = "/statusShare.js";
-
 const HOME = "home";
 
 /** @param {NS} ns */
@@ -61,19 +57,19 @@ export async function main(ns: NS) {
 
 /** @param {NS} ns */
 function stopHacking(ns: NS) {
-	ns.exec(SCRIPT_STATUSHACKING, HOME, 1, "stop");
+	ns.exec(STATUSHACKING.scriptPath, HOME, 1, "stop");
 }
 /** @param {NS} ns */
 function startHacking(ns: NS) {
-	ns.exec(SCRIPT_STATUSHACKING, HOME, 1, "start");
+	ns.exec(STATUSHACKING.scriptPath, HOME, 1, "start");
 }
 /** @param {NS} ns */
 function stopPurchase(ns: NS) {
-	ns.exec(SCRIPT_STATUSPURCHASE, HOME, 1, "stop");
+	ns.exec(STATUSPURCHASE.scriptPath, HOME, 1, "stop");
 }
 /** @param {NS} ns */
 function startPurchase(ns: NS) {
-	ns.exec(SCRIPT_STATUSPURCHASE, HOME, 1, "start");
+	ns.exec(STATUSPURCHASE.scriptPath, HOME, 1, "start");
 }
 
 /** @param {NS} ns */

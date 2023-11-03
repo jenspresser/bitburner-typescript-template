@@ -19,15 +19,15 @@ export async function main(ns: NS) {
   if (action === "stop") {
     ns.tprint("Stop Purchasing! ", (type || ""));
     for (let script of scripts) {
-      if (ns.scriptRunning(script, "home")) {
-        ns.scriptKill(script, "home");
+      if (script.isRunningOnHome(ns)) {
+        ns.scriptKill(script.scriptPath, "home");
       }
     }
   } else if (action === "start") {
     ns.tprint("Start Purchasing! ", (type || ""));
     for (let script of scripts) {
-      if (!ns.scriptRunning(script, "home")) {
-        ns.exec(script, "home");
+      if (!script.isRunningOnHome(ns)) {
+        ns.exec(script.scriptPath, "home");
       }
     }
   } else {
@@ -44,11 +44,11 @@ export function isRunningPurchasing(ns: NS) {
 }
 
 export function isRunningHacknet(ns: NS) {
-  return HACKNET_SCRIPTS.filter(it => ns.scriptRunning(it, "home")).length > 0;
+  return HACKNET_SCRIPTS.filter(it => it.isRunningOnHome(ns)).length > 0;
 }
 
 export function isRunningPurchasingServers(ns: NS) {
-  return PURCHASE_SERVER_SCRIPTS.filter(it => ns.scriptRunning(it, "home")).length > 0;
+  return PURCHASE_SERVER_SCRIPTS.filter(it => it.isRunningOnHome(ns)).length > 0;
 }
 
 /** @param {NS} ns */

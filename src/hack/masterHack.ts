@@ -2,7 +2,7 @@ import { NS } from "@ns";
 import { calcHomeReserveRam } from "/libhome";
 import { PURCHASE_SERVER_PREFIX } from "/libserver";
 import { getNextHackTarget } from "/hack/libhack";
-import { SCRIPT_HACK, SCRIPT_GROW, SCRIPT_WEAKEN } from "/libscripts";
+import { HACK, GROW, WEAKEN } from "/libscripts";
 
 /** @param {NS} ns **/
 export async function main(ns: NS) {
@@ -24,13 +24,13 @@ export async function main(ns: NS) {
 	let target = await getNextHackTarget(ns);
 
 	const serverToHackFrom = ns.getHostname(); // For single argument calls - server will hack itself
-	const hackScript = SCRIPT_HACK;
-	const growScript = SCRIPT_GROW;
-	const weakenScript = SCRIPT_WEAKEN;
+	const hackScript = HACK.scriptPath;
+	const growScript = GROW.scriptPath;
+	const weakenScript = WEAKEN.scriptPath;
 
-	const hackScriptRAM = ns.getScriptRam(hackScript);
-	const growScriptRAM = ns.getScriptRam(growScript);
-	const weakenScriptRAM = ns.getScriptRam(weakenScript);
+	const hackScriptRAM = HACK.ram(ns);
+	const growScriptRAM = GROW.ram(ns);
+	const weakenScriptRAM = WEAKEN.ram(ns);
 
 	const serverMaxMoney = ns.getServerMaxMoney(target);
 	const moneyThresh = serverMaxMoney * 0.9; // 0.90 to maintain near 100% server money.  You can use 0.75 when starting out/using low thread counts

@@ -1,18 +1,17 @@
 import { NS } from "@ns";
-import { SCRIPT_STOCK } from "./libscripts";
-import { SCRIPTNAME_STOCK } from "./libscripts";
+import { STOCK } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   let action = ns.args[0];
 
   if (action === "stop") {
-    if (ns.scriptRunning(SCRIPTNAME_STOCK, "home")) {
-      ns.scriptKill(SCRIPT_STOCK, "home");
+    if (isRunningStock(ns)) {
+      ns.scriptKill(STOCK.scriptPath, "home");
     }
   } else if (action === "start") {
-    if (!ns.scriptRunning(SCRIPTNAME_STOCK, "home")) {
-      ns.exec(SCRIPT_STOCK, "home");
+    if (!isRunningStock(ns)) {
+      ns.exec(STOCK.scriptPath, "home");
     }
   }
 }
@@ -23,5 +22,5 @@ export async function main(ns: NS) {
  * @returns {boolean}
 */
 export function isRunningStock(ns: NS) {
-  return ns.scriptRunning(SCRIPTNAME_STOCK, "home");
+  return STOCK.isRunningOnHome(ns);
 }

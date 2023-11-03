@@ -1,10 +1,10 @@
 import { NS } from "@ns";
 import { ServerInfo, getServerInfo } from "/libserver";
 import { canRunGangOnHome } from "/libhome";
-import { SCRIPT_GANG } from "/libscripts";
+import { GANG } from "/libscripts";
 
 export function getGangScriptRam(ns: NS) : number {
-    return Math.ceil(SCRIPT_GANG.ram(ns));
+    return Math.ceil(GANG.ram(ns));
 }
 
 export function canRunGang(ns: NS) : boolean {

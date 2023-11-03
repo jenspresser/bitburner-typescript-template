@@ -2,13 +2,11 @@ import { NS } from "@ns";
 
 export class Script {
     scriptName: string;
+    scriptPath: string;
 
     constructor(scriptName: string) {
         this.scriptName = scriptName;
-    }
-
-    scriptPath() : string {
-        return "/" + this.scriptName;
+        this.scriptPath = "/" + scriptName;
     }
 
     ram(ns: NS) : number {
@@ -24,52 +22,43 @@ export class Script {
     }
 }
 
-export class GangScript extends Script {
-    constructor() {
-        super("gang/gang.js");
-    }
-}
-
-
 // Purchase Scripts
 export const HACKNET_SCRIPTS = [
     "keepBuyingHacknet.js"
-];
+].map(it => new Script(it));
 export const PURCHASE_SERVER_SCRIPTS = [
     "purchaseServers.js",
     "upgradeServers.js",
-];
+].map(it => new Script(it));
+
 export const PURCHASE_SCRIPTS = PURCHASE_SERVER_SCRIPTS.concat(HACKNET_SCRIPTS);
 
 // Stock Script
-export const SCRIPTNAME_STOCK = "stocks/stockTrader5.js";
-export const SCRIPT_STOCK = "/" + SCRIPTNAME_STOCK;
+export const STOCK = new Script("stocks/stockTrader5.js");
 
 // Share Script
-export const SHARE_SCRIPT = "/share/share.js";
+export const SHARE = new Script("share/share.js");
 
 // Hack Scripts
-export const SCRIPTNAME_MASTERHACK = "hack/masterHack.js";
-export const SCRIPT_MASTERHACK = "/" + SCRIPTNAME_MASTERHACK;
+export const MASTERHACK = new Script("hack/masterHack.js");
+export const HACK = new Script("hack/hack.js");
+export const GROW = new Script("hack/grow.js");
+export const WEAKEN = new Script("hack/weaken.js");
 
-export const SCRIPTNAME_HACK = "hack/hack.js";
-export const SCRIPT_HACK = "/" + SCRIPTNAME_HACK;
+export const ALL_HACK_SCRIPTS = [MASTERHACK, HACK, GROW, WEAKEN];
 
-export const SCRIPTNAME_GROW = "hack/grow.js";
-export const SCRIPT_GROW = "/" + SCRIPTNAME_GROW;
+export const DISTRIBUTEHACK = new Script("hack/distributeHack.js");
 
-export const SCRIPTNAME_WEAKEN = "hack/weaken.js";
-export const SCRIPT_WEAKEN = "/" + SCRIPTNAME_WEAKEN;
-
-export const ALL_HACK_SCRIPTS = [SCRIPTNAME_MASTERHACK, SCRIPTNAME_HACK, SCRIPTNAME_GROW, SCRIPTNAME_WEAKEN];
-
-export const SCRIPTNAME_DISTRIBUTEHACK = "hack/distributeHack.js";
-export const SCRIPT_DISTRIBUTEHACK = "/" + SCRIPTNAME_DISTRIBUTEHACK;
+export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([DISTRIBUTEHACK]);
 
 // Gang Scripts
-export const SCRIPT_GANG = new GangScript();
+export const GANG = new Script("gang/gang.js");
 
-export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([SCRIPT_DISTRIBUTEHACK]);
+// Status Scripts
+export const STATUSPURCHASE = new Script("/statusPurchase.js");
+export const STATUSHACKING = new Script("/statusHacking.js");
+export const STATUSSHARING = new Script("/statusShare.js");
+export const STATUSGANG = new Script("/statusGang.js");
 
 
 

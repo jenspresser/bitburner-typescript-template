@@ -1,6 +1,6 @@
 import { NS, } from "@ns";
 import { HOME_RESERVE_RAM } from "./initHome";
-import { ALL_HOME_SCRIPTS, SCRIPT_GANG } from "./libscripts";
+import { ALL_HOME_SCRIPTS, GANG } from "./libscripts";
 import { getHomeMaxRam } from "./library";
 
 /**
@@ -12,7 +12,7 @@ export function calcHomeReserveRam(ns: NS): number {
 	let homeBaseReserveRam = calcHomeBaseReserveRam(ns);
 
 	if (canRunGangOnHome(ns)) {
-		homeBaseReserveRam += SCRIPT_GANG.ram(ns);
+		homeBaseReserveRam += GANG.ram(ns);
 	}
 
 	return homeBaseReserveRam;
@@ -25,7 +25,7 @@ export function calcHomeBaseReserveRam(ns: NS): number {
 	let reserveRAM = 0;
 
 	for (let script of ALL_HOME_SCRIPTS) {
-		reserveRAM += ns.getScriptRam(script);
+		reserveRAM += script.ram(ns);
 	}
 
 	reserveRAM += HOME_RESERVE_RAM;
@@ -33,6 +33,6 @@ export function calcHomeBaseReserveRam(ns: NS): number {
 	return reserveRAM;
 }
 export function canRunGangOnHome(ns: NS): boolean {
-    return calcHomeBaseReserveRam(ns) + SCRIPT_GANG.ram(ns) < getHomeMaxRam(ns);
+    return calcHomeBaseReserveRam(ns) + GANG.ram(ns) < getHomeMaxRam(ns);
 }
 

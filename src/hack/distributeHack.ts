@@ -3,7 +3,7 @@ import { getServersWithRootAccess } from "/libserver";
 import { distributeScripts, getHomeMaxRam } from "/library";
 import { calcHomeReserveRam } from "/libhome";
 import { MODE_FILE_NAME, crawlRootAccess, setTargetMode } from "/hack/libhack"
-import { SCRIPTNAME_MASTERHACK, SCRIPT_MASTERHACK } from "/libscripts";
+import { MASTERHACK } from "/libscripts";
 
 
 /** @param {NS} ns */
@@ -77,13 +77,13 @@ async function distributeOnHome(ns: NS) {
  * @param {string} slaveServerName
  */
 async function setupMasterHack(ns: NS, masterServerName: string) {
-  let alreadyRunning = ns.scriptRunning(SCRIPTNAME_MASTERHACK, masterServerName);
+  let alreadyRunning = MASTERHACK.isRunningOnServer(ns, masterServerName);
 
   ns.print("masterServerName=", masterServerName, " - already running? ", alreadyRunning);
 
   if (!alreadyRunning) {
     ns.print("setup masterHack on [", masterServerName, "]");
-    ns.exec(SCRIPT_MASTERHACK, masterServerName, 1);
+    ns.exec(MASTERHACK.scriptPath, masterServerName, 1);
   }
 }
 
