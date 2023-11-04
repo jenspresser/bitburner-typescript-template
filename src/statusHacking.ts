@@ -37,7 +37,7 @@ export function startHacking(ns: NS) {
   ns.tprint("Start Hacking!");
 
   if (!isRunningHacking(ns)) {
-    ns.exec(DISTRIBUTEHACK.scriptPath, "home");
+    DISTRIBUTEHACK.execOnHome(ns);
   }
 }
 

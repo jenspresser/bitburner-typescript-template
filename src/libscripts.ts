@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { NS, RunOptions } from "@ns";
 import { getServersWithRootAccess } from "./libserver";
 
 export class Script {
@@ -39,6 +39,22 @@ export class Script {
 
     killOnHome(ns: NS) {
         this.killOnServer(ns, "home");
+    }
+
+    execOnServer(ns: NS, hostname: string, threadOrOptions?: number | RunOptions, ...args: (string | number | boolean)[]): number {
+        return ns.exec(this.scriptPath, hostname, threadOrOptions, ...args);
+    }
+
+    execOnHome(ns: NS, threadOrOptions?: number | RunOptions, ...args: (string | number | boolean)[]) : number {
+        return this.execOnServer(ns, "home", threadOrOptions, ...args);
+    }
+
+    execOnServerArgsOnly(ns: NS, hostname: string, ...args: (string | number | boolean)[]): number {
+        return ns.exec(this.scriptPath, hostname, 1, ...args);
+    }
+
+    execOnHomeArgsOnly(ns: NS, ...args: (string | number | boolean)[]) : number {
+        return this.execOnServer(ns, "home", 1, ...args);
     }
 }
 

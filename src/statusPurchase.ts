@@ -25,7 +25,7 @@ export async function main(ns: NS) {
     ns.tprint("Start Purchasing! ", (type || ""));
     for (let script of scripts) {
       if (!script.isRunningOnHome(ns)) {
-        ns.exec(script.scriptPath, "home");
+        script.execOnHome(ns);
       }
     }
   } else {

@@ -15,9 +15,7 @@ export async function main(ns: NS) {
       stopSharing(ns, server);
     }
   } else if ("status" === ns.args[0]) {
-    let isRunning = isRunningSharing(ns);
-
-    ns.tprint("\tSharing: ", isRunning);
+    ns.tprint("\tSharing: ", isRunningSharing(ns));
   }
 }
 
@@ -48,6 +46,6 @@ function startSharing(ns: NS, server: string) {
   let threads = Math.floor(availRam / shareRam);
 
   if (threads > 0) {
-    ns.exec(SHARE.scriptPath, server, threads);
+    SHARE.execOnServer(ns, server, threads);
   }
 }

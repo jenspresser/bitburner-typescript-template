@@ -6,7 +6,7 @@ import { isRunningHacknet, isRunningPurchasingServers } from "/statusPurchase";
 import { isRunningSharing } from "/statusShare";
 import { isRunningStock } from "/statusStocks";
 import { printTable } from "/table";
-import { GANG, STATUSHACKING, STATUSPURCHASE } from "./libscripts";
+import { GANG, STATUSGANG, STATUSHACKING, STATUSPURCHASE } from "./libscripts";
 
 export const HOME_RESERVE_RAM = 32;
 const HOME = "home";
@@ -15,6 +15,7 @@ const HOME = "home";
 export async function main(ns: NS) {
 	let preventPurchase = ns.args[0] === "nopurchase" || ns.args[0] === "no";
 	let shouldPurchase = !preventPurchase;
+	let shouldStartGang = ns.args.filter(arg => arg === "gang" || arg === "g").length > 0;
 
 	initializeTargetMode(ns);
 
@@ -28,8 +29,7 @@ export async function main(ns: NS) {
 		ns.tprint("set target mode to ", mode, ", restart Hacking");
 		persistTargetMode(ns, mode);
 
-		stopHacking(ns);
-		startHacking(ns);
+		restartHacking(ns);
 		return;
 	}
 
@@ -42,6 +42,7 @@ export async function main(ns: NS) {
 	if (shouldStop) {
 		stopHacking(ns);
 		stopPurchase(ns);
+		stopGang(ns);
 		return;
 	}
 
@@ -53,23 +54,40 @@ export async function main(ns: NS) {
 		await ns.sleep(100);
 		startPurchase(ns);
 	}
+
+	if(shouldStartGang) {
+		await ns.sleep(100);
+		startGang(ns);
+	}
 }
 
+function restartHacking(ns: NS) {
+	stopHacking(ns);
+	startHacking(ns);
+}
 /** @param {NS} ns */
 function stopHacking(ns: NS) {
-	ns.exec(STATUSHACKING.scriptPath, HOME, 1, "stop");
+	STATUSHACKING.execOnHomeArgsOnly(ns, "stop");
 }
 /** @param {NS} ns */
 function startHacking(ns: NS) {
-	ns.exec(STATUSHACKING.scriptPath, HOME, 1, "start");
+	STATUSHACKING.execOnHomeArgsOnly(ns, "start");
 }
 /** @param {NS} ns */
 function stopPurchase(ns: NS) {
-	ns.exec(STATUSPURCHASE.scriptPath, HOME, 1, "stop");
+	STATUSPURCHASE.execOnHomeArgsOnly(ns, "stop");
 }
 /** @param {NS} ns */
 function startPurchase(ns: NS) {
-	ns.exec(STATUSPURCHASE.scriptPath, HOME, 1, "start");
+	STATUSPURCHASE.execOnHomeArgsOnly(ns, "start");
+}
+/** @param {NS} ns */
+function stopGang(ns: NS) {
+	STATUSGANG.execOnHomeArgsOnly(ns, "stop");
+}
+/** @param {NS} ns */
+function startGang(ns: NS) {
+	STATUSGANG.execOnHomeArgsOnly(ns, "start");
 }
 
 /** @param {NS} ns */

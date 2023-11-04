@@ -9,7 +9,7 @@ export async function main(ns: NS) {
     STOCK.killOnHome(ns);
   } else if (action === "start") {
     if (!isRunningStock(ns)) {
-      ns.exec(STOCK.scriptPath, "home");
+      STOCK.execOnHome(ns);
     }
   }
 }

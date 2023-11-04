@@ -27,7 +27,8 @@ export function startGang(ns: NS) {
 
     if (gangServer !== undefined) {
         if (!isRunningGangOnServer(ns, gangServer)) {
-            ns.exec(GANG.scriptPath, gangServer);
+            ns.tprint("Starting GANG on " + gangServer);
+            GANG.execOnServer(ns, gangServer);
         }
     }
 }
@@ -36,6 +37,7 @@ export function stopGang(ns: NS) {
     const gangServer = getGangScriptServer(ns);
 
     if (gangServer !== undefined) {
+        ns.tprint("Stopping GANG on " + gangServer);
         GANG.killOnServer(ns, gangServer);
     }
 }
