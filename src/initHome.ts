@@ -67,27 +67,27 @@ function restartHacking(ns: NS) {
 }
 /** @param {NS} ns */
 function stopHacking(ns: NS) {
-	STATUSHACKING.execOnHomeArgsOnly(ns, "stop");
+	STATUSHACKING.stop(ns);
 }
 /** @param {NS} ns */
 function startHacking(ns: NS) {
-	STATUSHACKING.execOnHomeArgsOnly(ns, "start");
+	STATUSHACKING.start(ns);
 }
 /** @param {NS} ns */
 function stopPurchase(ns: NS) {
-	STATUSPURCHASE.execOnHomeArgsOnly(ns, "stop");
+	STATUSPURCHASE.stop(ns);
 }
 /** @param {NS} ns */
 function startPurchase(ns: NS) {
-	STATUSPURCHASE.execOnHomeArgsOnly(ns, "start");
+	STATUSPURCHASE.start(ns);
 }
 /** @param {NS} ns */
 function stopGang(ns: NS) {
-	STATUSGANG.execOnHomeArgsOnly(ns, "stop");
+	STATUSGANG.stop(ns);
 }
 /** @param {NS} ns */
 function startGang(ns: NS) {
-	STATUSGANG.execOnHomeArgsOnly(ns, "start");
+	STATUSGANG.start(ns);
 }
 
 /** @param {NS} ns */

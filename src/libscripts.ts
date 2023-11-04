@@ -58,6 +58,20 @@ export class Script {
     }
 }
 
+export class StatusScript extends Script {
+    constructor(scriptName: string) {
+        super(scriptName);
+    }
+
+    stop(ns: NS) {
+        this.execOnHomeArgsOnly(ns, "stop");
+    }
+
+    start(ns: NS) {
+        this.execOnHomeArgsOnly(ns, "start");
+    }
+}
+
 // Purchase Scripts
 export const HACKNET_SCRIPTS = [
     "keepBuyingHacknet.js"
@@ -91,10 +105,10 @@ export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([DISTRIBUTEHACK]);
 export const GANG = new Script("gang/gang.js");
 
 // Status Scripts
-export const STATUSPURCHASE = new Script("statusPurchase.js");
-export const STATUSHACKING = new Script("statusHacking.js");
-export const STATUSSHARING = new Script("statusShare.js");
-export const STATUSGANG = new Script("statusGang.js");
+export const STATUSPURCHASE = new StatusScript("statusPurchase.js");
+export const STATUSHACKING = new StatusScript("statusHacking.js");
+export const STATUSSHARING = new StatusScript("statusShare.js");
+export const STATUSGANG = new StatusScript("statusGang.js");
 
 
 
