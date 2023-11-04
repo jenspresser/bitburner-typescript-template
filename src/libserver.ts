@@ -161,11 +161,11 @@ export class ServerInfo {
     return [this.hostname, this.hasRoot, ns.formatRam(this.maxRam)];
   }
 
-  static sortByRamAsc() {
+  static sortByRamDesc() {
     return (a: ServerInfo, b: ServerInfo) => { return b.maxRam - a.maxRam; };
   }
-
-  static sortByRamDesc() {
+  
+  static sortByRamAsc() {
     return (a: ServerInfo, b: ServerInfo) => { return a.maxRam - b.maxRam; };
   }
 }

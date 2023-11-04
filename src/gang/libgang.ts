@@ -19,9 +19,11 @@ export function getGangScriptServer(ns: NS) : string|undefined {
     const gangScriptRam = getGangScriptRam(ns);
 
     const candidateServers = getServerInfo(ns)
+        .filter(server => server.hostname !== "home")
         .filter(server => server.hasRoot)
-        .filter(server => server.maxRam > gangScriptRam)
-        .sort(ServerInfo.sortByRamAsc());
+        .filter(server => server.maxRam > gangScriptRam);
+
+    candidateServers.sort(ServerInfo.sortByRamAsc());
 
     if(candidateServers.length > 0) {
         return candidateServers[0].hostname;

@@ -30,6 +30,8 @@ export function startGang(ns: NS) {
             ns.tprint("Starting GANG on " + gangServer);
             GANG.execOnServer(ns, gangServer);
         }
+    } else {
+        ns.tprint("No server available to run GANG script");
     }
 }
 
