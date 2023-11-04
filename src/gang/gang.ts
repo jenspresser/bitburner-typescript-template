@@ -147,6 +147,8 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 	let hasVigilante = false;
 	let reservedMembers : string[] = [];
 
+	ns.print("initial workjobs: ", workJobs);
+
 	// Following Mission Steps:
 	// When not all member slots filled: train members, ascend them and earn reputation -> With that fill member slots
 	// When member slots filled, and we have not full territorial control: train members and participate in task "territory warfare": -> increase power
@@ -203,11 +205,11 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 					if (vigilanteCandidates.length > 0) {
 						let memberName = vigilanteCandidates[0].name;
 		
-						ns.print("After Task assign, wanted gain was positive => assign additional Vigilante Task for " + memberName);
+						ns.print("After Task assignment, wanted gain was still positive => assign additional Vigilante Task for " + memberName);
 		
 						ns.gang.setMemberTask(memberName, VIGILANTE_JUSTICE);
-						additionalVigilante++;
 					}
+					additionalVigilante++;
 				}
 			}
 		}
