@@ -147,6 +147,12 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 	let hasVigilante = false;
 	let reservedMembers : string[] = [];
 
+	// Following Mission Steps:
+	// When not all member slots filled: train members, ascend them and earn reputation -> With that fill member slots
+	// When member slots filled, and we have not full territorial control: train members and participate in task "territory warfare": -> increase power
+	// As soon as the lowest clash win chance reaches 80%, we engage in territory warfare with other gangs until we control everything
+	// After that we return to our usual tasks, earning money and respect
+
 	for (let member of members) {
 		let highestValueTask = TRAIN_COMBAT;
 		let memberInfo = ns.gang.getMemberInformation(member);
