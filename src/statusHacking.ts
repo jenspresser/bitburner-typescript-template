@@ -50,10 +50,15 @@ export function stopHacking(ns: NS) {
   DISTRIBUTEHACK.killOnHome(ns);
 
   for (let server of getServersWithRootAccess(ns)) {
-    MASTERHACK.killOnServer(ns, server);
-    for (let hackScript of ALL_HACK_SCRIPTS) {
-      hackScript.killOnServer(ns, server);
-    }
+    stopHackingOnServer(ns, server);
+  }
+}
+
+export function stopHackingOnServer(ns: NS, server: string) {
+  MASTERHACK.killOnServer(ns, server);
+  
+  for (let hackScript of ALL_HACK_SCRIPTS) {
+    hackScript.killOnServer(ns, server);
   }
 }
 

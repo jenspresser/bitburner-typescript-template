@@ -3,6 +3,7 @@ import { calcHomeReserveRam } from "/libhome";
 import { PURCHASE_SERVER_PREFIX } from "/libserver";
 import { getNextHackTarget } from "/hack/libhack";
 import { HACK, GROW, WEAKEN } from "/libscripts";
+import { getGangScriptRam, getGangScriptServer } from "/gang/libgang";
 
 /** @param {NS} ns **/
 export async function main(ns: NS) {
@@ -53,6 +54,13 @@ export async function main(ns: NS) {
 		|| WEAKEN.isRunningHackTask(ns, serverToHackFrom, target)
 	) {
 		await ns.sleep(10000);
+	}
+
+	let requiredRam = Math.ceil(HACK.ram(ns) + GROW.ram(ns) + WEAKEN.ram(ns));
+
+	if(Math.floor(serverMaxRAM) < requiredRam) {
+		ns.print("Not enough RAM available => EXIT");
+		return;
 	}
 
 	// Main loop - will terminate if no RAM available
@@ -213,6 +221,12 @@ function getServerRam(ns: NS, serverToHackFrom: string): number {
 
 	if ("home" === serverToHackFrom) {
 		serverMaxRAM = serverMaxRAM - calcHomeReserveRam(ns);
+	} else {
+		let gangServer = getGangScriptServer(ns);
+
+		if(gangServer && gangServer === serverToHackFrom) {
+			serverMaxRAM = serverMaxRAM - getGangScriptRam(ns);
+		}
 	}
 
 	return serverMaxRAM;

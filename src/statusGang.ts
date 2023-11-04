@@ -1,6 +1,7 @@
 import { NS } from "@ns";
 import { getGangScriptServer } from "/gang/libgang";
 import { GANG } from "./libscripts";
+import { stopHackingOnServer } from "./statusHacking";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -27,6 +28,9 @@ export function startGang(ns: NS) {
 
     if (gangServer !== undefined) {
         if (!isRunningGangOnServer(ns, gangServer)) {
+            ns.tprint("    Stop Hacking on " + gangServer);
+            stopHackingOnServer(ns, gangServer);
+
             ns.tprint("Starting GANG on " + gangServer);
             GANG.execOnServer(ns, gangServer);
         }
