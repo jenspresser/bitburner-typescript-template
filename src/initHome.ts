@@ -1,12 +1,6 @@
 import { NS } from "@ns";
-import { readTargetMode, initializeTargetMode, persistTargetMode, getProgramCount } from "/hack/libhack";
-import { getPurchasedServerNames } from "/libserver";
-import { isRunningHacking } from "/statusHacking";
-import { isRunningHacknet, isRunningPurchasingServers } from "/statusPurchase";
-import { isRunningSharing } from "/statusShare";
-import { isRunningStock } from "/statusStocks";
-import { printTable } from "/table";
-import { GANG, STATUSGANG, STATUSHACKING, STATUSPURCHASE } from "./libscripts";
+import { initializeTargetMode, persistTargetMode } from "/hack/libhack";
+import { STATUSGANG, STATUSHACKING, STATUSPURCHASE } from "./libscripts";
 
 export const HOME_RESERVE_RAM = 32;
 const HOME = "home";
@@ -20,7 +14,6 @@ export async function main(ns: NS) {
 	initializeTargetMode(ns);
 
 	let shouldStop = ns.args[0] === "stop";
-	let shouldPrintStatus = ns.args[0] === "status";
 
 	const MODE_PREFIX = "mode=";
 	if (ns.args[0] && (typeof ns.args[0] === 'string') && ns.args[0].startsWith(MODE_PREFIX)) {
@@ -30,12 +23,6 @@ export async function main(ns: NS) {
 		persistTargetMode(ns, mode);
 
 		await restartHacking(ns);
-		return;
-	}
-
-	if (shouldPrintStatus) {
-		printStatus(ns);
-
 		return;
 	}
 
@@ -89,27 +76,4 @@ function stopGang(ns: NS) {
 /** @param {NS} ns */
 function startGang(ns: NS) {
 	STATUSGANG.start(ns);
-}
-
-/** @param {NS} ns */
-function printStatus(ns: NS) {
-	let matrix = [
-		["Hacking", isRunningHacking(ns)],
-		["Target Mode", readTargetMode(ns)],
-		["Purchase Servers on", isRunningPurchasingServers(ns)],
-		["Purchase Hacknet on", isRunningHacknet(ns)],
-		["Sharing", isRunningSharing(ns)],
-		["Stocks", isRunningStock(ns)],
-		["Gang", GANG.isRunningOnAnyServers(ns)],
-		["Programs", getProgramCount(ns)],
-		["Purchased Servers", getPurchasedServerNames(ns).length],
-		["Script Gain ($/s)", ns.formatNumber(ns.getTotalScriptIncome()[0])],
-		["Script Gain (Exp)", ns.formatNumber(ns.getTotalScriptExpGain())]
-	]
-
-	printTable(ns, matrix, {
-		header: ["Action", "State"],
-		horizontalSeparator: "first",
-		align: ["left", "right"]
-	});
 }

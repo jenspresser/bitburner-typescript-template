@@ -30,5 +30,14 @@ export function getGangScriptServer(ns: NS) : string|undefined {
     }
 
     return undefined;
+}
 
+export function statusGangOutput(ns: NS) : string {
+    const isRunning = GANG.isRunningOnAnyServers(ns);
+
+    if(!isRunning) {
+        return "false";
+    }
+
+    return "on " + getGangScriptServer(ns);
 }
