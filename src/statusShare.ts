@@ -34,9 +34,7 @@ export function isRunningSharing(ns: NS) {
  * @param {string} server
  */
 function stopSharing(ns: NS, server: string) {
-  if (isRunningSharing(ns)) {
-    ns.scriptKill(SHARE.scriptPath, server);
-  }
+  SHARE.killOnServer(ns, server);
 }
 
 /** 

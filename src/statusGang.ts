@@ -36,9 +36,7 @@ export function stopGang(ns: NS) {
     const gangServer = getGangScriptServer(ns);
 
     if (gangServer !== undefined) {
-        if(isRunningGangOnServer(ns, gangServer)) {
-            ns.scriptKill(GANG.scriptPath, gangServer);
-        }
+        GANG.killOnServer(ns, gangServer);
     }
 }
 

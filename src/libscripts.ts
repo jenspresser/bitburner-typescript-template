@@ -27,8 +27,18 @@ export class Script {
             .filter(server => this.isRunningOnServer(ns, server))
     }
 
-    isRunningOnAnyServers(ns: NS) : boolean {
+    isRunningOnAnyServers(ns: NS): boolean {
         return this.isRunningOnTheseServers(ns).length > 0;
+    }
+
+    killOnServer(ns: NS, server: string) {
+        if (this.isRunningOnServer(ns, server)) {
+            ns.scriptKill(this.scriptName, server);
+        }
+    }
+
+    killOnHome(ns: NS) {
+        this.killOnServer(ns, "home");
     }
 }
 
@@ -65,10 +75,10 @@ export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([DISTRIBUTEHACK]);
 export const GANG = new Script("gang/gang.js");
 
 // Status Scripts
-export const STATUSPURCHASE = new Script("/statusPurchase.js");
-export const STATUSHACKING = new Script("/statusHacking.js");
-export const STATUSSHARING = new Script("/statusShare.js");
-export const STATUSGANG = new Script("/statusGang.js");
+export const STATUSPURCHASE = new Script("statusPurchase.js");
+export const STATUSHACKING = new Script("statusHacking.js");
+export const STATUSSHARING = new Script("statusShare.js");
+export const STATUSGANG = new Script("statusGang.js");
 
 
 

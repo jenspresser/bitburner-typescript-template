@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import {
-	ALL_HACK_SCRIPTS,
+  ALL_HACK_SCRIPTS,
   DISTRIBUTEHACK,
   MASTERHACK
 } from "./libscripts";
@@ -47,18 +47,12 @@ export function startHacking(ns: NS) {
 export function stopHacking(ns: NS) {
   ns.tprint("Stop Hacking!");
 
-  if (DISTRIBUTEHACK.isRunningOnHome(ns)) {
-    ns.scriptKill(DISTRIBUTEHACK.scriptPath, "home");
-  }
+  DISTRIBUTEHACK.killOnHome(ns);
 
   for (let server of getServersWithRootAccess(ns)) {
+    MASTERHACK.killOnServer(ns, server);
     for (let hackScript of ALL_HACK_SCRIPTS) {
-      if (hackScript.isRunningOnServer(ns, server)) {
-        ns.scriptKill(hackScript.scriptPath, server);
-      }
-    }
-    if (MASTERHACK.isRunningOnServer(ns, server)) {
-      ns.scriptKill(MASTERHACK.scriptPath, server);
+      hackScript.killOnServer(ns, server);
     }
   }
 }

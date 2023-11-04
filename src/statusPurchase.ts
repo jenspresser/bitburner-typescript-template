@@ -19,9 +19,7 @@ export async function main(ns: NS) {
   if (action === "stop") {
     ns.tprint("Stop Purchasing! ", (type || ""));
     for (let script of scripts) {
-      if (script.isRunningOnHome(ns)) {
-        ns.scriptKill(script.scriptPath, "home");
-      }
+      script.killOnHome(ns);
     }
   } else if (action === "start") {
     ns.tprint("Start Purchasing! ", (type || ""));
