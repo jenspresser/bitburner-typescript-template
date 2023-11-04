@@ -6,9 +6,7 @@ export async function main(ns: NS) {
   let action = ns.args[0];
 
   if (action === "stop") {
-    if (isRunningStock(ns)) {
-      ns.scriptKill(STOCK.scriptPath, "home");
-    }
+    STOCK.killOnHome(ns);
   } else if (action === "start") {
     if (!isRunningStock(ns)) {
       ns.exec(STOCK.scriptPath, "home");
