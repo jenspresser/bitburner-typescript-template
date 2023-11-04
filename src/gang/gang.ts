@@ -15,6 +15,8 @@ export async function main(ns: NS) {
 		var territoryWinChance = 1;
 
 		while (true) {
+			ns.clearLog();
+			
 			recruit(ns);
 			equipMembers(ns);
 			ascend(ns);
@@ -130,7 +132,7 @@ const TERRORISM = "Terrorism";
 function calcAvailableWorkJobs(ns: NS) : number {
 	let numMembers = ns.gang.getMemberNames().length;
 
-	return Math.max(
+	return Math.min(
 		(numMembers - 1),
 		Math.floor((numMembers) / 2)
 	);
