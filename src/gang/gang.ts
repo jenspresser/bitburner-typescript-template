@@ -116,62 +116,137 @@ const VIGILANTE_JUSTICE = "Vigilante Justice";
 const TRAIN_COMBAT = "Train Combat";
 const TERRITORY_WARFARE = "Territory Warfare";
 
+const MUG_PEOPLE = "Mug People";
+const DEAL_DRUGS = "Deal Drugs";
+const STRONGARM_CIVILIANS = "Strongarm Civilians";
+const RUN_CON = "Run a Con";
+const ARMED_ROBBERY = "Armed Robbery";
+const TRAFFICK_ARMS = "Traffick Illegal Arms";
+const THREATEN_BLACKMAIL = "Threaten & Blackmail";
+const HUMAN_TRAFFICK = "Human Trafficking";
+const TERRORISM = "Terrorism";
+
+
+function calcAvailableWorkJobs(ns: NS) : number {
+	let numMembers = ns.gang.getMemberNames().length;
+
+	return Math.max(
+		(numMembers - 1),
+		Math.floor((numMembers) / 2)
+	);
+}
+
 function assignMembers(ns: NS, territoryWinChance: number) {
 	let members = ns.gang.getMemberNames();
 	members.sort((a, b) => memberCombatStats(ns, b) - memberCombatStats(ns, a));
 	let gangInfo = ns.gang.getGangInformation();
-	let workJobs = Math.floor((members.length) / 2);
+	let workJobs = calcAvailableWorkJobs(ns);
 	let wantedLevelIncrease = 0;
 	let hasVigilante = false;
+	let reservedMembers : string[] = [];
 
 	for (let member of members) {
-		let highestTaskValue = 0;
 		let highestValueTask = TRAIN_COMBAT;
 		let memberInfo = ns.gang.getMemberInformation(member);
 
 		if (workJobs > 0 && gangInfo.territory < 1 && members.length >= 12 && territoryWinChance < 0.95) {
+			ns.print("prepare " + member + " for " + TERRITORY_WARFARE);
 			workJobs--;
 			highestValueTask = TERRITORY_WARFARE;
+			reservedMembers.push(member);
 		}
 		else if (memberCombatStats(ns, member) < 50) {
+			ns.print("prepare " + member + " for " + TRAIN_COMBAT + ", combatStats < 50");
 			highestValueTask = TRAIN_COMBAT;
+			reservedMembers.push(member);
 		}
 		else if (workJobs >= 0 && wantedLevelIncrease > 0 && !hasVigilante) {
 			workJobs--;
 			highestValueTask = VIGILANTE_JUSTICE;
 			wantedLevelIncrease += calcWantedChange(ns, gangInfo, member, highestValueTask);
 			hasVigilante = true;
+			ns.print("prepare " + member + " for " + VIGILANTE_JUSTICE + ", wantedLevelIncrease > 0 && !hasVigilante");
+			reservedMembers.push(member);
 		}
-		else if (workJobs > 0 && memberCombatStats(ns, member) > 50) {
+		else if (workJobs >= 0 && memberCombatStats(ns, member) > 50) {
 			workJobs--;
-			for (const task of tasks) {
-				let valueOfTask = taskValue(ns, gangInfo, member, task);
-				if (valueOfTask > highestTaskValue) {
-					highestTaskValue = valueOfTask;
-					highestValueTask = task;
-				}
-			}
+
+			highestValueTask = calculateNextTask(ns, gangInfo, member);
+			ns.print("prepare " + member + " for " + highestValueTask + ", from calculateNextTask");
+
 			wantedLevelIncrease += calcWantedChange(ns, gangInfo, member, highestValueTask);
 		}
-
 
 		if (memberInfo.task != highestValueTask) {
 			ns.print("Assign " + member + " to " + highestValueTask);
 			ns.gang.setMemberTask(member, highestValueTask);
 		}
 
-		while (ns.gang.getGangInformation().wantedLevelGainRate > 0) {
-			let memberInfos = ns.gang.getMemberNames().map(member => ns.gang.getMemberInformation(member));
-			let vigilanteCandidates = memberInfos.filter(memberInfo => memberInfo.task !== VIGILANTE_JUSTICE).sort((a, b) => calcMemberCombatStats(b) - calcMemberCombatStats(a));
+		if(ns.gang.getGangInformation().wantedLevelGainRate > 0) {
+			let availableMembers = ns.gang.getMemberNames().filter(member => !reservedMembers.includes(member));
+			let numAvailable = availableMembers.length;
 
-			let memberName = vigilanteCandidates[0].name;
+			if(numAvailable > 0) {
+				let additionalVigilante = 0;
 
-			ns.tprint("After Task assign, wanted gain was positive => assign additional Vigilante Task for " + memberName);
-
-			ns.gang.setMemberTask(memberName, VIGILANTE_JUSTICE);
+				while (ns.gang.getGangInformation().wantedLevelGainRate > 0 && additionalVigilante < numAvailable) {
+					let vigilanteCandidates = availableMembers.map(member => ns.gang.getMemberInformation(member)).sort((a, b) => calcMemberCombatStats(b) - calcMemberCombatStats(a));
+		
+					if (vigilanteCandidates.length > 0) {
+						let memberName = vigilanteCandidates[0].name;
+		
+						ns.print("After Task assign, wanted gain was positive => assign additional Vigilante Task for " + memberName);
+		
+						ns.gang.setMemberTask(memberName, VIGILANTE_JUSTICE);
+						additionalVigilante++;
+					}
+				}
+			}
 		}
 	}
 }
+
+function calculateNextTask(ns: NS, gangInfo: GangGenInfo, member: string): string {
+	if (hasFormulaAPI(ns)) {
+		return calculateNextTaskWithFormula(ns, gangInfo, member);
+	}
+
+	return calculateNextTaskNoFormula(ns, gangInfo, member);
+}
+
+function calculateNextTaskNoFormula(ns: NS, gangInfo: GangGenInfo, member: string): string {
+	let memberStatsValue = calcMemberCombatStats(ns.gang.getMemberInformation(member));
+
+	if (memberStatsValue <= 100) {
+		return MUG_PEOPLE;
+	} else if (memberStatsValue <= 150) {
+		return DEAL_DRUGS;
+	} else if (memberStatsValue <= 200) {
+		return STRONGARM_CIVILIANS;
+	} else if (memberStatsValue <= 350) {
+		return TRAFFICK_ARMS;
+	} else if (memberStatsValue <= 475) {
+		return THREATEN_BLACKMAIL;
+	} else {
+		return HUMAN_TRAFFICK;
+	}
+}
+
+function calculateNextTaskWithFormula(ns: NS, gangInfo: GangGenInfo, member: string): string {
+	let highestValueTask = TRAIN_COMBAT;
+	let highestTaskValue = 0;
+
+	for (const task of tasks) {
+		let valueOfTask = taskValue(ns, gangInfo, member, task);
+		if (valueOfTask > highestTaskValue) {
+			highestTaskValue = valueOfTask;
+			highestValueTask = task;
+		}
+	}
+
+	return highestValueTask;
+}
+
 
 function calcWantedChange(ns: NS, gangInfo: GangGenInfo, member: string, task: string): number {
 	let taskStats = ns.gang.getTaskStats(task);
@@ -197,8 +272,12 @@ function taskValue(ns: NS, gangInfo: GangGenInfo, member: string, task: string):
 }
 
 function taskValueNoFormula(ns: NS, gangInfo: GangGenInfo, member: string, task: string): number {
+	let memberStatsValue = calcMemberCombatStats(ns.gang.getMemberInformation(member));
+
 	let taskStats = ns.gang.getTaskStats(task);
-	return taskStats.baseMoney * taskStats.baseRespect;
+
+	let difficultyRatio = memberStatsValue / taskStats.difficulty
+	return ((taskStats.baseMoney * taskStats.baseRespect) / difficultyRatio);
 }
 
 function taskValueWithFormula(ns: NS, gangInfo: GangGenInfo, member: string, task: string): number {
@@ -256,7 +335,7 @@ function joinGang(ns: NS) {
 	}
 }
 
-const tasks = ["Mug People", "Deal Drugs", "Strongarm Civilians", "Run a Con", "Armed Robbery", "Traffick Illegal Arms", "Threaten & Blackmail", "Human Trafficking", "Terrorism"];
+const tasks = [MUG_PEOPLE, DEAL_DRUGS, STRONGARM_CIVILIANS, RUN_CON, ARMED_ROBBERY, TRAFFICK_ARMS, THREATEN_BLACKMAIL, HUMAN_TRAFFICK, TERRORISM];
 
 const augmentationNames = ["Bionic Arms", "Bionic Legs", "Bionic Spine", "BrachiBlades", "Nanofiber Weave", "Synthetic Heart", "Synfibril Muscle", "Graphene Bone Lacings", "BitWire", "Neuralstimulator", "DataJack"];
 
