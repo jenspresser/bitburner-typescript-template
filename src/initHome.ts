@@ -6,7 +6,7 @@ import { isRunningHacknet, isRunningPurchasingServers } from "/statusPurchase";
 import { isRunningSharing } from "/statusShare";
 import { isRunningStock } from "/statusStocks";
 import { printTable } from "/table";
-import { STATUSHACKING, STATUSPURCHASE } from "./libscripts";
+import { GANG, STATUSHACKING, STATUSPURCHASE } from "./libscripts";
 
 export const HOME_RESERVE_RAM = 32;
 const HOME = "home";
@@ -81,6 +81,7 @@ function printStatus(ns: NS) {
 		["Purchase Hacknet on", isRunningHacknet(ns)],
 		["Sharing", isRunningSharing(ns)],
 		["Stocks", isRunningStock(ns)],
+		["Gang", GANG.isRunningOnAnyServers(ns)],
 		["Programs", getProgramCount(ns)],
 		["Purchased Servers", getPurchasedServerNames(ns).length],
 		["Script Gain ($/s)", ns.formatNumber(ns.getTotalScriptIncome()[0])],

@@ -1,4 +1,5 @@
 import { NS } from "@ns";
+import { getServersWithRootAccess } from "./libserver";
 
 export class Script {
     scriptName: string;
@@ -9,16 +10,25 @@ export class Script {
         this.scriptPath = "/" + scriptName;
     }
 
-    ram(ns: NS) : number {
+    ram(ns: NS): number {
         return ns.getScriptRam(this.scriptName);
     }
 
-    isRunningOnHome(ns: NS) : boolean {
+    isRunningOnHome(ns: NS): boolean {
         return this.isRunningOnServer(ns, "home");
     }
 
-    isRunningOnServer(ns: NS, server: string) : boolean {
+    isRunningOnServer(ns: NS, server: string): boolean {
         return ns.scriptRunning(this.scriptName, server);
+    }
+
+    isRunningOnTheseServers(ns: NS): string[] {
+        return getServersWithRootAccess(ns)
+            .filter(server => this.isRunningOnServer(ns, server))
+    }
+
+    isRunningOnAnyServers(ns: NS) : boolean {
+        return this.isRunningOnTheseServers(ns).length > 0;
     }
 }
 
