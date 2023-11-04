@@ -1,4 +1,4 @@
-import { NS, RunOptions } from "@ns";
+import { FilenameOrPID, NS, RunOptions } from "@ns";
 import { getServersWithRootAccess } from "./libserver";
 
 export class Script {
@@ -12,6 +12,14 @@ export class Script {
 
     ram(ns: NS): number {
         return ns.getScriptRam(this.scriptName);
+    }
+
+    isRunningOnServerWithSpec(ns: NS, server: string, ...args: (string | number | boolean)[]): boolean {
+        return ns.isRunning(this.scriptName, server, ...args);
+    }
+
+    isRunningOnHomeWithSpec(ns: NS, server: string, ...args: (string | number | boolean)[]): boolean {
+        return this.isRunningOnServerWithSpec(ns, "home", ...args);
     }
 
     isRunningOnHome(ns: NS): boolean {
@@ -72,6 +80,24 @@ export class StatusScript extends Script {
     }
 }
 
+export class HackScript extends Script {
+    constructor(scriptName: string) {
+        super(scriptName);
+    }
+
+    execHackTask(ns: NS, serverToHackFrom: string, threads: number, target: string, sleepTime: number, batch?: number|undefined) {
+        if(batch) {
+            this.execOnServer(ns, serverToHackFrom, threads, target, sleepTime, batch);    
+        } else {
+            this.execOnServer(ns, serverToHackFrom, threads, target, sleepTime);
+        }
+    }
+
+    isRunningHackTask(ns: NS, serverToHackFrom: string, target: string) {
+        return this.isRunningOnServerWithSpec(ns, serverToHackFrom, target);
+    }
+}
+
 // Purchase Scripts
 export const HACKNET_SCRIPTS = [
     "keepBuyingHacknet.js"
@@ -91,9 +117,9 @@ export const SHARE = new Script("share/share.js");
 
 // Hack Scripts
 export const MASTERHACK = new Script("hack/masterHack.js");
-export const HACK = new Script("hack/hack.js");
-export const GROW = new Script("hack/grow.js");
-export const WEAKEN = new Script("hack/weaken.js");
+export const HACK = new HackScript("hack/hack.js");
+export const GROW = new HackScript("hack/grow.js");
+export const WEAKEN = new HackScript("hack/weaken.js");
 
 export const ALL_HACK_SCRIPTS = [MASTERHACK, HACK, GROW, WEAKEN];
 

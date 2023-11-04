@@ -24,14 +24,6 @@ export async function main(ns: NS) {
 	let target = await getNextHackTarget(ns);
 
 	const serverToHackFrom = ns.getHostname(); // For single argument calls - server will hack itself
-	const hackScript = HACK.scriptPath;
-	const growScript = GROW.scriptPath;
-	const weakenScript = WEAKEN.scriptPath;
-
-	const hackScriptRAM = HACK.ram(ns);
-	const growScriptRAM = GROW.ram(ns);
-	const weakenScriptRAM = WEAKEN.ram(ns);
-
 	const serverMaxMoney = ns.getServerMaxMoney(target);
 	const moneyThresh = serverMaxMoney * 0.9; // 0.90 to maintain near 100% server money.  You can use 0.75 when starting out/using low thread counts
 	const securityThresh = ns.getServerMinSecurityLevel(target) + 5;
@@ -56,15 +48,15 @@ export async function main(ns: NS) {
 	}
 
 	// To prevent the script from crashing/terminating after closing and restarting the game.
-	while (ns.isRunning(hackScript, serverToHackFrom, target)
-		|| ns.isRunning(growScript, serverToHackFrom, target)
-		|| ns.isRunning(weakenScript, serverToHackFrom, target)
+	while ( HACK.isRunningHackTask(ns, serverToHackFrom, target)
+		|| GROW.isRunningHackTask(ns, serverToHackFrom, target)
+		|| WEAKEN.isRunningHackTask(ns, serverToHackFrom, target)
 	) {
 		await ns.sleep(10000);
 	}
 
 	// Main loop - will terminate if no RAM available
-	while (3 < (possibleThreads = Math.floor((serverMaxRAM - ns.getServerUsedRam(serverToHackFrom)) / growScriptRAM))) {
+	while (3 < (possibleThreads = Math.floor((serverMaxRAM - ns.getServerUsedRam(serverToHackFrom)) / GROW.ram(ns)))) {
 		currentServerMoney = ns.getServerMoneyAvailable(target);
 		currentServerSecurity = ns.getServerSecurityLevel(target);
 		sleepTimeHack = ns.getHackTime(target);
@@ -78,18 +70,18 @@ export async function main(ns: NS) {
 
 			if (weakenThreads > 0) {
 				ns.print("\tExecute weaken with " + weakenThreads + " threads");
-				ns.exec(weakenScript, serverToHackFrom, weakenThreads, target, 0);
+				WEAKEN.execHackTask(ns, serverToHackFrom, weakenThreads, target, 0);
 			}
 
 			if (growThreads > 0) {
 				let availableRam = getAvailableRam(ns, serverToHackFrom);
-				let growThreadRam = growThreads * growScriptRAM;
+				let growThreadRam = growThreads * GROW.ram(ns);
 				if (growThreadRam > availableRam) {
-					growThreads = Math.floor(availableRam / growScriptRAM);
+					growThreads = Math.floor(availableRam / GROW.ram(ns));
 				}
 
 				ns.print("\tExecute grow with " + growThreads + " threads");
-				ns.exec(growScript, serverToHackFrom, growThreads, target, 0);
+				GROW.execHackTask(ns, serverToHackFrom, growThreads, target, 0);
 			}
 
 			let waitTime = sleepTimeWeaken + sleepDelay;
@@ -103,18 +95,18 @@ export async function main(ns: NS) {
 
 			if (growThreads > 0) {
 				ns.print("\tExecute grow with " + growThreads + " threads");
-				ns.exec(growScript, serverToHackFrom, growThreads, target, 0);
+				GROW.execHackTask(ns, serverToHackFrom, growThreads, target, 0);
 			}
 			if (weakenThreads > 0) {
 				let availableRam = getAvailableRam(ns, serverToHackFrom);
-				let weakenThreadRam = weakenThreads * weakenScriptRAM;
+				let weakenThreadRam = weakenThreads * WEAKEN.ram(ns);
 
 				if (weakenThreadRam > availableRam) {
-					weakenThreadRam = Math.floor(availableRam / weakenScriptRAM);
+					weakenThreadRam = Math.floor(availableRam / WEAKEN.ram(ns));
 				}
 
 				ns.print("\tExecute weaken with " + weakenThreads + " threads");
-				ns.exec(weakenScript, serverToHackFrom, weakenThreads, target, 0);
+				WEAKEN.execHackTask(ns, serverToHackFrom, weakenThreads, target, 0);
 			}
 
 			let waitTime = sleepTimeWeaken + sleepDelay;
@@ -151,34 +143,34 @@ export async function main(ns: NS) {
 				if (isHighRamServer) {
 					if (useThreadsWeaken1 > 0) {
 						ns.print("\tExec weaken1 with " + useThreadsWeaken1 + " threads");
-						ns.exec(weakenScript, serverToHackFrom, useThreadsWeaken1, target, 0, 0 + 2 * i);
+						WEAKEN.execHackTask(ns, serverToHackFrom, useThreadsWeaken1, target, 0, (0 + 2 * i))
 					}
 					sleepTime = 2 * sleepDelay;
 				}
 				if (isHighRamServer) {
 					if (useThreadsWeaken2 > 0) {
 						ns.print("\tExec weaken2 with " + useThreadsWeaken2 + " threads");
-						ns.exec(weakenScript, serverToHackFrom, useThreadsWeaken2, target, sleepTime, 1 + 2 * i); // Second weaken script runs after the first
+						WEAKEN.execHackTask(ns, serverToHackFrom, useThreadsWeaken2, target, sleepTime, (1 + 2 * i)) // Second weaken script runs after the first
 					}
 					sleepTime = sleepTimeWeaken - sleepTimeGrow + sleepDelay;
 				}
 				if (isHighRamServer) {
 					if (useThreadsGrow > 0) {
 						ns.print("\tExec grow with " + useThreadsGrow + " threads");
-						ns.exec(growScript, serverToHackFrom, useThreadsGrow, target, sleepTime, i); // Grow script ends before second weaken script
+						GROW.execHackTask(ns, serverToHackFrom, useThreadsGrow, target, sleepTime, i); // Grow script ends before second weaken script
 					}
 					sleepTime = sleepTimeWeaken - sleepTimeHack - sleepDelay;
 				}
 				if (useThreadsHack > 0) {
-					let hackThreadRam = useThreadsHack * hackScriptRAM;
+					let hackThreadRam = useThreadsHack * HACK.ram(ns);
 					let availableRam = getAvailableRam(ns, serverToHackFrom);
 
 					if (hackThreadRam > availableRam) {
-						useThreadsHack = Math.floor(availableRam / hackScriptRAM);
+						useThreadsHack = Math.floor(availableRam / HACK.ram(ns));
 					}
 
 					ns.print("\tExec hack with " + useThreadsHack + " threads");
-					ns.exec(hackScript, serverToHackFrom, useThreadsHack, target, sleepTime, i); // Hack script ends before first weaken script
+					HACK.execHackTask(ns, serverToHackFrom, useThreadsHack, target, sleepTime, i) // Hack script ends before first weaken script
 				}
 				await ns.sleep(3 * sleepDelay);
 			}

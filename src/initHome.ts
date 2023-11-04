@@ -29,7 +29,7 @@ export async function main(ns: NS) {
 		ns.tprint("set target mode to ", mode, ", restart Hacking");
 		persistTargetMode(ns, mode);
 
-		restartHacking(ns);
+		await restartHacking(ns);
 		return;
 	}
 
@@ -61,8 +61,9 @@ export async function main(ns: NS) {
 	}
 }
 
-function restartHacking(ns: NS) {
+async function restartHacking(ns: NS) {
 	stopHacking(ns);
+	await ns.sleep(100);
 	startHacking(ns);
 }
 /** @param {NS} ns */

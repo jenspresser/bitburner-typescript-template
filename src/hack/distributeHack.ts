@@ -83,7 +83,7 @@ async function setupMasterHack(ns: NS, masterServerName: string) {
 
   if (!alreadyRunning) {
     ns.print("setup masterHack on [", masterServerName, "]");
-    ns.exec(MASTERHACK.scriptPath, masterServerName, 1);
+    MASTERHACK.execOnServer(ns, masterServerName, 1);
   }
 }
 
