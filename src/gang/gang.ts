@@ -16,7 +16,7 @@ export async function main(ns: NS) {
 
 		while (true) {
 			ns.clearLog();
-			
+
 			recruit(ns);
 			equipMembers(ns);
 			ascend(ns);
@@ -129,7 +129,7 @@ const HUMAN_TRAFFICK = "Human Trafficking";
 const TERRORISM = "Terrorism";
 
 
-function calcAvailableWorkJobs(ns: NS) : number {
+function calcAvailableWorkJobs(ns: NS): number {
 	let numMembers = ns.gang.getMemberNames().length;
 
 	return Math.min(
@@ -145,7 +145,7 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 	let workJobs = calcAvailableWorkJobs(ns);
 	let wantedLevelIncrease = 0;
 	let hasVigilante = false;
-	let reservedMembers : string[] = [];
+	let reservedMembers: string[] = [];
 
 	ns.print("initial workjobs: ", workJobs);
 
@@ -170,7 +170,7 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 			highestValueTask = TRAIN_COMBAT;
 			reservedMembers.push(member);
 		}
-		else if (workJobs >= 0 && wantedLevelIncrease > 0 && !hasVigilante) {
+		else if (workJobs >= 0 && wantedLevelIncrease > 0 && !hasVigilante && members.length >= 8) {
 			workJobs--;
 			highestValueTask = VIGILANTE_JUSTICE;
 			wantedLevelIncrease += calcWantedChange(ns, gangInfo, member, highestValueTask);
@@ -192,21 +192,21 @@ function assignMembers(ns: NS, territoryWinChance: number) {
 			ns.gang.setMemberTask(member, highestValueTask);
 		}
 
-		if(ns.gang.getGangInformation().wantedLevelGainRate > 0) {
+		if (ns.gang.getGangInformation().wantedLevelGainRate > 0) {
 			let availableMembers = ns.gang.getMemberNames().filter(member => !reservedMembers.includes(member));
 			let numAvailable = availableMembers.length;
 
-			if(numAvailable > 0) {
+			if (numAvailable > 0) {
 				let additionalVigilante = 0;
 
 				while (ns.gang.getGangInformation().wantedLevelGainRate > 0 && additionalVigilante < numAvailable) {
 					let vigilanteCandidates = availableMembers.map(member => ns.gang.getMemberInformation(member)).sort((a, b) => calcMemberCombatStats(b) - calcMemberCombatStats(a));
-		
+
 					if (vigilanteCandidates.length > 0) {
 						let memberName = vigilanteCandidates[0].name;
-		
+
 						ns.print("After Task assignment, wanted gain was still positive => assign additional Vigilante Task for " + memberName);
-		
+
 						ns.gang.setMemberTask(memberName, VIGILANTE_JUSTICE);
 					}
 					additionalVigilante++;
