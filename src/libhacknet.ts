@@ -11,6 +11,10 @@ export async function keepBuyingHacknet(ns: NS) {
 
     ns.print("Start keepBuyingHacknet");
 
+    if(canKeepUpgradingHacknet(hacknet)) {
+        printOnStop(ns);
+    }
+
     while (canKeepUpgradingHacknet(hacknet)) {
         ns.print("  canKeepUpgradingHacknet ");
 
@@ -45,8 +49,12 @@ export async function keepBuyingHacknet(ns: NS) {
             hacknet.upgradeCore(upgradeableNodeCore);
         }
         await ns.sleep(10);
-    }
-    ns.print("End keepBuyingHacknet");
+    } 
+    printOnStop(ns);
+}
+
+function printOnStop(ns :NS) {
+    ns.tprint("Cannot keep upgrading hacknet: Max Server count and fully upgraded");
 }
 
 /** 

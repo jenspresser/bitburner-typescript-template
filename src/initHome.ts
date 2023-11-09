@@ -1,6 +1,8 @@
 import { NS } from "@ns";
 import { initializeTargetMode, persistTargetMode } from "/hack/libhack";
-import { STATUSGANG, STATUSHACKING, STATUSPURCHASE } from "./libscripts";
+import { STATUSGANG, STATUSHACKING } from "./libscripts";
+import { PurchasePservStatusScriptExecutor } from "./statusPurchasePserv";
+import { PurchaseHacknetStatusScriptExecutor } from "./statusPurchaseHacknet";
 
 export const HOME_RESERVE_RAM = 32;
 const HOME = "home";
@@ -28,7 +30,8 @@ export async function main(ns: NS) {
 
 	if (shouldStop) {
 		stopHacking(ns);
-		stopPurchase(ns);
+		stopPurchasePserv(ns);
+		stopPurchaseHacknet(ns);
 		stopGang(ns);
 		return;
 	}
@@ -39,7 +42,8 @@ export async function main(ns: NS) {
 
 	if (shouldPurchase) {
 		await ns.sleep(100);
-		startPurchase(ns);
+		startPurchasePserv(ns);
+		startPurchaseHacknet(ns);
 	}
 
 	if(shouldStartGang) {
@@ -53,27 +57,32 @@ async function restartHacking(ns: NS) {
 	await ns.sleep(100);
 	startHacking(ns);
 }
-/** @param {NS} ns */
+
+
 function stopHacking(ns: NS) {
 	STATUSHACKING.stop(ns);
 }
-/** @param {NS} ns */
 function startHacking(ns: NS) {
 	STATUSHACKING.start(ns);
 }
-/** @param {NS} ns */
-function stopPurchase(ns: NS) {
-	STATUSPURCHASE.stop(ns);
+
+function stopPurchasePserv(ns: NS) {
+	PurchasePservStatusScriptExecutor.INSTANCE.stop(ns);
 }
-/** @param {NS} ns */
-function startPurchase(ns: NS) {
-	STATUSPURCHASE.start(ns);
+function startPurchasePserv(ns: NS) {
+	PurchasePservStatusScriptExecutor.INSTANCE.start(ns);
 }
-/** @param {NS} ns */
+
+function stopPurchaseHacknet(ns: NS) {
+	PurchaseHacknetStatusScriptExecutor.INSTANCE.stop(ns);
+}
+function startPurchaseHacknet(ns: NS) {
+	PurchaseHacknetStatusScriptExecutor.INSTANCE.start(ns);
+}
+
 function stopGang(ns: NS) {
 	STATUSGANG.stop(ns);
 }
-/** @param {NS} ns */
 function startGang(ns: NS) {
 	STATUSGANG.start(ns);
 }

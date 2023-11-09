@@ -2,14 +2,15 @@ import { NS } from "@ns";
 import { readTargetMode, getProgramCount } from "/hack/libhack";
 import { getPurchasedServerNames } from "/libserver";
 import { isRunningHacking } from "/statusHacking";
-import { isRunningHacknet, isRunningPurchasingServers } from "/statusPurchase";
+import { PurchasePservStatusScriptExecutor } from "/statusPurchasePserv";
+import { PurchaseHacknetStatusScriptExecutor } from "/statusPurchaseHacknet";
 import { isRunningSharing } from "/statusShare";
 import { isRunningStock } from "/statusStocks";
 import { printTable } from "/table";
 import { statusGangOutput } from "./gang/libgang";
+import { STATUS_SCRIPT_EXECUTORS } from "./libscripts";
 
 export const HOME_RESERVE_RAM = 32;
-const HOME = "home";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -18,11 +19,15 @@ export async function main(ns: NS) {
 
 /** @param {NS} ns */
 function printStatus(ns: NS) {
+	let statusFromExecutors = [
+		PurchaseHacknetStatusScriptExecutor.INSTANCE,
+		PurchasePservStatusScriptExecutor.INSTANCE
+	].map(it => it.getStatus(ns));
+
 	let matrix = [
 		["Hacking", isRunningHacking(ns)],
 		["Target Mode", readTargetMode(ns)],
-		["Purchase Servers on", isRunningPurchasingServers(ns)],
-		["Purchase Hacknet on", isRunningHacknet(ns)],
+		...statusFromExecutors,
 		["Sharing", isRunningSharing(ns)],
 		["Stocks", isRunningStock(ns)],
 		["Gang", statusGangOutput(ns)],

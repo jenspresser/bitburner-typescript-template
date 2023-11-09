@@ -78,6 +78,10 @@ export class StatusScript extends Script {
     start(ns: NS) {
         this.execOnHomeArgsOnly(ns, "start");
     }
+
+    status(ns: NS) {
+        this.execOnHomeArgsOnly(ns, "status");
+    }
 }
 
 export class HackScript extends Script {
@@ -96,6 +100,68 @@ export class HackScript extends Script {
     isRunningHackTask(ns: NS, serverToHackFrom: string, target: string) {
         return this.isRunningOnServerWithSpec(ns, serverToHackFrom, target);
     }
+}
+
+export const STATUS_SCRIPT_EXECUTORS : StatusScriptExecutor[] = [];
+
+export function getStatusScriptExecutor(name: string) : StatusScriptExecutor {
+    let executor = STATUS_SCRIPT_EXECUTORS.find(it => it.statusName === name);
+
+    if(executor) {
+        return executor;
+    }
+    
+    throw "StatusScriptExecutor with name [" + name + "] not registered! Registered name: " + STATUS_SCRIPT_EXECUTORS.map(it => it.statusName);
+}
+
+export interface HasStatus {
+    getStatus(ns: NS): [string, string];
+}
+export interface HasRunningStatus extends HasStatus {
+    isRunning(ns: NS) : boolean;
+}
+export interface CanStartStop {
+    start(ns: NS) : void;
+    stop(ns: NS) : void;
+    restart(ns: NS): void;
+}
+
+export abstract class StatusScriptExecutor implements HasRunningStatus, CanStartStop {
+    statusName: string;
+    statusOutput: string;
+
+    constructor( statusName: string, statusOutput: string) {
+        this.statusName = statusName;
+        this.statusOutput = statusOutput;
+
+        STATUS_SCRIPT_EXECUTORS.push(this);
+    }
+
+    onMain(ns: NS) {
+        const action = ns.args[0];
+        if("start" === action) {
+            this.start(ns);
+        } else if("stop" === action) {
+            this.stop(ns);
+        } else if("restart" === action) {
+            this.stop(ns);
+            this.start(ns);
+        }
+    }
+
+    getStatus(ns: NS) : [string, string] { 
+        return [this.statusOutput, ""+this.isRunning(ns)];
+    }
+
+    restart(ns: NS) {
+        this.stop(ns);
+        this.start(ns);
+    }
+
+    abstract start(ns: NS) : void;
+    abstract stop(ns: NS) : void;
+    abstract isRunning(ns: NS) : boolean;
+    abstract neededStartRam(ns: NS): number;
 }
 
 // Purchase Scripts
@@ -131,7 +197,6 @@ export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([DISTRIBUTEHACK]);
 export const GANG = new Script("gang/gang.js");
 
 // Status Scripts
-export const STATUSPURCHASE = new StatusScript("statusPurchase.js");
 export const STATUSHACKING = new StatusScript("statusHacking.js");
 export const STATUSSHARING = new StatusScript("statusShare.js");
 export const STATUSGANG = new StatusScript("statusGang.js");
