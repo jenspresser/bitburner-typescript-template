@@ -7,7 +7,7 @@ const HOME = "home";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-	let preventPurchase = ns.args[0] === "nopurchase" || ns.args[0] === "no";
+	let preventPurchase = ns.args.filter(arg => arg === "nopurchase" || arg === "no").length > 0;
 	let shouldPurchase = !preventPurchase;
 	let shouldStartGang = ns.args.filter(arg => arg === "gang" || arg === "g").length > 0;
 
