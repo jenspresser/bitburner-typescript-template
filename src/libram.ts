@@ -1,7 +1,11 @@
-import { NS, } from "@ns";
-import { HOME_RESERVE_RAM } from "./initHome";
+import { NS } from "@ns";
 import { ALL_HOME_SCRIPTS, GANG } from "./libscripts";
-import { getHomeMaxRam } from "./library";
+
+export const HOME_RESERVE_RAM = 32;
+
+export function getHomeMaxRam(ns: NS) {
+    return ns.getServerMaxRam("home");
+}
 
 export function calcHomeReserveRam(ns: NS): number {
 	let homeBaseReserveRam = calcHomeBaseReserveRam(ns);
@@ -28,4 +32,3 @@ export function calcHomeBaseReserveRam(ns: NS): number {
 export function canRunGangOnHome(ns: NS): boolean {
     return calcHomeBaseReserveRam(ns) + GANG.ram(ns) < getHomeMaxRam(ns);
 }
-

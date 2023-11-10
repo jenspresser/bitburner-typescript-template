@@ -5,7 +5,6 @@ import { HacknetStatusScript } from "./statusHacknet";
 import { HackingStatusScript } from "./statusHacking";
 import { GangStatusScript } from "./statusGang";
 
-export const HOME_RESERVE_RAM = 32;
 const HOME = "home";
 
 /** @param {NS} ns */

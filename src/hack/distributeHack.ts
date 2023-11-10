@@ -1,7 +1,7 @@
 import { NS } from "@ns";
 import { getServersWithRootAccess } from "/libserver";
 import { distributeScripts, getHomeMaxRam } from "/library";
-import { calcHomeReserveRam } from "/libhome";
+import { calcHomeReserveRam } from "/libram";
 import { MODE_FILE_NAME, crawlRootAccess, setTargetMode } from "/hack/libhack"
 import { MASTERHACK } from "/libscripts";
 

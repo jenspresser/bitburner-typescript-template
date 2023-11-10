@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { calcHomeReserveRam } from "/libhome";
+import { calcHomeReserveRam } from "/libram";
 import { PURCHASE_SERVER_PREFIX } from "/libserver";
 import { getNextHackTarget } from "/hack/libhack";
 import { HACK, GROW, WEAKEN } from "/libscripts";

@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { ServerInfo, getServerInfo } from "/libserver";
-import { canRunGangOnHome } from "/libhome";
+import { canRunGangOnHome } from "/libram";
 import { GANG } from "/libscripts";
 
 export function getGangScriptRam(ns: NS) : number {
