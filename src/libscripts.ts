@@ -273,4 +273,17 @@ export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([DISTRIBUTEHACK]);
 export const GANG = new Script("gang/gang.js");
 
 
+export abstract class StatusProperty implements HasStatus {
+    name: string;
+    output: string;
+    constructor(name: string, output: string) {
+        this.name = name;
+        this.output = output;
+    }
 
+    abstract getValue(ns: NS) : string;
+
+    getStatus(ns: NS) : [string, string]{
+        return [this.output, this.getValue(ns)];
+    }
+}

@@ -8,6 +8,7 @@ import { ShareStatusScript } from "/statusShare";
 import { StockStatusScript } from "/statusStocks";
 import { printTable } from "/table";
 import { GangStatusScript } from "./statusGang";
+import { StatusProperty } from "./libscripts";
 
 export const HOME_RESERVE_RAM = 32;
 
@@ -27,13 +28,17 @@ function printStatus(ns: NS) {
 		GangStatusScript.INSTANCE
 	].map(it => it.getStatus(ns));
 
+	let statusFromProperties = [
+		TargetModeStatusProperty.INSTANCE,
+		ProgramCountStatusProperty.INSTANCE,
+		PservCountStatusProperty.INSTANCE,
+		ScriptGainMoneyStatusProperty.INSTANCE,
+		ScriptGainExperienceStatusProperty.INSTANCE
+	].map(it => it.getStatus(ns));
+
 	let matrix = [
-		["Target Mode", readTargetMode(ns)],
 		...statusFromExecutors,
-		["Programs", getProgramCount(ns)],
-		["Purchased Servers", getPurchasedServerNames(ns).length],
-		["Script Gain ($/s)", ns.formatNumber(ns.getTotalScriptIncome()[0])],
-		["Script Gain (Exp)", ns.formatNumber(ns.getTotalScriptExpGain())]
+		...statusFromProperties
 	]
 
 	printTable(ns, matrix, {
@@ -42,3 +47,66 @@ function printStatus(ns: NS) {
 		align: ["left", "right"]
 	});
 }
+
+export class TargetModeStatusProperty extends StatusProperty {
+	static INSTANCE = new TargetModeStatusProperty();
+
+	constructor() {
+		super("targetMode", "Target Mode");
+	}
+
+	getValue(ns: NS): string {
+		return readTargetMode(ns);
+	}
+}
+
+export class ProgramCountStatusProperty extends StatusProperty {
+	static INSTANCE = new ProgramCountStatusProperty();
+
+	constructor() {
+		super("programCount", "Programs");
+	}
+
+	getValue(ns: NS): string {
+		return ""+getProgramCount(ns);
+	}
+}
+
+export class PservCountStatusProperty extends StatusProperty {
+	static INSTANCE = new PservCountStatusProperty();
+
+	constructor() {
+		super("pservCount", "Purchased Servers");
+	}
+
+	getValue(ns: NS): string {
+		return ""+getPurchasedServerNames(ns).length;
+	}
+}
+
+export class ScriptGainMoneyStatusProperty extends StatusProperty {
+	static INSTANCE = new ScriptGainMoneyStatusProperty();
+
+	constructor() {
+		super("scriptGainMoney", "Script Gain ($/s)");
+	}
+
+	getValue(ns: NS): string {
+		return ns.formatNumber(ns.getTotalScriptIncome()[0]);
+	}
+}
+
+
+
+export class ScriptGainExperienceStatusProperty extends StatusProperty {
+	static INSTANCE = new ScriptGainExperienceStatusProperty();
+
+	constructor() {
+		super("scriptGainExp", "Script Gain (Exp)");
+	}
+
+	getValue(ns: NS): string {
+		return ns.formatNumber(ns.getTotalScriptExpGain());
+	}
+}
+
