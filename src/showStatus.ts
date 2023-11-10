@@ -4,7 +4,7 @@ import { getPurchasedServerNames } from "/libserver";
 import { isRunningHacking } from "/statusHacking";
 import { PservStatusScript } from "./statusPserv";
 import { HacknetStatusScript } from "./statusHacknet";
-import { isRunningSharing } from "/statusShare";
+import { ShareStatusScript } from "/statusShare";
 import { StockStatusScript } from "/statusStocks";
 import { printTable } from "/table";
 import { statusGangOutput } from "./gang/libgang";
@@ -21,14 +21,14 @@ function printStatus(ns: NS) {
 	let statusFromExecutors = [
 		HacknetStatusScript.INSTANCE,
 		PservStatusScript.INSTANCE,
-		StockStatusScript.INSTANCE
+		StockStatusScript.INSTANCE,
+		ShareStatusScript.INSTANCE
 	].map(it => it.getStatus(ns));
 
 	let matrix = [
 		["Hacking", isRunningHacking(ns)],
 		["Target Mode", readTargetMode(ns)],
 		...statusFromExecutors,
-		["Sharing", isRunningSharing(ns)],
 		["Gang", statusGangOutput(ns)],
 		["Programs", getProgramCount(ns)],
 		["Purchased Servers", getPurchasedServerNames(ns).length],

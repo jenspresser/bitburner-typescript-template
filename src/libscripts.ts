@@ -190,6 +190,52 @@ export abstract class SingleScriptOnHomeStatusScript extends StatusScriptExecuto
     }
 }
 
+export abstract class DistributedTaskStatusScript extends StatusScriptExecutor {
+    script: Script;
+    constructor(script: Script, statusName: string, statusOutput: string) {
+        super(statusName, statusOutput);
+        this.script = script;
+    }
+
+    start(ns: NS): void {
+        ns.tprint("Start " + this.statusName);
+        this.getRunOnServers(ns).forEach(server => this.startOnServer(ns, server));
+    }
+
+    stop(ns: NS): void {
+        ns.tprint("Stop " + this.statusName);
+        this.getKillOnServers(ns).forEach(server => this.stopOnServer(ns, server));
+    }
+
+    isRunning(ns: NS): boolean {
+        return this.determineRunStatus(ns);
+    }
+
+    neededStartRam(ns: NS): number {
+        return this.script.ram(ns);
+    }
+
+    startOnServer(ns: NS, server: string) {
+        if (!this.script.isRunningOnServer(ns, server)) {
+            this.script.execOnServer(ns, server);
+        }
+    }
+
+    stopOnServer(ns: NS, server: string) {
+        this.script.killOnServer(ns, server);
+    }
+
+    determineRunStatus(ns: NS): boolean {
+        return this.script.isRunningOnAnyServers(ns);
+    }
+
+    getKillOnServers(ns: NS): string[] {
+        return this.getRunOnServers(ns)
+            .filter(server => this.script.isRunningOnServer(ns, server));
+    }
+
+    abstract getRunOnServers(ns: NS): string[];
+}
 
 
 // Hacknet Script

@@ -1,51 +1,34 @@
 import { NS } from "@ns";
 import { getServersWithRootAccess } from "/libserver";
-import { SHARE } from "./libscripts";
+import { DistributedTaskStatusScript, SHARE } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  let servers = ["home"].concat(getServersWithRootAccess(ns));
+  ShareStatusScript.INSTANCE.onMain(ns);
+}
 
-  if ("start" === ns.args[0]) {
-    for (let server of servers) {
-      startSharing(ns, server);
-    }
-  } else if ("stop" === ns.args[0]) {
-    for (let server of servers) {
-      stopSharing(ns, server);
-    }
-  } else if ("status" === ns.args[0]) {
-    ns.tprint("\tSharing: ", isRunningSharing(ns));
+export class ShareStatusScript extends DistributedTaskStatusScript {
+  static NAME = "share";
+  static INSTANCE = new ShareStatusScript();
+
+  constructor() {
+    super(SHARE, ShareStatusScript.NAME, "Share");
   }
-}
 
-/** 
- * @param {NS} ns 
- * @returns {boolean}
-*/
-export function isRunningSharing(ns: NS) {
-  return SHARE.isRunningOnHome(ns);
-}
+  startOnServer(ns: NS, server: string): void {
+    if (!this.script.isRunningOnServer(ns, server)) {
+      let shareRam = this.script.ram(ns);
+      let availRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
+  
+      let threads = Math.floor(availRam / shareRam);
+  
+      if (threads > 0) {
+        this.script.execOnServer(ns, server, threads);
+      }
+    }
+  }
 
-/**
- * @param {NS} ns
- * @param {string} server
- */
-function stopSharing(ns: NS, server: string) {
-  SHARE.killOnServer(ns, server);
-}
-
-/** 
- * @param {NS} ns 
- * @param {string} server
-*/
-function startSharing(ns: NS, server: string) {
-  let shareRam = SHARE.ram(ns);
-  let availRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
-
-  let threads = Math.floor(availRam / shareRam);
-
-  if (threads > 0) {
-    SHARE.execOnServer(ns, server, threads);
+  getRunOnServers(ns: NS): string[] {
+    return ["home"].concat(getServersWithRootAccess(ns));
   }
 }
