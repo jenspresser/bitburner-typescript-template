@@ -1,6 +1,16 @@
 import { NS } from "@ns";
 import { uploadScripts } from "./library";
+
 export const PURCHASE_SERVER_PREFIX = "pserv-";
+
+export const FACTION_SERVERS = [
+  "CSEC",
+  "avmnite-02h",
+  "I.I.I.I",
+  "run4theh111z",
+  "The-Cave",
+  "w0r1d_d43m0n"
+];
 
 /** 
  * @param {NS} ns
@@ -31,8 +41,7 @@ export function getServerNames(ns: NS) {
 
 /** 
  * @param {NS} ns
- * @param {boolean} [withBackdoorCheck]
- * @param {serverInfoFilter} [filter]
+  * @param {serverInfoFilter} [filter]
  * @returns  ServerInfo[]
 */
 export function getServerInfo(ns: NS, filter = () => true) {
@@ -94,6 +103,11 @@ export function getServersWithoutRootAccess(ns: NS): string[] {
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_NONPURCHASED)
     .filter(ServerInfoFilters.SERVER_INFO_FILTER_NOT_HASROOT)
     .map(it => it.hostname);
+}
+
+export function getServersWithBackdoor(ns: NS): string[] {
+  return getServersWithRootAccess(ns)
+    .filter(it => ns.getServer(it).backdoorInstalled);
 }
 
 export class ServerInfoFilters {
@@ -165,7 +179,7 @@ export class ServerInfo {
   static sortByRamDesc() {
     return (a: ServerInfo, b: ServerInfo) => { return b.maxRam - a.maxRam; };
   }
-  
+
   static sortByRamAsc() {
     return (a: ServerInfo, b: ServerInfo) => { return a.maxRam - b.maxRam; };
   }
@@ -175,9 +189,9 @@ export class ServerInfo {
  * @param {NS} ns
 */
 export function distributeScripts(ns: NS) {
-    let serverNames = getServersWithRootAccess(ns);
+  let serverNames = getServersWithRootAccess(ns);
 
-    for (let i = 0; i < serverNames.length; i++) {
-        uploadScripts(ns, serverNames[i]);
-    }
+  for (let i = 0; i < serverNames.length; i++) {
+    uploadScripts(ns, serverNames[i]);
+  }
 }

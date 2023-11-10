@@ -1,16 +1,7 @@
 import { NS } from "@ns";
-import { getNodeServerNames } from "./libserver";
 import { getProgramCount } from "./hack/libhack";
 import { printTable } from "./table";
-
-const SERVER_NAMES = [
-    "CSEC",
-    "avmnite-02h",
-    "I.I.I.I",
-    "run4theh111z",
-    "The-Cave",
-    "w0r1d_d43m0n"
-];
+import { FACTION_SERVERS } from "./libserver";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -38,7 +29,7 @@ export async function main(ns: NS) {
 }
 
 function getInfos(ns: NS, playerInfo : PlayerInfo) : Info[] {
-    return SERVER_NAMES.map(server => {
+    return FACTION_SERVERS.map(server => {
         let portsRequired = ns.getServerNumPortsRequired(server);
         let levelRequired = ns.getServerRequiredHackingLevel(server);
 

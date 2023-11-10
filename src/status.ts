@@ -7,7 +7,7 @@ import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { printTable } from "./table";
 import { HasStatus, MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
-import { KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
+import { BackdooredServersStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -56,6 +56,8 @@ const PROPERTIES: StatusProperty[] = [
     PservCountStatusProperty.INSTANCE,
     ScriptGainMoneyStatusProperty.INSTANCE,
     ScriptGainExperienceStatusProperty.INSTANCE,
+    RootServersStatusProperty.INSTANCE,
+    BackdooredServersStatusProperty.INSTANCE,
     KarmaStatusProperty.INSTANCE
 ]
 

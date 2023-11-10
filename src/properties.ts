@@ -2,7 +2,7 @@ import { NS } from "@ns";
 import { MODE_FILE_NAME, TARGET_MODE_DEFAULT, getProgramCount, persistTargetMode, readTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
 import { MutableStatusProperty, StatusProperty } from "./libscripts";
-import { getPurchasedServerNames } from "./libserver";
+import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
 
 export class TargetModeStatusProperty extends MutableStatusProperty {
@@ -92,5 +92,29 @@ export class KarmaStatusProperty extends StatusProperty {
 
     getValue(ns: NS): string {
         return ns.formatNumber(getKarma(ns));
+    }
+}
+
+export class RootServersStatusProperty extends StatusProperty {
+    static INSTANCE = new RootServersStatusProperty();
+
+    constructor() {
+        super("rootServers", "Root Servers");
+    }
+
+    getValue(ns: NS): string {
+        return String(getServersWithRootAccess(ns).length) + " / " + String(getServerNames(ns).length);
+    }
+}
+
+export class BackdooredServersStatusProperty extends StatusProperty {
+    static INSTANCE = new BackdooredServersStatusProperty();
+
+    constructor() {
+        super("backdooredServers", "Backdoor Count");
+    }
+
+    getValue(ns: NS): string {
+        return String(getServersWithBackdoor(ns).length) + " / " + String(getServersWithRootAccess(ns).length);
     }
 }
