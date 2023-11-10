@@ -84,18 +84,6 @@ export class HackScript extends Script {
     }
 }
 
-export const STATUS_SCRIPT_EXECUTORS: StatusScript[] = [];
-
-export function getStatusScriptExecutor(name: string): StatusScript {
-    let executor = STATUS_SCRIPT_EXECUTORS.find(it => it.statusName === name);
-
-    if (executor) {
-        return executor;
-    }
-
-    throw "StatusScriptExecutor with name [" + name + "] not registered! Registered name: " + STATUS_SCRIPT_EXECUTORS.map(it => it.statusName);
-}
-
 export interface HasStatus {
     getStatus(ns: NS): [string, string];
 }
@@ -121,6 +109,11 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
 
     onMain(ns: NS) {
         const action = ns.args[0];
+        
+        this.onAction(ns, String(action));
+    }
+
+    onAction(ns: NS, action: string) {
         if ("start" === action) {
             this.beforeStart(ns);
             this.start(ns);
@@ -135,7 +128,7 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
         }
     }
 
-    getActionNames() {
+    getModuleNames() {
         if(this.statusAlias) {
             return [this.statusAlias, this.statusName]
         } else {
