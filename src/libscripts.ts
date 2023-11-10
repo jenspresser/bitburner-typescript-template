@@ -274,8 +274,6 @@ export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([DISTRIBUTEHACK]);
 export const GANG = new Script("gang/gang.js");
 
 // Status Scripts
-export const STATUSHACKING = new StatusScript("statusHacking.js");
-export const STATUSSHARING = new StatusScript("statusShare.js");
 export const STATUSGANG = new StatusScript("statusGang.js");
 
 
