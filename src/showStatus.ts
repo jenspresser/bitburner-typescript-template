@@ -5,7 +5,7 @@ import { isRunningHacking } from "/statusHacking";
 import { PservStatusScript } from "./statusPserv";
 import { HacknetStatusScript } from "./statusHacknet";
 import { isRunningSharing } from "/statusShare";
-import { isRunningStock } from "/statusStocks";
+import { StockStatusScript } from "/statusStocks";
 import { printTable } from "/table";
 import { statusGangOutput } from "./gang/libgang";
 
@@ -20,7 +20,8 @@ export async function main(ns: NS) {
 function printStatus(ns: NS) {
 	let statusFromExecutors = [
 		HacknetStatusScript.INSTANCE,
-		PservStatusScript.INSTANCE
+		PservStatusScript.INSTANCE,
+		StockStatusScript.INSTANCE
 	].map(it => it.getStatus(ns));
 
 	let matrix = [
@@ -28,7 +29,6 @@ function printStatus(ns: NS) {
 		["Target Mode", readTargetMode(ns)],
 		...statusFromExecutors,
 		["Sharing", isRunningSharing(ns)],
-		["Stocks", isRunningStock(ns)],
 		["Gang", statusGangOutput(ns)],
 		["Programs", getProgramCount(ns)],
 		["Purchased Servers", getPurchasedServerNames(ns).length],

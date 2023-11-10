@@ -1,24 +1,16 @@
 import { NS } from "@ns";
-import { STOCK } from "./libscripts";
+import { STOCK, SingleScriptOnHomeStatusScript } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  let action = ns.args[0];
-
-  if (action === "stop") {
-    STOCK.killOnHome(ns);
-  } else if (action === "start") {
-    if (!isRunningStock(ns)) {
-      STOCK.execOnHome(ns);
-    }
-  }
+  StockStatusScript.INSTANCE.onMain(ns);
 }
 
+export class StockStatusScript extends SingleScriptOnHomeStatusScript {
+  static NAME = "stock";
+  static INSTANCE = new StockStatusScript();
 
-/** 
- * @param {NS} ns 
- * @returns {boolean}
-*/
-export function isRunningStock(ns: NS) {
-  return STOCK.isRunningOnHome(ns);
+  constructor() {
+    super(STOCK, StockStatusScript.NAME, "Stocks on");
+  }
 }
