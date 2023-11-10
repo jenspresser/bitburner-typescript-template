@@ -33,7 +33,7 @@ export async function main(ns: NS) {
         return;
     }
 
-    if(action === "modules") {
+    if (action === "modules") {
         printModules(ns);
         return;
     }
@@ -49,7 +49,7 @@ export async function main(ns: NS) {
         ns.tprint("Try to " + action + " modules: [" + modules + "]");
         let scripts = getModuleScripts(modules);
 
-        for(let script of scripts) {
+        for (let script of scripts) {
             script.onAction(ns, action);
         }
     }
@@ -60,21 +60,29 @@ type SpecialModule = {
     scriptFilter: () => string[]
 };
 
-const SPECIALS : SpecialModule[] = [
+const SPECIALS: SpecialModule[] = [
     {
         name: "all",
         scriptFilter: () => STATUS_SCRIPTS.map(it => it.statusName)
     },
     {
         name: "simple",
-        scriptFilter: () => ["hacking","hacknet","pserv"]
+        scriptFilter: () => [HackingStatusScript.NAME, HacknetStatusScript.NAME, PservStatusScript.NAME]
+    },
+    {
+        name: "simplegang",
+        scriptFilter: () => [HackingStatusScript.NAME, HacknetStatusScript.NAME, PservStatusScript.NAME, GangStatusScript.NAME]
+    },
+    {
+        name: "hackandgang",
+        scriptFilter: () => [HackingStatusScript.NAME, GangStatusScript.NAME]
     }
 ]
 
-function getModulesFromArgs(ns: NS) : string[] {
+function getModulesFromArgs(ns: NS): string[] {
     let modulesArgs = ns.args.splice(1).map(it => String(it));
 
-    if(SPECIALS.map(it => it.name).includes(modulesArgs[0])) {
+    if (SPECIALS.map(it => it.name).includes(modulesArgs[0])) {
         return SPECIALS.find(it => it.name === modulesArgs[0])!.scriptFilter();
     }
 
@@ -84,7 +92,7 @@ function getModulesFromArgs(ns: NS) : string[] {
     return modules;
 }
 
-function getModuleScripts(modules: string[]) : StatusScript[] {
+function getModuleScripts(modules: string[]): StatusScript[] {
     return STATUS_SCRIPTS.filter(script => {
         let scriptModuleNames = script.getModuleNames();
 
