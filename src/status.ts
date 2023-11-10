@@ -100,7 +100,8 @@ export async function main(ns: NS) {
 
     if (startStopActions.includes(action)) {
         if (ns.args.length === 1) {
-            ns.tprint("Need to specify which modules to " + action);
+            ns.tprint("Need to specify which modules to [" + action + "]");
+            printModules(ns);
             return;
         }
 
