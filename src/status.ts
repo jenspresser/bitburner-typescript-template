@@ -76,7 +76,15 @@ const SPECIALS: SpecialModule[] = [
     {
         name: "hackandgang",
         scriptFilter: () => [HackingStatusScript.NAME, GangStatusScript.NAME]
-    }
+    },
+    {
+        name: "spendmoney",
+        scriptFilter: () => [HacknetStatusScript.NAME, PservStatusScript.NAME]
+    },
+    {
+        name: "gainmoney",
+        scriptFilter: () => [HackingStatusScript.NAME, GangStatusScript.NAME]
+    },
 ]
 
 function getModulesFromArgs(ns: NS): string[] {
