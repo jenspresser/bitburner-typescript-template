@@ -53,7 +53,7 @@ export class Script {
         return ns.exec(this.scriptPath, hostname, threadOrOptions, ...args);
     }
 
-    execOnHome(ns: NS, threadOrOptions?: number | RunOptions, ...args: (string | number | boolean)[]) : number {
+    execOnHome(ns: NS, threadOrOptions?: number | RunOptions, ...args: (string | number | boolean)[]): number {
         return this.execOnServer(ns, "home", threadOrOptions, ...args);
     }
 
@@ -61,7 +61,7 @@ export class Script {
         return ns.exec(this.scriptPath, hostname, 1, ...args);
     }
 
-    execOnHomeArgsOnly(ns: NS, ...args: (string | number | boolean)[]) : number {
+    execOnHomeArgsOnly(ns: NS, ...args: (string | number | boolean)[]): number {
         return this.execOnServer(ns, "home", 1, ...args);
     }
 }
@@ -89,9 +89,9 @@ export class HackScript extends Script {
         super(scriptName);
     }
 
-    execHackTask(ns: NS, serverToHackFrom: string, threads: number, target: string, sleepTime: number, batch?: number|undefined) {
-        if(batch) {
-            this.execOnServer(ns, serverToHackFrom, threads, target, sleepTime, batch);    
+    execHackTask(ns: NS, serverToHackFrom: string, threads: number, target: string, sleepTime: number, batch?: number | undefined) {
+        if (batch) {
+            this.execOnServer(ns, serverToHackFrom, threads, target, sleepTime, batch);
         } else {
             this.execOnServer(ns, serverToHackFrom, threads, target, sleepTime);
         }
@@ -102,15 +102,15 @@ export class HackScript extends Script {
     }
 }
 
-export const STATUS_SCRIPT_EXECUTORS : StatusScriptExecutor[] = [];
+export const STATUS_SCRIPT_EXECUTORS: StatusScriptExecutor[] = [];
 
-export function getStatusScriptExecutor(name: string) : StatusScriptExecutor {
+export function getStatusScriptExecutor(name: string): StatusScriptExecutor {
     let executor = STATUS_SCRIPT_EXECUTORS.find(it => it.statusName === name);
 
-    if(executor) {
+    if (executor) {
         return executor;
     }
-    
+
     throw "StatusScriptExecutor with name [" + name + "] not registered! Registered name: " + STATUS_SCRIPT_EXECUTORS.map(it => it.statusName);
 }
 
@@ -118,11 +118,11 @@ export interface HasStatus {
     getStatus(ns: NS): [string, string];
 }
 export interface HasRunningStatus extends HasStatus {
-    isRunning(ns: NS) : boolean;
+    isRunning(ns: NS): boolean;
 }
 export interface CanStartStop {
-    start(ns: NS) : void;
-    stop(ns: NS) : void;
+    start(ns: NS): void;
+    stop(ns: NS): void;
     restart(ns: NS): void;
 }
 
@@ -130,27 +130,25 @@ export abstract class StatusScriptExecutor implements HasRunningStatus, CanStart
     statusName: string;
     statusOutput: string;
 
-    constructor( statusName: string, statusOutput: string) {
+    constructor(statusName: string, statusOutput: string) {
         this.statusName = statusName;
         this.statusOutput = statusOutput;
-
-        STATUS_SCRIPT_EXECUTORS.push(this);
     }
 
     onMain(ns: NS) {
         const action = ns.args[0];
-        if("start" === action) {
+        if ("start" === action) {
             this.start(ns);
-        } else if("stop" === action) {
+        } else if ("stop" === action) {
             this.stop(ns);
-        } else if("restart" === action) {
+        } else if ("restart" === action) {
             this.stop(ns);
             this.start(ns);
         }
     }
 
-    getStatus(ns: NS) : [string, string] { 
-        return [this.statusOutput, ""+this.isRunning(ns)];
+    getStatus(ns: NS): [string, string] {
+        return [this.statusOutput, "" + this.isRunning(ns)];
     }
 
     restart(ns: NS) {
@@ -158,10 +156,38 @@ export abstract class StatusScriptExecutor implements HasRunningStatus, CanStart
         this.start(ns);
     }
 
-    abstract start(ns: NS) : void;
-    abstract stop(ns: NS) : void;
-    abstract isRunning(ns: NS) : boolean;
+    abstract start(ns: NS): void;
+    abstract stop(ns: NS): void;
+    abstract isRunning(ns: NS): boolean;
     abstract neededStartRam(ns: NS): number;
+}
+
+export abstract class SingleScriptOnHomeStatusScript extends StatusScriptExecutor {
+    script: Script;
+    constructor(script: Script, statusName: string, statusOutput: string) {
+        super(statusName, statusOutput);
+        this.script = script;
+    }
+
+    start(ns: NS): void {
+        ns.tprint("Start " + this.statusName);
+        if (!this.script.isRunningOnHome(ns)) {
+            this.script.execOnHome(ns);
+        }
+    }
+
+    stop(ns: NS): void {
+        ns.tprint("Stop " + this.statusName);
+        this.script.killOnHome(ns);
+    }
+
+    isRunning(ns: NS): boolean {
+        return this.script.isRunningOnHome(ns);
+    }
+
+    neededStartRam(ns: NS): number {
+        return this.script.ram(ns);
+    }
 }
 
 

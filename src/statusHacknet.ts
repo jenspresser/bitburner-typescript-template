@@ -1,36 +1,16 @@
 import { NS } from "@ns";
-import { HACKNET, StatusScriptExecutor } from "./libscripts";
+import { HACKNET, SingleScriptOnHomeStatusScript } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  HacknetStatusScriptExecutor.INSTANCE.onMain(ns);
+  HacknetStatusScript.INSTANCE.onMain(ns);
 }
 
-export class HacknetStatusScriptExecutor extends StatusScriptExecutor {
+export class HacknetStatusScript extends SingleScriptOnHomeStatusScript {
   static NAME = "hacknet";
-  static INSTANCE = new HacknetStatusScriptExecutor();
+  static INSTANCE = new HacknetStatusScript();
 
   constructor() {
-    super(HacknetStatusScriptExecutor.NAME, "Purchase Hacknet on");
-  }
-
-  start(ns: NS): void {
-    ns.tprint("Start Purchasing Hacknet! ");
-    if (!HACKNET.isRunningOnHome(ns)) {
-      HACKNET.execOnHome(ns);
-    }
-  }
-
-  stop(ns: NS): void {
-    ns.tprint("Stop Purchasing Hacknet!");
-    HACKNET.killOnHome(ns);
-  }
-
-  isRunning(ns: NS): boolean {
-    return HACKNET.isRunningOnHome(ns);
-  }
-
-  neededStartRam(ns: NS): number {
-    return HACKNET.ram(ns);
+    super(HACKNET, HacknetStatusScript.NAME, "Purchase Hacknet on");
   }
 }

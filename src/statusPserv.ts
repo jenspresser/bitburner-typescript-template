@@ -1,36 +1,16 @@
 import { NS } from "@ns";
-import { PSERV, StatusScriptExecutor } from "./libscripts";
+import { PSERV, SingleScriptOnHomeStatusScript } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  PservStatusScriptExecutor.INSTANCE.onMain(ns);
+  PservStatusScript.INSTANCE.onMain(ns);
 }
 
-export class PservStatusScriptExecutor extends StatusScriptExecutor {
+export class PservStatusScript extends SingleScriptOnHomeStatusScript {
   static NAME = "pserv";
-  static INSTANCE = new PservStatusScriptExecutor();
+  static INSTANCE = new PservStatusScript();
 
   constructor() {
-    super(PservStatusScriptExecutor.NAME, "Purchase Pserv on");
-  }
-
-  start(ns: NS): void {
-    ns.tprint("Start Purchasing Pserv! ");
-    if (!PSERV.isRunningOnHome(ns)) {
-      PSERV.execOnHome(ns);
-    }
-  }
-
-  stop(ns: NS): void {
-    ns.tprint("Stop Purchasing Pserv!");
-    PSERV.killOnHome(ns);
-  }
-
-  isRunning(ns: NS): boolean {
-    return PSERV.isRunningOnHome(ns);
-  }
-
-  neededStartRam(ns: NS): number {
-    return PSERV.ram(ns);
+    super(PSERV, PservStatusScript.NAME, "Purchase Pserv on");
   }
 }

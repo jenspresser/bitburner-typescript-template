@@ -2,8 +2,8 @@ import { NS } from "@ns";
 import { readTargetMode, getProgramCount } from "/hack/libhack";
 import { getPurchasedServerNames } from "/libserver";
 import { isRunningHacking } from "/statusHacking";
-import { PservStatusScriptExecutor } from "./statusPserv";
-import { HacknetStatusScriptExecutor } from "./statusHacknet";
+import { PservStatusScript } from "./statusPserv";
+import { HacknetStatusScript } from "./statusHacknet";
 import { isRunningSharing } from "/statusShare";
 import { isRunningStock } from "/statusStocks";
 import { printTable } from "/table";
@@ -19,8 +19,8 @@ export async function main(ns: NS) {
 /** @param {NS} ns */
 function printStatus(ns: NS) {
 	let statusFromExecutors = [
-		HacknetStatusScriptExecutor.INSTANCE,
-		PservStatusScriptExecutor.INSTANCE
+		HacknetStatusScript.INSTANCE,
+		PservStatusScript.INSTANCE
 	].map(it => it.getStatus(ns));
 
 	let matrix = [
