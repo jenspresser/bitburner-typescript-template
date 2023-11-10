@@ -49,10 +49,6 @@ export function getKarma(ns: NS) : number {
     return 0;
 }
 
-export function getHomeMaxRam(ns: NS) {
-    return ns.getServerMaxRam("home");
-}
-
 /**
  * @param {NS} ns
  * @param {string} hostname

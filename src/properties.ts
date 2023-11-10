@@ -5,7 +5,7 @@ import { MutableStatusProperty, StatusProperty } from "./libscripts";
 import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
 import { getProgramCount } from "./libprograms";
-import { getHomeMaxRam } from "./libram";
+import { getHomeMaxRam, getHomeUsedRam } from "./libram";
 
 export class TargetModeStatusProperty extends MutableStatusProperty {
     static INSTANCE = new TargetModeStatusProperty();
@@ -129,6 +129,6 @@ export class HomeRamStatusProperty extends StatusProperty {
     }
 
     getValue(ns: NS): string {
-        return ns.formatRam(ns.getServerUsedRam("home")) + " / " + ns.formatRam(getHomeMaxRam(ns));
+        return ns.formatRam(getHomeUsedRam(ns)) + " / " + ns.formatRam(getHomeMaxRam(ns));
     }
 };

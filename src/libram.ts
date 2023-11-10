@@ -7,6 +7,10 @@ export function getHomeMaxRam(ns: NS) {
     return ns.getServerMaxRam("home");
 }
 
+export function getHomeUsedRam(ns: NS) {
+	return ns.getServerUsedRam("home");
+}
+
 export function calcHomeReserveRam(ns: NS): number {
 	let homeBaseReserveRam = calcHomeBaseReserveRam(ns);
 
