@@ -1,9 +1,9 @@
 import { NS } from "@ns";
 import { initializeTargetMode, persistTargetMode } from "/hack/libhack";
-import { PservStatusScript } from "./statusPserv";
-import { HacknetStatusScript } from "./statusHacknet";
-import { HackingStatusScript } from "./statusHacking";
-import { GangStatusScript } from "./statusGang";
+import { PservStatusScript } from "./status/statusPserv";
+import { HacknetStatusScript } from "./status/statusHacknet";
+import { HackingStatusScript } from "./status/statusHacking";
+import { GangStatusScript } from "./status/statusGang";
 
 const HOME = "home";
 

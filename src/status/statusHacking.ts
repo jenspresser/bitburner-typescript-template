@@ -2,11 +2,9 @@ import { NS } from "@ns";
 import {
   ALL_HACK_SCRIPTS,
   DISTRIBUTEHACK,
-  DistributedTaskStatusScript,
   MASTERHACK,
   SingleScriptOnHomeStatusScript
-} from "./libscripts";
-import { getServersWithRootAccess } from "/libserver";
+} from "/libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

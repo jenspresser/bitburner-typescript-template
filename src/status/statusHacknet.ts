@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { HACKNET, SingleScriptOnHomeStatusScript } from "./libscripts";
+import { HACKNET, SingleScriptOnHomeStatusScript } from "/libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { PSERV, SingleScriptOnHomeStatusScript } from "./libscripts";
+import { PSERV, SingleScriptOnHomeStatusScript } from "/libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

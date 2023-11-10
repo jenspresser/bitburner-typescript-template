@@ -1,14 +1,14 @@
 import { NS } from "@ns";
 import { readTargetMode, getProgramCount } from "/hack/libhack";
 import { getPurchasedServerNames } from "/libserver";
-import { HackingStatusScript } from "/statusHacking";
-import { PservStatusScript } from "./statusPserv";
-import { HacknetStatusScript } from "./statusHacknet";
-import { ShareStatusScript } from "/statusShare";
-import { StockStatusScript } from "/statusStocks";
+import { HackingStatusScript } from "/status/statusHacking";
+import { PservStatusScript } from "/status/statusPserv";
+import { HacknetStatusScript } from "/status/statusHacknet";
+import { ShareStatusScript } from "/status/statusShare";
+import { StockStatusScript } from "/status/statusStocks";
 import { printTable } from "/table";
-import { GangStatusScript } from "./statusGang";
-import { StatusProperty } from "./libscripts";
+import { GangStatusScript } from "/status/statusGang";
+import { StatusProperty } from "/libscripts";
 
 export const HOME_RESERVE_RAM = 32;
 

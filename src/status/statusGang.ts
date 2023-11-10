@@ -1,7 +1,7 @@
 import { NS } from "@ns";
 import { getGangScriptServer } from "/gang/libgang";
-import { DistributedTaskStatusScript, GANG } from "./libscripts";
-import { HackingStatusScript } from "./statusHacking";
+import { DistributedTaskStatusScript, GANG } from "/libscripts";
+import { HackingStatusScript } from "/status/statusHacking";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
