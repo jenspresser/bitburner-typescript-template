@@ -103,7 +103,7 @@ export function createTableString(matrix: any[][], {header, horizontalSeparator,
                 all = true;
                 break;
             default:
-                if (typeof (separator[i]) == "number") {
+                if (typeof (parseInt(separator[i])) === "number") {
                     separatorPerRow.push(parseInt(separator[i]))
                     separatorPerRow.push(parseInt(separator[i]) + 1)
                 }

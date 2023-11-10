@@ -1,9 +1,10 @@
 import { NS } from "@ns";
-import { MODE_FILE_NAME, TARGET_MODE_DEFAULT, getProgramCount, persistTargetMode, readTargetMode } from "./hack/libhack";
+import { MODE_FILE_NAME, TARGET_MODE_DEFAULT, persistTargetMode, readTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
 import { MutableStatusProperty, StatusProperty } from "./libscripts";
 import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
+import { getProgramCount } from "./libprograms";
 
 export class TargetModeStatusProperty extends MutableStatusProperty {
     static INSTANCE = new TargetModeStatusProperty();

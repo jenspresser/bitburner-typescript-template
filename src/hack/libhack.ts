@@ -1,6 +1,7 @@
 import { NS, PortData } from "@ns";
 import { getNodeServersWithRootAccess, getServersWithoutRootAccess } from "/libserver";
 import { isPortEmpty, PORT_NEXT_TARGET_INDEX, PORT_NEXT_TARGET_MODE } from "/PORTS";
+import { PROGRAM_BruteSSH, PROGRAM_FTPCrack, PROGRAM_HTTPWorm, PROGRAM_SQLInject, PROGRAM_relaySMTP, availablePortOpenerPrograms, isProgramAvailable } from "/libprograms";
 
 export const MODE_FILE_NAME = "hack/_mode.txt";
 
@@ -382,32 +383,6 @@ export class ServerHackData {
 
 /** 
  * @param {NS} ns 
- * @returns {number}
-*/
-export function getProgramCount(ns: NS) {
-	let count = 0;
-
-	if (ns.fileExists("BruteSSH.exe")) {
-		count++
-	}
-	if (ns.fileExists("FTPCrack.exe")) {
-		count++
-	}
-	if (ns.fileExists("relaySMTP.exe")) {
-		count++
-	}
-	if (ns.fileExists("HTTPWorm.exe")) {
-		count++
-	}
-	if (ns.fileExists("SQLInject.exe")) {
-		count++
-	}
-
-	return count;
-}
-
-/** 
- * @param {NS} ns 
  * @param {String} hostname
 */
 export function getRootAccess(ns: NS, hostname: string) {
@@ -416,29 +391,29 @@ export function getRootAccess(ns: NS, hostname: string) {
 		var portsNeeded = ns.getServerNumPortsRequired(hostname);
 		var open = 0
 
-		if (ns.fileExists("BruteSSH.exe") && portsNeeded > 0) {
+		if (isProgramAvailable(ns, PROGRAM_BruteSSH) && portsNeeded > 0) {
 			ns.brutessh(hostname);
 			open++
 		}
-		if (ns.fileExists("FTPCrack.exe") && portsNeeded > 1) {
+		if (isProgramAvailable(ns, PROGRAM_FTPCrack) && portsNeeded > 1) {
 			ns.ftpcrack(hostname);
 			open++
 		}
-		if (ns.fileExists("relaySMTP.exe") && portsNeeded > 2) {
+		if (isProgramAvailable(ns, PROGRAM_relaySMTP) && portsNeeded > 2) {
 			ns.relaysmtp(hostname);
 			open++
 		}
-		if (ns.fileExists("HTTPWorm.exe") && portsNeeded > 3) {
+		if (isProgramAvailable(ns, PROGRAM_HTTPWorm) && portsNeeded > 3) {
 			ns.httpworm(hostname);
 			open++
 		}
-		if (ns.fileExists("SQLInject.exe") && portsNeeded > 4) {
+		if (isProgramAvailable(ns, PROGRAM_SQLInject) && portsNeeded > 4) {
 			ns.sqlinject(hostname);
 			open++
 		}
+
 		if (portsNeeded <= open) {
 			ns.nuke(hostname);
-
 		}
 	}
 }

@@ -265,6 +265,9 @@ export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([DISTRIBUTEHACK]);
 // Gang Scripts
 export const GANG = new Script("gang/gang.js");
 
+// Singularity Scripts
+export const BUY_PROGRAMS = new Script("singularity/keepBuyingPrograms.js");
+
 
 export abstract class StatusProperty implements HasStatus {
     name: string;

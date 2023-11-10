@@ -8,6 +8,7 @@ import { ShareStatusScript } from "./status/statusShare";
 import { printTable } from "./table";
 import { HasStatus, MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
 import { BackdooredServersStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
+import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -15,7 +16,8 @@ const STATUS_SCRIPTS = [
     PservStatusScript.INSTANCE,
     GangStatusScript.INSTANCE,
     StockStatusScript.INSTANCE,
-    ShareStatusScript.INSTANCE
+    ShareStatusScript.INSTANCE,
+    BuyProgramsStatusScript.INSTANCE
 ]
 
 type SpecialModule = {
@@ -177,12 +179,13 @@ function printStatus(ns: NS) {
 
     let matrix = [
         ...statusFromExecutors,
+        ["Property", "Value"],
         ...statusFromProperties
     ]
 
     printTable(ns, matrix, {
-        header: ["Action", "State"],
-        horizontalSeparator: "first",
+        header: ["Module", "State"],
+        horizontalSeparator: ["first", String(statusFromExecutors.length)],
         align: ["left", "right"]
     });
 }
