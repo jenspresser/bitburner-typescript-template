@@ -39,6 +39,16 @@ export function getBitNodeMultipliers(ns: NS) : BitNodeMultipliers {
     return ns.getBitNodeMultipliers();
 }
 
+export function getKarma(ns: NS) : number {
+    let evalResult = eval("ns.heart.break()");
+
+    if(evalResult && typeof evalResult === "number") {
+        return evalResult;
+    }
+
+    return 0;
+}
+
 export function getHomeMaxRam(ns: NS) {
     return ns.getServerMaxRam("home");
 }

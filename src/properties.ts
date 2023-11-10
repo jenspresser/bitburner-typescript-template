@@ -3,6 +3,7 @@ import { MODE_FILE_NAME, TARGET_MODE_DEFAULT, getProgramCount, persistTargetMode
 import { HackingStatusScript } from "./status/statusHacking";
 import { MutableStatusProperty, StatusProperty } from "./libscripts";
 import { getPurchasedServerNames } from "./libserver";
+import { getKarma } from "./library";
 
 export class TargetModeStatusProperty extends MutableStatusProperty {
     static INSTANCE = new TargetModeStatusProperty();
@@ -90,11 +91,6 @@ export class KarmaStatusProperty extends StatusProperty {
     }
 
     getValue(ns: NS): string {
-        let evalResult = eval("ns.heart.break()");
-
-        if(evalResult && typeof evalResult === "number") {
-            return ns.formatNumber(evalResult);
-        }
-        return "N/A";
+        return ns.formatNumber(getKarma(ns));
     }
 }
