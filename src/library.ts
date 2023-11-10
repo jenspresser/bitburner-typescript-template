@@ -1,5 +1,4 @@
 import { BitNodeMultipliers, NS } from "@ns";
-import { getServersWithRootAccess } from "/libserver";
 
 /**
  * @param {NS} ns
@@ -30,17 +29,6 @@ export function uploadScripts(ns: NS, hostname: string) {
     let scripts = ns.ls("home", ".js");
 
     ns.scp(scripts, hostname);
-}
-
-/** 
- * @param {NS} ns
-*/
-export function distributeScripts(ns: NS) {
-    let serverNames = getServersWithRootAccess(ns);
-
-    for (let i = 0; i < serverNames.length; i++) {
-        uploadScripts(ns, serverNames[i]);
-    }
 }
 
 export function hasFormulaAPI(ns: NS) : boolean {

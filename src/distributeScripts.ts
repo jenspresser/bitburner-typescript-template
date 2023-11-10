@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { distributeScripts } from "library";
+import { distributeScripts } from "./libserver";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

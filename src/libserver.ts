@@ -1,4 +1,5 @@
 import { NS } from "@ns";
+import { uploadScripts } from "./library";
 export const PURCHASE_SERVER_PREFIX = "pserv-";
 
 /** 
@@ -168,4 +169,15 @@ export class ServerInfo {
   static sortByRamAsc() {
     return (a: ServerInfo, b: ServerInfo) => { return a.maxRam - b.maxRam; };
   }
+}
+
+/**
+ * @param {NS} ns
+*/
+export function distributeScripts(ns: NS) {
+    let serverNames = getServersWithRootAccess(ns);
+
+    for (let i = 0; i < serverNames.length; i++) {
+        uploadScripts(ns, serverNames[i]);
+    }
 }
