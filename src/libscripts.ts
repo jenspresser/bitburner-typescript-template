@@ -138,9 +138,13 @@ export abstract class StatusScriptExecutor implements HasRunningStatus, CanStart
     onMain(ns: NS) {
         const action = ns.args[0];
         if ("start" === action) {
+            this.beforeStart(ns);
             this.start(ns);
+            this.afterStart(ns);
         } else if ("stop" === action) {
+            this.beforeStop(ns);
             this.stop(ns);
+            this.afterStop(ns);
         } else if ("restart" === action) {
             this.stop(ns);
             this.start(ns);
@@ -160,6 +164,11 @@ export abstract class StatusScriptExecutor implements HasRunningStatus, CanStart
     abstract stop(ns: NS): void;
     abstract isRunning(ns: NS): boolean;
     abstract neededStartRam(ns: NS): number;
+    
+    beforeStart(ns: NS) {}
+    afterStart(ns: NS) {}
+    beforeStop(ns: NS) {}
+    afterStop(ns: NS) {}
 }
 
 export abstract class SingleScriptOnHomeStatusScript extends StatusScriptExecutor {
@@ -265,16 +274,11 @@ export const HACKNET_SCRIPTS = [
 export const PURCHASE_SERVER_SCRIPTS = [
     PSERV
 ]
-
 export const PURCHASE_SCRIPTS = PURCHASE_SERVER_SCRIPTS.concat(HACKNET_SCRIPTS);
-
 export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([DISTRIBUTEHACK]);
 
 // Gang Scripts
 export const GANG = new Script("gang/gang.js");
-
-// Status Scripts
-export const STATUSGANG = new StatusScript("statusGang.js");
 
 
 

@@ -21,16 +21,22 @@ export class HackingStatusScript extends SingleScriptOnHomeStatusScript {
     super(DISTRIBUTEHACK, HackingStatusScript.NAME, "Hacking");
   }
 
-  stop(ns: NS): void {
-    super.stop(ns);
-
-    for (let server of getServersWithRootAccess(ns)) {
-      MASTERHACK.killOnServer(ns, server);
-
-      for (let hackScript of ALL_HACK_SCRIPTS) {
-        hackScript.killOnServer(ns, server);
-      }
+  afterStop(ns: NS): void {
+    for (let server of MASTERHACK.isRunningOnTheseServers(ns)) {
+      this.stopOnServer(ns, server);
     }
+  }
+
+  stopOnServer(ns: NS, server: string) {
+    MASTERHACK.killOnServer(ns, server);
+
+    for (let hackScript of ALL_HACK_SCRIPTS) {
+      hackScript.killOnServer(ns, server);
+    }
+  }
+
+  isRunningOnServer(ns: NS, server: string): boolean {
+    return MASTERHACK.isRunningOnServer(ns, server);
   }
 
 }

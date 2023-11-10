@@ -1,80 +1,59 @@
 import { NS } from "@ns";
 import { getGangScriptServer } from "/gang/libgang";
-import { GANG } from "./libscripts";
-import { stopHackingOnServer } from "./statusHacking";
+import { DistributedTaskStatusScript, GANG } from "./libscripts";
+import { HackingStatusScript } from "./statusHacking";
+import { HacknetStatusScript } from "./statusHacknet";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-    let action = ns.args[0];
+    GangStatusScript.INSTANCE.onMain(ns);
+}
 
-    if (action === "stop") {
-        stopGang(ns);
-    } else if (action === "start") {
-        startGang(ns);
-    } else if (action === "restart") {
-        restartGang(ns);
-    } else {
-        showHelp(ns);
+
+
+export class GangStatusScript extends DistributedTaskStatusScript {
+    static NAME = "gang";
+    static INSTANCE = new GangStatusScript();
+
+    constructor() {
+        super(GANG, GangStatusScript.NAME, "Gang");
     }
-}
 
-export function restartGang(ns: NS) {
-    stopGang(ns);
-    startGang(ns);
-}
+    beforeStart(ns: NS): void {
+        const gangServer = getGangScriptServer(ns);
 
-export function startGang(ns: NS) {
-    const gangServer = getGangScriptServer(ns);
-
-    if (gangServer !== undefined) {
-        if (!isRunningGangOnServer(ns, gangServer)) {
-            ns.tprint("    Stop Hacking on " + gangServer);
-            stopHackingOnServer(ns, gangServer);
-
-            ns.tprint("Starting GANG on " + gangServer);
-            GANG.execOnServer(ns, gangServer);
+        if (gangServer !== undefined) {
+            if (!this.script.isRunningOnServer(ns, gangServer) 
+                    && HackingStatusScript.INSTANCE.isRunningOnServer(ns, gangServer)) {
+                ns.tprint("    Stop Hacking on " + gangServer);
+                HackingStatusScript.INSTANCE.stopOnServer(ns, gangServer);
+            }
         }
-    } else {
-        ns.tprint("No server available to run GANG script");
-    }
-}
-
-export function stopGang(ns: NS) {
-    const gangServer = getGangScriptServer(ns);
-
-    if (gangServer !== undefined) {
-        ns.tprint("Stopping GANG on " + gangServer);
-        GANG.killOnServer(ns, gangServer);
-    }
-}
-
-/** 
- * @param {NS} ns 
- * @returns {boolean}
-*/
-export function isRunningGang(ns: NS): boolean {
-    const gangServer = getGangScriptServer(ns);
-
-    if (gangServer === undefined) {
-        return false;
     }
 
-    return isRunningGangOnServer(ns, gangServer);
-}
+    getRunOnServers(ns: NS): string[] {
+        const gangServer = getGangScriptServer(ns);
 
+        if (gangServer !== undefined) {
+            return [gangServer]
+        } else {
+            ns.tprint("No server available to run GANG script");
+            return []
+        }
+    }
 
-/** 
- * @param {NS} ns 
- * @returns {boolean}
-*/
-export function isRunningGangOnServer(ns: NS, hostname: string): boolean {
-    return GANG.isRunningOnServer(ns, hostname);
-}
+    getStatus(ns: NS): [string, string] {
+        return [this.statusOutput, this.statusGangOutput(ns)];
+    }
 
-/** @param {NS} ns */
-function showHelp(ns: NS) {
-    ns.tprint("usage:");
-    ns.tprint("  run statusGang stop");
-    ns.tprint("  run statusGang start");
-    ns.tprint("  run statusGang restart");
+    private statusGangOutput(ns: NS): string {
+        const isRunning = GANG.isRunningOnAnyServers(ns);
+
+        if (!isRunning) {
+            return "false";
+        }
+
+        return "on " + getGangScriptServer(ns);
+    }
+
 }

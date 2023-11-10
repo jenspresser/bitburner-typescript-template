@@ -7,7 +7,7 @@ import { HacknetStatusScript } from "./statusHacknet";
 import { ShareStatusScript } from "/statusShare";
 import { StockStatusScript } from "/statusStocks";
 import { printTable } from "/table";
-import { statusGangOutput } from "./gang/libgang";
+import { GangStatusScript } from "./statusGang";
 
 export const HOME_RESERVE_RAM = 32;
 
@@ -23,13 +23,13 @@ function printStatus(ns: NS) {
 		HacknetStatusScript.INSTANCE,
 		PservStatusScript.INSTANCE,
 		StockStatusScript.INSTANCE,
-		ShareStatusScript.INSTANCE
+		ShareStatusScript.INSTANCE,
+		GangStatusScript.INSTANCE
 	].map(it => it.getStatus(ns));
 
 	let matrix = [
 		["Target Mode", readTargetMode(ns)],
 		...statusFromExecutors,
-		["Gang", statusGangOutput(ns)],
 		["Programs", getProgramCount(ns)],
 		["Purchased Servers", getPurchasedServerNames(ns).length],
 		["Script Gain ($/s)", ns.formatNumber(ns.getTotalScriptIncome()[0])],

@@ -1,9 +1,9 @@
 import { NS } from "@ns";
 import { initializeTargetMode, persistTargetMode } from "/hack/libhack";
-import { STATUSGANG } from "./libscripts";
 import { PservStatusScript } from "./statusPserv";
 import { HacknetStatusScript } from "./statusHacknet";
 import { HackingStatusScript } from "./statusHacking";
+import { GangStatusScript } from "./statusGang";
 
 export const HOME_RESERVE_RAM = 32;
 const HOME = "home";
@@ -82,8 +82,8 @@ function startPurchaseHacknet(ns: NS) {
 }
 
 function stopGang(ns: NS) {
-	STATUSGANG.stop(ns);
+	GangStatusScript.INSTANCE.stop(ns);
 }
 function startGang(ns: NS) {
-	STATUSGANG.start(ns);
+	GangStatusScript.INSTANCE.start(ns);
 }
