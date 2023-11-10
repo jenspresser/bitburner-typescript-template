@@ -256,7 +256,7 @@ export const HACK = new HackScript("hack/hack.js");
 export const GROW = new HackScript("hack/grow.js");
 export const WEAKEN = new HackScript("hack/weaken.js");
 export const DISTRIBUTEHACK = new Script("hack/distributeHack.js");
-export const ALL_HACK_SCRIPTS = [MASTERHACK, HACK, GROW, WEAKEN];
+export const ALL_HACK_SCRIPTS = [HACK, GROW, WEAKEN];
 
 // Purchase Scripts
 export const HACKNET_SCRIPTS = [

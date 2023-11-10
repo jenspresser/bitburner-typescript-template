@@ -21,10 +21,9 @@ export async function main(ns: NS) {
 	while (true) {
     ns.print("crawlRootAccess");
 		await crawlRootAccess(ns);
-    ns.print("distributeScripts");
-		await distributeScripts(ns);
-
+    
     await ns.sleep(1000);
+    
     ns.print("distributeHack");
     await distributeHack(ns);
 
@@ -35,7 +34,6 @@ export async function main(ns: NS) {
 /** @param {NS} ns */
 export async function distributeHack(ns: NS) {
   await distributeScripts(ns);
-
   await distributeOnRootServers(ns);
   await distributeOnHome(ns);
 }
