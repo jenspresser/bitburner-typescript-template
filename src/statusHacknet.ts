@@ -11,6 +11,6 @@ export class HacknetStatusScript extends SingleScriptOnHomeStatusScript {
   static INSTANCE = new HacknetStatusScript();
 
   constructor() {
-    super(HACKNET, HacknetStatusScript.NAME, "Purchase Hacknet on");
+    super(HACKNET, HacknetStatusScript.NAME, "Purchase Hacknet on", "hn");
   }
 }

@@ -12,7 +12,7 @@ export class ShareStatusScript extends DistributedTaskStatusScript {
   static INSTANCE = new ShareStatusScript();
 
   constructor() {
-    super(SHARE, ShareStatusScript.NAME, "Share");
+    super(SHARE, ShareStatusScript.NAME, "Share", "sh");
   }
 
   startOnServer(ns: NS, server: string): void {

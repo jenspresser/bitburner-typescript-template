@@ -11,6 +11,6 @@ export class StockStatusScript extends SingleScriptOnHomeStatusScript {
   static INSTANCE = new StockStatusScript();
 
   constructor() {
-    super(STOCK, StockStatusScript.NAME, "Stocks on");
+    super(STOCK, StockStatusScript.NAME, "Stocks on", "st");
   }
 }

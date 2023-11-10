@@ -11,6 +11,6 @@ export class PservStatusScript extends SingleScriptOnHomeStatusScript {
   static INSTANCE = new PservStatusScript();
 
   constructor() {
-    super(PSERV, PservStatusScript.NAME, "Purchase Pserv on");
+    super(PSERV, PservStatusScript.NAME, "Purchase Pserv on", "ps");
   }
 }

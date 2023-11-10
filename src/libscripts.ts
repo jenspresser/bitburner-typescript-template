@@ -111,10 +111,12 @@ export interface CanStartStop {
 export abstract class StatusScript implements HasRunningStatus, CanStartStop {
     statusName: string;
     statusOutput: string;
+    statusAlias?: string;
 
-    constructor(statusName: string, statusOutput: string) {
+    constructor(statusName: string, statusOutput: string, statusAlias?: string) {
         this.statusName = statusName;
         this.statusOutput = statusOutput;
+        this.statusAlias = statusAlias;
     }
 
     onMain(ns: NS) {
@@ -130,6 +132,14 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
         } else if ("restart" === action) {
             this.stop(ns);
             this.start(ns);
+        }
+    }
+
+    getActionNames() {
+        if(this.statusAlias) {
+            return [this.statusAlias, this.statusName]
+        } else {
+            return [this.statusName];
         }
     }
 
@@ -155,8 +165,8 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
 
 export abstract class SingleScriptOnHomeStatusScript extends StatusScript {
     script: Script;
-    constructor(script: Script, statusName: string, statusOutput: string) {
-        super(statusName, statusOutput);
+    constructor(script: Script, statusName: string, statusOutput: string, statusAlias?: string) {
+        super(statusName, statusOutput, statusAlias);
         this.script = script;
     }
 
@@ -183,8 +193,8 @@ export abstract class SingleScriptOnHomeStatusScript extends StatusScript {
 
 export abstract class DistributedTaskStatusScript extends StatusScript {
     script: Script;
-    constructor(script: Script, statusName: string, statusOutput: string) {
-        super(statusName, statusOutput);
+    constructor(script: Script, statusName: string, statusOutput: string, statusAlias?: string) {
+        super(statusName, statusOutput, statusAlias);
         this.script = script;
     }
 

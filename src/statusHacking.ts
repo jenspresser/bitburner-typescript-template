@@ -18,7 +18,7 @@ export class HackingStatusScript extends SingleScriptOnHomeStatusScript {
   static INSTANCE = new HackingStatusScript();
 
   constructor() {
-    super(DISTRIBUTEHACK, HackingStatusScript.NAME, "Hacking");
+    super(DISTRIBUTEHACK, HackingStatusScript.NAME, "Hacking", "h");
   }
 
   afterStop(ns: NS): void {

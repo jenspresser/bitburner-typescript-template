@@ -15,7 +15,7 @@ export class GangStatusScript extends DistributedTaskStatusScript {
     static INSTANCE = new GangStatusScript();
 
     constructor() {
-        super(GANG, GangStatusScript.NAME, "Gang");
+        super(GANG, GangStatusScript.NAME, "Gang", "g");
     }
 
     beforeStart(ns: NS): void {
