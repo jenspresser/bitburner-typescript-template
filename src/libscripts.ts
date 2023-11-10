@@ -66,24 +66,6 @@ export class Script {
     }
 }
 
-export class StatusScript extends Script {
-    constructor(scriptName: string) {
-        super(scriptName);
-    }
-
-    stop(ns: NS) {
-        this.execOnHomeArgsOnly(ns, "stop");
-    }
-
-    start(ns: NS) {
-        this.execOnHomeArgsOnly(ns, "start");
-    }
-
-    status(ns: NS) {
-        this.execOnHomeArgsOnly(ns, "status");
-    }
-}
-
 export class HackScript extends Script {
     constructor(scriptName: string) {
         super(scriptName);
@@ -102,9 +84,9 @@ export class HackScript extends Script {
     }
 }
 
-export const STATUS_SCRIPT_EXECUTORS: StatusScriptExecutor[] = [];
+export const STATUS_SCRIPT_EXECUTORS: StatusScript[] = [];
 
-export function getStatusScriptExecutor(name: string): StatusScriptExecutor {
+export function getStatusScriptExecutor(name: string): StatusScript {
     let executor = STATUS_SCRIPT_EXECUTORS.find(it => it.statusName === name);
 
     if (executor) {
@@ -126,7 +108,7 @@ export interface CanStartStop {
     restart(ns: NS): void;
 }
 
-export abstract class StatusScriptExecutor implements HasRunningStatus, CanStartStop {
+export abstract class StatusScript implements HasRunningStatus, CanStartStop {
     statusName: string;
     statusOutput: string;
 
@@ -171,7 +153,7 @@ export abstract class StatusScriptExecutor implements HasRunningStatus, CanStart
     afterStop(ns: NS) {}
 }
 
-export abstract class SingleScriptOnHomeStatusScript extends StatusScriptExecutor {
+export abstract class SingleScriptOnHomeStatusScript extends StatusScript {
     script: Script;
     constructor(script: Script, statusName: string, statusOutput: string) {
         super(statusName, statusOutput);
@@ -199,7 +181,7 @@ export abstract class SingleScriptOnHomeStatusScript extends StatusScriptExecuto
     }
 }
 
-export abstract class DistributedTaskStatusScript extends StatusScriptExecutor {
+export abstract class DistributedTaskStatusScript extends StatusScript {
     script: Script;
     constructor(script: Script, statusName: string, statusOutput: string) {
         super(statusName, statusOutput);
