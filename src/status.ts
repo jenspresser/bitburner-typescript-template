@@ -130,7 +130,8 @@ function printStatus(ns: NS) {
         ProgramCountStatusProperty.INSTANCE,
         PservCountStatusProperty.INSTANCE,
         ScriptGainMoneyStatusProperty.INSTANCE,
-        ScriptGainExperienceStatusProperty.INSTANCE
+        ScriptGainExperienceStatusProperty.INSTANCE,
+        KarmaStatusProperty.INSTANCE
     ].map(it => it.getStatus(ns));
 
     let matrix = [
@@ -204,5 +205,22 @@ export class ScriptGainExperienceStatusProperty extends StatusProperty {
 
     getValue(ns: NS): string {
         return ns.formatNumber(ns.getTotalScriptExpGain());
+    }
+}
+
+export class KarmaStatusProperty extends StatusProperty {
+    static INSTANCE = new KarmaStatusProperty();
+
+    constructor() {
+        super("karma", "Karma");
+    }
+
+    getValue(ns: NS): string {
+        let evalResult = eval("ns.heart.break()");
+
+        if(evalResult && typeof evalResult === "number") {
+            return ns.formatNumber(evalResult);
+        }
+        return "N/A";
     }
 }
