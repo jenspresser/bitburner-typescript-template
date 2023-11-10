@@ -11,10 +11,6 @@ export async function keepBuyingHacknet(ns: NS) {
 
     ns.print("Start keepBuyingHacknet");
 
-    if(canKeepUpgradingHacknet(hacknet)) {
-        printOnStop(ns);
-    }
-
     while (canKeepUpgradingHacknet(hacknet)) {
         ns.print("  canKeepUpgradingHacknet ");
 
@@ -50,6 +46,7 @@ export async function keepBuyingHacknet(ns: NS) {
         }
         await ns.sleep(10);
     } 
+    
     printOnStop(ns);
 }
 

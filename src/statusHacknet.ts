@@ -4,15 +4,15 @@ import { HACKNET_SCRIPTS } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  PurchaseHacknetStatusScriptExecutor.INSTANCE.onMain(ns);
+  HacknetStatusScriptExecutor.INSTANCE.onMain(ns);
 }
 
-export class PurchaseHacknetStatusScriptExecutor extends StatusScriptExecutor {
-  static NAME="purchase_hacknet";
-  static INSTANCE = new PurchaseHacknetStatusScriptExecutor();
+export class HacknetStatusScriptExecutor extends StatusScriptExecutor {
+  static NAME="hacknet";
+  static INSTANCE = new HacknetStatusScriptExecutor();
 
   constructor() {
-    super(PurchaseHacknetStatusScriptExecutor.NAME, "Purchase Hacknet on");
+    super(HacknetStatusScriptExecutor.NAME, "Purchase Hacknet on");
   }
 
   start(ns: NS): void {

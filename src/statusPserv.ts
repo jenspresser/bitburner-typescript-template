@@ -4,15 +4,15 @@ import { PURCHASE_SERVER_SCRIPTS } from "./libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  PurchasePservStatusScriptExecutor.INSTANCE.onMain(ns);
+  PservStatusScriptExecutor.INSTANCE.onMain(ns);
 }
 
-export class PurchasePservStatusScriptExecutor extends  StatusScriptExecutor {
-  static NAME="purchase_pserv";
-  static INSTANCE = new PurchasePservStatusScriptExecutor();
+export class PservStatusScriptExecutor extends  StatusScriptExecutor {
+  static NAME="pserv";
+  static INSTANCE = new PservStatusScriptExecutor();
 
   constructor() {
-    super(PurchasePservStatusScriptExecutor.NAME, "Purchase Pserv on");
+    super(PservStatusScriptExecutor.NAME, "Purchase Pserv on");
   }
 
   start(ns: NS): void {
