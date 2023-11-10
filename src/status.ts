@@ -7,7 +7,7 @@ import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { printTable } from "./table";
 import { HasStatus, MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
-import { BackdooredServersStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
+import { BackdooredServersStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 
 const STATUS_SCRIPTS = [
@@ -54,13 +54,14 @@ const SPECIALS: SpecialModule[] = [
 
 const PROPERTIES: StatusProperty[] = [
     TargetModeStatusProperty.INSTANCE,
+    HomeRamStatusProperty.INSTANCE,
     ProgramCountStatusProperty.INSTANCE,
     PservCountStatusProperty.INSTANCE,
     ScriptGainMoneyStatusProperty.INSTANCE,
     ScriptGainExperienceStatusProperty.INSTANCE,
     RootServersStatusProperty.INSTANCE,
     BackdooredServersStatusProperty.INSTANCE,
-    KarmaStatusProperty.INSTANCE
+    KarmaStatusProperty.INSTANCE,
 ]
 
 const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
