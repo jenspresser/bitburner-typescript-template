@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { getProgramCount } from "./hack/libhack";
+import { getProgramCount } from "./libprograms";
 import { printTable } from "./table";
 import { FACTION_SERVERS } from "./libserver";
 

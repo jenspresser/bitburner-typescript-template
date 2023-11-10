@@ -31,18 +31,18 @@ export function uploadScripts(ns: NS, hostname: string) {
     ns.scp(scripts, hostname);
 }
 
-export function hasFormulaAPI(ns: NS) : boolean {
+export function hasFormulaAPI(ns: NS): boolean {
     return ns.fileExists("Formulas.exe", "home");
 }
 
-export function getBitNodeMultipliers(ns: NS) : BitNodeMultipliers {
+export function getBitNodeMultipliers(ns: NS): BitNodeMultipliers {
     return ns.getBitNodeMultipliers();
 }
 
-export function getKarma(ns: NS) : number {
+export function getKarma(ns: NS): number {
     let evalResult = eval("ns.heart.break()");
 
-    if(evalResult && typeof evalResult === "number") {
+    if (evalResult && typeof evalResult === "number") {
         return evalResult;
     }
 
@@ -120,4 +120,12 @@ export class ServerRam {
         this.hostname = hostname;
         this.ram = ram;
     }
+}
+
+export function onlyUnique(value: any, index: number, array: any[]) {
+    return array.indexOf(value) === index;
+}
+
+export function distinct<Type>(arr: Type[]) : Type[] {
+    return arr.filter(onlyUnique);
 }

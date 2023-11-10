@@ -9,6 +9,7 @@ import { printTable } from "./table";
 import { HasStatus, MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
 import { BackdooredServersStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
+import { distinct } from "./library";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -148,15 +149,20 @@ function setProperty(ns: NS) {
 
 function getModulesFromArgs(ns: NS): string[] {
     let modulesArgs = ns.args.splice(1).map(it => String(it));
+    let availableModuleNames = STATUS_SCRIPTS.flatMap(it => it.getModuleNames());
+    let specialModuleAliases = SPECIALS.map(it => it.name); 
 
-    if (SPECIALS.map(it => it.name).includes(modulesArgs[0])) {
-        return SPECIALS.find(it => it.name === modulesArgs[0])!.scriptFilter();
+    let modules : string[] = [];
+
+    for(let moduleArg of modulesArgs) {
+        if(availableModuleNames.includes(moduleArg)) {
+            modules.push(moduleArg);
+        } else if(specialModuleAliases.includes(moduleArg)) {
+            modules.push(...getModulesFromSpecialModuleAlias(moduleArg));
+        }
     }
 
-    let availableModuleNames = STATUS_SCRIPTS.flatMap(it => it.getModuleNames());
-    let modules = modulesArgs.filter(it => availableModuleNames.includes(it));
-
-    return modules;
+    return distinct(modules);
 }
 
 function getModuleScripts(modules: string[]): StatusScript[] {
@@ -165,6 +171,10 @@ function getModuleScripts(modules: string[]): StatusScript[] {
 
         return scriptModuleNames.filter(it => modules.includes(it)).length > 0;
     });
+}
+
+function getModulesFromSpecialModuleAlias(specialModuleAlias: string) : string[] {
+    return SPECIALS.find(it => it.name === specialModuleAlias)?.scriptFilter() ?? [];
 }
 
 function printModules(ns: NS) {
