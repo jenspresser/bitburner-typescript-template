@@ -164,16 +164,13 @@ export abstract class StatusScriptExecutor implements HasRunningStatus, CanStart
     abstract neededStartRam(ns: NS): number;
 }
 
-// Purchase Scripts
-export const HACKNET_SCRIPTS = [
-    "keepBuyingHacknet.js"
-].map(it => new Script(it));
-export const PURCHASE_SERVER_SCRIPTS = [
-    "purchaseServers.js",
-    "upgradeServers.js",
-].map(it => new Script(it));
 
-export const PURCHASE_SCRIPTS = PURCHASE_SERVER_SCRIPTS.concat(HACKNET_SCRIPTS);
+
+// Hacknet Script
+export const HACKNET = new Script("keepBuyingHacknet.js");
+
+// Pserv Scripts
+export const PSERV = new Script("keepBuyingPserv.js");
 
 // Stock Script
 export const STOCK = new Script("stocks/stockTrader5.js");
@@ -186,10 +183,18 @@ export const MASTERHACK = new Script("hack/masterHack.js");
 export const HACK = new HackScript("hack/hack.js");
 export const GROW = new HackScript("hack/grow.js");
 export const WEAKEN = new HackScript("hack/weaken.js");
-
+export const DISTRIBUTEHACK = new Script("hack/distributeHack.js");
 export const ALL_HACK_SCRIPTS = [MASTERHACK, HACK, GROW, WEAKEN];
 
-export const DISTRIBUTEHACK = new Script("hack/distributeHack.js");
+// Purchase Scripts
+export const HACKNET_SCRIPTS = [
+    HACKNET
+];
+export const PURCHASE_SERVER_SCRIPTS = [
+    PSERV
+]
+
+export const PURCHASE_SCRIPTS = PURCHASE_SERVER_SCRIPTS.concat(HACKNET_SCRIPTS);
 
 export const ALL_HOME_SCRIPTS = PURCHASE_SCRIPTS.concat([DISTRIBUTEHACK]);
 

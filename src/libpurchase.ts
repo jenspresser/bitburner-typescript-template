@@ -7,52 +7,56 @@ import {
 
 export const TARGET_PURCHASE_RAM = 16;
 
-/** 
- * @param {NS} ns
-*/
-export async function upgradeServers(ns: NS) {
-    const targetMaxRam = ns.getPurchasedServerMaxRam();
+export async function keepBuyingPserv(ns: NS) {
+    ns.tprint("Start keepBuyingPserv!");
 
-    let initialCount = getPurchasedServerNames(ns).length;
+    const initialCount = getPurchasedServerNames(ns).length;
 
-    ns.tprint("Start upgrading Servers until " + ns.formatRam(targetMaxRam) + " RAM");
+    ns.tprint("Purchase Servers with " + ns.formatRam(TARGET_PURCHASE_RAM) + " RAM");
+    ns.tprint(" Starting with " + initialCount + " purchased servers");
+    ns.tprint("Start upgrading Servers until " + ns.formatRam(ns.getPurchasedServerMaxRam()) + " RAM");
     ns.tprint("  initially " + initialCount + " purchased servers available");
 
-    if (initialCount == 0) {
-        ns.tprint("  Starting with 0 initial purchased Servers. Waiting until Servers available");
-
-        while (getPurchasedServerNames(ns).length === 0) {
-            await ns.sleep(10000);
+    while (canKeepUpgradingPserv(ns)) {
+        // Check, if we do not have reached the max server limit
+        if (getPurchasedServerNames(ns).length < ns.getPurchasedServerLimit()) {
+            // Check if we have enough money to purchase a server
+            if (getHomeServerMoney(ns) > ns.getPurchasedServerCost(TARGET_PURCHASE_RAM)) {
+                ns.purchaseServer(getNextPurchaseServerName(ns), TARGET_PURCHASE_RAM);
+            }
         }
 
-        ns.tprint("Purchased Servers available, start upgrading");
-    }
-
-    while (hasUpgradeableServer(ns, targetMaxRam)) {
-        let server = getNextUpgradeableServer(ns, targetMaxRam);
-
-        if (getHomeServerMoney(ns) > server.upgradeRamCost) {
-            ns.upgradePurchasedServer(server.hostname, server.nextRam);
-            // setupHackSimple(ns, server.hostname);
-            // setuphackNext(ns, server.hostname);
+        if (hasUpgradeableServer(ns)) {
+            let server = getNextUpgradeableServer(ns);
+    
+            if (getHomeServerMoney(ns) > server.upgradeRamCost) {
+                ns.upgradePurchasedServer(server.hostname, server.nextRam);
+            }
         }
-
+        
         await ns.sleep(50);
     }
 
-    ns.tprint("Cannot upgrade more servers; EXIT");
+    ns.tprint("Cannot buy or upgrade any more Pserv, EXIT");
 }
 
+function canKeepUpgradingPserv(ns: NS) {
+    return canBuyNewServer(ns) || hasUpgradeableServer(ns);
+}
 
 /**
  * @param {NS} ns
  * @param {Number} targetMaxRam
- * @returns {ServerRam}
+ * @returns {PurchasedServerRam}
  */
-export function getNextUpgradeableServer(ns: NS, targetMaxRam: number) {
-    return getUpgradeableServers(ns, targetMaxRam)
+export function getNextUpgradeableServer(ns: NS): PurchasedServerRam {
+    return getUpgradeableServers(ns)
         .sort((a, b) => a.upgradeRamCost - b.upgradeRamCost)
     [0];
+}
+
+export function canBuyNewServer(ns: NS): boolean {
+    return getPurchasedServerNames(ns).length < ns.getPurchasedServerLimit();
 }
 
 /**
@@ -60,8 +64,9 @@ export function getNextUpgradeableServer(ns: NS, targetMaxRam: number) {
  * @param {Number} targetMaxRam
  * @returns {Boolean}
  */
-export function hasUpgradeableServer(ns: NS, targetMaxRam: number) {
-    return getUpgradeableServers(ns, targetMaxRam).length > 0;
+export function hasUpgradeableServer(ns: NS): boolean {
+    let targetMaxRam: number = ns.getPurchasedServerMaxRam();
+    return getUpgradeableServers(ns).length > 0;
 }
 
 /**
@@ -69,9 +74,9 @@ export function hasUpgradeableServer(ns: NS, targetMaxRam: number) {
  * @param {Number} targetMaxRam
  * @returns {PurchasedServerRam[]}
  */
-export function getUpgradeableServers(ns: NS, targetMaxRam: number) {
-    return getPurchasedServerRams(ns, targetMaxRam)
-        .filter(serverRam => serverRam.ram < targetMaxRam);
+export function getUpgradeableServers(ns: NS): PurchasedServerRam[] {
+    return getPurchasedServerRams(ns)
+        .filter(serverRam => serverRam.ram < ns.getPurchasedServerMaxRam());
 }
 
 /**
@@ -79,9 +84,9 @@ export function getUpgradeableServers(ns: NS, targetMaxRam: number) {
  * @param {Number} targetMaxRam
  * @returns {PurchasedServerRam[]}
  */
-export function getPurchasedServerRams(ns: NS, targetMaxRam: number) {
+export function getPurchasedServerRams(ns: NS,): PurchasedServerRam[] {
     return getPurchasedServerNames(ns)
-        .filter(name => ns.getServerMaxRam(name) < targetMaxRam)
+        .filter(name => ns.getServerMaxRam(name) < ns.getPurchasedServerMaxRam())
         .map(name => {
             let initialRam = ns.getServerMaxRam(name);
             let targetRam = initialRam * 2;
@@ -98,39 +103,6 @@ export class PurchasedServerRam extends ServerRam {
         this.upgradeRamCost = upgradeRamCost;
     }
 }
-
-/** 
- * @param {NS} ns
-*/
-export async function purchaseServers(ns: NS) {
-    // How much RAM each purchased server will have. In this case, it'll
-    // be 8GB.
-    var purchaseRam = TARGET_PURCHASE_RAM;
-
-    ns.tprint("Purchase Servers with " + ns.formatRam(purchaseRam) + " RAM");
-    ns.tprint(" Starting with " + getPurchasedServerNames(ns).length + " purchased servers");
-
-    // Continuously try to purchase servers until we've reached the maximum
-    // amount of servers
-    while (getPurchasedServerNames(ns).length < ns.getPurchasedServerLimit()) {
-        // Check if we have enough money to purchase a server
-        if (getHomeServerMoney(ns) > ns.getPurchasedServerCost(purchaseRam)) {
-            // If we have enough money, then:
-            //  1. Purchase the server
-            //  2. Copy our hacking script onto the newly-purchased server
-            //  3. Run our hacking script on the newly-purchased server with 3 threads
-            //  4. Increment our iterator to indicate that we've bought a new server
-            var hostname = ns.purchaseServer(getNextPurchaseServerName(ns), purchaseRam);
-            //setupHackSimple(ns, hostname);
-            //setuphackNext(ns, hostname);
-        }
-
-        await ns.sleep(50);
-    }
-
-    ns.tprint("Cannot purchase more servers; EXIT");
-}
-
 
 /**
  * @param {NS} ns
