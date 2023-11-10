@@ -103,6 +103,8 @@ function getModuleScripts(modules: string[]): StatusScript[] {
 function printModules(ns: NS) {
     ns.tprint("Available Modules: ")
     STATUS_SCRIPTS.forEach(it => ns.tprint("\t[" + it.getModuleNames() + "]"));
+    ns.tprint("\t--------------------------");
+    SPECIALS.forEach(it => ns.tprint("\t["+it.name+"] => [" + it.scriptFilter() + "]"));
 }
 
 function printStatus(ns: NS) {
