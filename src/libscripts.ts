@@ -109,7 +109,7 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
 
     onMain(ns: NS) {
         const action = ns.args[0];
-        
+
         this.onAction(ns, String(action));
     }
 
@@ -129,7 +129,7 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
     }
 
     getModuleNames() {
-        if(this.statusAlias) {
+        if (this.statusAlias) {
             return [this.statusAlias, this.statusName]
         } else {
             return [this.statusName];
@@ -149,11 +149,11 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
     abstract stop(ns: NS): void;
     abstract isRunning(ns: NS): boolean;
     abstract neededStartRam(ns: NS): number;
-    
-    beforeStart(ns: NS) {}
-    afterStart(ns: NS) {}
-    beforeStop(ns: NS) {}
-    afterStop(ns: NS) {}
+
+    beforeStart(ns: NS) { }
+    afterStart(ns: NS) { }
+    beforeStop(ns: NS) { }
+    afterStop(ns: NS) { }
 }
 
 export abstract class SingleScriptOnHomeStatusScript extends StatusScript {
@@ -274,9 +274,33 @@ export abstract class StatusProperty implements HasStatus {
         this.output = output;
     }
 
-    abstract getValue(ns: NS) : string;
+    abstract getValue(ns: NS): string;
 
-    getStatus(ns: NS) : [string, string]{
+    getStatus(ns: NS): [string, string] {
         return [this.output, this.getValue(ns)];
+    }
+
+    isMutable() : boolean {
+        return false;
+    }
+}
+
+export abstract class MutableStatusProperty extends StatusProperty {
+    constructor(name: string, output: string) {
+        super(name, output);
+    }
+
+    abstract setValue(ns: NS, value: string): void;
+
+    abstract getDefaultValue(ns: NS) : string;
+
+    initialize(ns: NS) {
+        this.setValue(ns, this.getDefaultValue(ns));
+    }
+
+    afterSet(ns: NS) {}
+
+    isMutable() : boolean {
+        return true;
     }
 }

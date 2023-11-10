@@ -6,9 +6,8 @@ import { GangStatusScript } from "./status/statusGang";
 import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { printTable } from "./table";
-import { StatusProperty, StatusScript } from "./libscripts";
-import { getProgramCount, readTargetMode } from "./hack/libhack";
-import { getPurchasedServerNames } from "./libserver";
+import { HasStatus, MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
+import { KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -18,42 +17,6 @@ const STATUS_SCRIPTS = [
     StockStatusScript.INSTANCE,
     ShareStatusScript.INSTANCE
 ]
-
-export async function main(ns: NS) {
-    const action: string = String(ns.args[0]);
-    const startStopActions: string[] = ["start", "stop", "restart"]
-    const availableActions: string[] = ["print", "modules", ...startStopActions];
-
-    if (!availableActions.includes(action)) {
-        ns.tprint("first parameter must be one of " + availableActions);
-    }
-
-    if (action === "print") {
-        printStatus(ns);
-        return;
-    }
-
-    if (action === "modules") {
-        printModules(ns);
-        return;
-    }
-
-    if (startStopActions.includes(action)) {
-        if (ns.args.length === 1) {
-            ns.tprint("Need to specify which modules to " + action);
-            return;
-        }
-
-        let modules = getModulesFromArgs(ns);
-
-        ns.tprint("Try to " + action + " modules: [" + modules + "]");
-        let scripts = getModuleScripts(modules);
-
-        for (let script of scripts) {
-            script.onAction(ns, action);
-        }
-    }
-}
 
 type SpecialModule = {
     name: string,
@@ -85,7 +48,97 @@ const SPECIALS: SpecialModule[] = [
         name: "gainmoney",
         scriptFilter: () => [HackingStatusScript.NAME, GangStatusScript.NAME]
     },
+];
+
+const PROPERTIES: StatusProperty[] = [
+    TargetModeStatusProperty.INSTANCE,
+    ProgramCountStatusProperty.INSTANCE,
+    PservCountStatusProperty.INSTANCE,
+    ScriptGainMoneyStatusProperty.INSTANCE,
+    ScriptGainExperienceStatusProperty.INSTANCE,
+    KarmaStatusProperty.INSTANCE
 ]
+
+const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
+    .filter(it => it.isMutable)
+    .map(it => (it as MutableStatusProperty));
+
+const startStopActions: string[] = ["start", "stop", "restart"];
+const availableActions: string[] = ["print", "modules", "property", ...startStopActions];
+
+function errorEmptyOrWrongAction(ns: NS) {
+    ns.tprint("first parameter must be one of " + availableActions);
+}
+
+export async function main(ns: NS) {
+    if (ns.args.length === 0) {
+        errorEmptyOrWrongAction(ns);
+        return;
+    }
+
+    const action: string = String(ns.args[0]);
+
+    if (!availableActions.includes(action)) {
+        errorEmptyOrWrongAction(ns);
+        return;
+    }
+
+    if (action === "print") {
+        printStatus(ns);
+        return;
+    }
+
+    if (action === "modules") {
+        printModules(ns);
+        return;
+    }
+
+    if (action === "property") {
+        setProperty(ns);
+        return;
+    }
+
+    if (startStopActions.includes(action)) {
+        if (ns.args.length === 1) {
+            ns.tprint("Need to specify which modules to " + action);
+            return;
+        }
+
+        let modules = getModulesFromArgs(ns);
+
+        ns.tprint("Try to " + action + " modules: [" + modules + "]");
+        let scripts = getModuleScripts(modules);
+
+        for (let script of scripts) {
+            script.onAction(ns, action);
+        }
+    }
+}
+
+function setProperty(ns: NS) {
+    const availableProperties = MUTABLE_PROPERTIES.map(it => it.name);
+
+    if (ns.args.length < 3) {
+        ns.tprint("Must call 'property' with at least a property name and value");
+        ns.tprint("available properties: " + availableProperties.join(", "));
+        return;
+    }
+
+    let propertyName = String(ns.args[1]);
+    let property = MUTABLE_PROPERTIES.find(it => it.name === propertyName);
+
+    if (!property) {
+        ns.tprint("invalid property " + propertyName + "; available properties: [" + availableProperties.join(", ") + "]");
+        return;
+    }
+
+    let propertyValue = String(ns.args[2]);
+
+    ns.tprint("Setting property [" + propertyName + "] to value [" + propertyValue + "]");
+
+    property.setValue(ns, propertyValue);
+    property.afterSet(ns);
+}
 
 function getModulesFromArgs(ns: NS): string[] {
     let modulesArgs = ns.args.splice(1).map(it => String(it));
@@ -112,27 +165,12 @@ function printModules(ns: NS) {
     ns.tprint("Available Modules: ")
     STATUS_SCRIPTS.forEach(it => ns.tprint("\t[" + it.getModuleNames() + "]"));
     ns.tprint("\t--------------------------");
-    SPECIALS.forEach(it => ns.tprint("\t["+it.name+"] => [" + it.scriptFilter() + "]"));
+    SPECIALS.forEach(it => ns.tprint("\t[" + it.name + "] => [" + it.scriptFilter() + "]"));
 }
 
 function printStatus(ns: NS) {
-    let statusFromExecutors = [
-        HackingStatusScript.INSTANCE,
-        HacknetStatusScript.INSTANCE,
-        PservStatusScript.INSTANCE,
-        StockStatusScript.INSTANCE,
-        ShareStatusScript.INSTANCE,
-        GangStatusScript.INSTANCE
-    ].map(it => it.getStatus(ns));
-
-    let statusFromProperties = [
-        TargetModeStatusProperty.INSTANCE,
-        ProgramCountStatusProperty.INSTANCE,
-        PservCountStatusProperty.INSTANCE,
-        ScriptGainMoneyStatusProperty.INSTANCE,
-        ScriptGainExperienceStatusProperty.INSTANCE,
-        KarmaStatusProperty.INSTANCE
-    ].map(it => it.getStatus(ns));
+    let statusFromExecutors = STATUS_SCRIPTS.map(it => it.getStatus(ns));
+    let statusFromProperties = PROPERTIES.map(it => it.getStatus(ns));
 
     let matrix = [
         ...statusFromExecutors,
@@ -144,83 +182,4 @@ function printStatus(ns: NS) {
         horizontalSeparator: "first",
         align: ["left", "right"]
     });
-}
-
-export class TargetModeStatusProperty extends StatusProperty {
-    static INSTANCE = new TargetModeStatusProperty();
-
-    constructor() {
-        super("targetMode", "Target Mode");
-    }
-
-    getValue(ns: NS): string {
-        return readTargetMode(ns);
-    }
-}
-
-export class ProgramCountStatusProperty extends StatusProperty {
-    static INSTANCE = new ProgramCountStatusProperty();
-
-    constructor() {
-        super("programCount", "Programs");
-    }
-
-    getValue(ns: NS): string {
-        return "" + getProgramCount(ns);
-    }
-}
-
-export class PservCountStatusProperty extends StatusProperty {
-    static INSTANCE = new PservCountStatusProperty();
-
-    constructor() {
-        super("pservCount", "Purchased Servers");
-    }
-
-    getValue(ns: NS): string {
-        return "" + getPurchasedServerNames(ns).length;
-    }
-}
-
-export class ScriptGainMoneyStatusProperty extends StatusProperty {
-    static INSTANCE = new ScriptGainMoneyStatusProperty();
-
-    constructor() {
-        super("scriptGainMoney", "Script Gain ($/s)");
-    }
-
-    getValue(ns: NS): string {
-        return ns.formatNumber(ns.getTotalScriptIncome()[0]);
-    }
-}
-
-
-
-export class ScriptGainExperienceStatusProperty extends StatusProperty {
-    static INSTANCE = new ScriptGainExperienceStatusProperty();
-
-    constructor() {
-        super("scriptGainExp", "Script Gain (Exp)");
-    }
-
-    getValue(ns: NS): string {
-        return ns.formatNumber(ns.getTotalScriptExpGain());
-    }
-}
-
-export class KarmaStatusProperty extends StatusProperty {
-    static INSTANCE = new KarmaStatusProperty();
-
-    constructor() {
-        super("karma", "Karma");
-    }
-
-    getValue(ns: NS): string {
-        let evalResult = eval("ns.heart.break()");
-
-        if(evalResult && typeof evalResult === "number") {
-            return ns.formatNumber(evalResult);
-        }
-        return "N/A";
-    }
 }
