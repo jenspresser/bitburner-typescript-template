@@ -79,7 +79,7 @@ const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
     .map(it => (it as MutableStatusProperty));
 
 const startStopActions: string[] = ["start", "stop", "restart"];
-const availableActions: string[] = ["print", "modules", "property", ...startStopActions];
+const availableActions: string[] = ["status", "modules", "property", ...startStopActions];
 
 function errorEmptyOrWrongAction(ns: NS) {
     ns.tprint("first parameter must be one of " + availableActions);
@@ -102,7 +102,7 @@ export async function main(ns: NS) {
         return;
     }
 
-    if (action === "print") {
+    if (action === "status") {
         printStatus(ns);
         return;
     }
