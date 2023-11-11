@@ -1,4 +1,4 @@
-import { FilenameOrPID, NS, RunOptions } from "@ns";
+import { NS, RunOptions } from "@ns";
 import { getServersWithRootAccess } from "./libserver";
 
 export class Script {
@@ -211,7 +211,14 @@ export abstract class DistributedTaskStatusScript extends StatusScript {
 
     startOnServer(ns: NS, server: string) {
         if (!this.script.isRunningOnServer(ns, server)) {
-            this.script.execOnServer(ns, server);
+            let availableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
+            let neededRam = this.script.ram(ns);
+
+            if(availableRam > neededRam) {
+                this.script.execOnServer(ns, server);
+            } else {
+                ns.tprint("Cannot start script " + this.script.scriptName + " on server " + server + ": not enough ram (needed: " + ns.formatRam(neededRam) + ", available: " + ns.formatRam(availableRam) + ")");
+            }
         }
     }
 
@@ -267,6 +274,7 @@ export const GANG = new Script("gang/gang.js");
 
 // Singularity Scripts
 export const BUY_PROGRAMS = new Script("singularity/keepBuyingPrograms.js");
+export const UPGRADE_HOME = new Script("singularity/keepUpgradingHome.js");
 
 
 export abstract class StatusProperty implements HasStatus {
@@ -283,11 +291,11 @@ export abstract class StatusProperty implements HasStatus {
         return [this.output, this.getValue(ns)];
     }
 
-    isMutable() : boolean {
+    isMutable(): boolean {
         return false;
     }
 
-    isUsable(ns: NS) : boolean {
+    isUsable(ns: NS): boolean {
         return true;
     }
 }
@@ -299,15 +307,15 @@ export abstract class MutableStatusProperty extends StatusProperty {
 
     abstract setValue(ns: NS, value: string): void;
 
-    abstract getDefaultValue(ns: NS) : string;
+    abstract getDefaultValue(ns: NS): string;
 
     initialize(ns: NS) {
         this.setValue(ns, this.getDefaultValue(ns));
     }
 
-    afterSet(ns: NS) {}
+    afterSet(ns: NS) { }
 
-    isMutable() : boolean {
+    isMutable(): boolean {
         return true;
     }
 }

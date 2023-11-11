@@ -1,6 +1,8 @@
 import { NS } from "@ns";
 import { ALL_HOME_SCRIPTS, GANG } from "./libscripts";
 
+export const HOME_COMPUTER_MAX_RAM = 1073741824; // 2 ^ 30
+export const HOME_COMPUTER_MAX_CORES = 8;
 export const HOME_RESERVE_RAM = 32;
 
 export function getHomeMaxRam(ns: NS) {

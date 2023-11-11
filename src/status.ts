@@ -6,10 +6,11 @@ import { GangStatusScript } from "./status/statusGang";
 import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { printTable } from "./table";
-import { MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
+import { MutableStatusProperty, StatusProperty, StatusScript, UPGRADE_HOME } from "./libscripts";
 import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { distinct } from "./library";
+import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -18,7 +19,8 @@ const STATUS_SCRIPTS = [
     GangStatusScript.INSTANCE,
     StockStatusScript.INSTANCE,
     ShareStatusScript.INSTANCE,
-    BuyProgramsStatusScript.INSTANCE
+    BuyProgramsStatusScript.INSTANCE,
+    UpgradeHomeStatusScript.INSTANCE
 ]
 
 type SpecialModule = {
@@ -83,6 +85,7 @@ export async function main(ns: NS) {
     // TODO: Singularity: Upgrade Home CPU/Ram, Automatic Backdoor of servers (if possible), singularity special module
     // TODO: Short-Aliases for special modules
     // TODO: try to get the module names recursively, so they could potentially be nested
+    // TODO: Properties namespacing/grouping, with some default output, e.g. "run status.js status gang" shows gang related outputs?
 
     if (ns.args.length === 0) {
         errorEmptyOrWrongAction(ns);
