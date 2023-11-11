@@ -333,7 +333,11 @@ function recruit(ns: NS) {
 		let members = ns.gang.getMemberNames();
 		let memberName = "m" + members.length;
 		ns.print("Recruit new gang member " + memberName);
-		ns.gang.recruitMember(memberName);
+		let wasRecruited = ns.gang.recruitMember(memberName);
+
+		if(wasRecruited) {
+			ns.toast("Recruited Gang Member " + memberName);
+		}
 	}
 }
 
