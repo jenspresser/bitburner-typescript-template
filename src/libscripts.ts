@@ -154,6 +154,10 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
     afterStart(ns: NS) { }
     beforeStop(ns: NS) { }
     afterStop(ns: NS) { }
+
+    calcAvailableRam(ns: NS, server: string): number {
+        return ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
+    }
 }
 
 export abstract class SingleScriptOnHomeStatusScript extends StatusScript {
@@ -166,7 +170,14 @@ export abstract class SingleScriptOnHomeStatusScript extends StatusScript {
     start(ns: NS): void {
         ns.tprint("Start " + this.statusName);
         if (!this.script.isRunningOnHome(ns)) {
-            this.script.execOnHome(ns);
+            let availableRam = this.calcAvailableRam(ns, ns.getHostname());
+            let neededRam = this.script.ram(ns);
+
+            if (availableRam > neededRam) {
+                this.script.execOnHome(ns);
+            } else {
+                ns.tprint("Cannot start script " + this.script.scriptName + " on server " + ns.getHostname() + ": not enough ram (needed: " + ns.formatRam(neededRam) + ", available: " + ns.formatRam(availableRam) + ")");
+            }
         }
     }
 
@@ -211,10 +222,10 @@ export abstract class DistributedTaskStatusScript extends StatusScript {
 
     startOnServer(ns: NS, server: string) {
         if (!this.script.isRunningOnServer(ns, server)) {
-            let availableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
+            let availableRam = this.calcAvailableRam(ns, server);
             let neededRam = this.script.ram(ns);
 
-            if(availableRam > neededRam) {
+            if (availableRam > neededRam) {
                 this.script.execOnServer(ns, server);
             } else {
                 ns.tprint("Cannot start script " + this.script.scriptName + " on server " + server + ": not enough ram (needed: " + ns.formatRam(neededRam) + ", available: " + ns.formatRam(availableRam) + ")");

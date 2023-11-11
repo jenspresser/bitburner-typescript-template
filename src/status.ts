@@ -82,7 +82,7 @@ function errorEmptyOrWrongAction(ns: NS) {
 }
 
 export async function main(ns: NS) {
-    // TODO: Singularity: Upgrade Home CPU/Ram, Automatic Backdoor of servers (if possible), singularity special module
+    // TODO: Singularity: Automatic Backdoor of servers (if possible), singularity special module
     // TODO: Short-Aliases for special modules
     // TODO: try to get the module names recursively, so they could potentially be nested
     // TODO: Properties namespacing/grouping, with some default output, e.g. "run status.js status gang" shows gang related outputs?
