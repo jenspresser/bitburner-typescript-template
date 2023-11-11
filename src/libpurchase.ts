@@ -11,18 +11,31 @@ export async function keepBuyingPserv(ns: NS) {
     ns.tprint("Start keepBuyingPserv!");
 
     const initialCount = getPurchasedServerNames(ns).length;
+    const allServersBoughtMsg = "  Already have all " + ns.getPurchasedServerLimit() + " purchased servers, will not buy more";
 
     ns.tprint("Purchase Servers with " + ns.formatRam(TARGET_PURCHASE_RAM) + " RAM");
     ns.tprint(" Starting with " + initialCount + " purchased servers");
     ns.tprint("Start upgrading Servers until " + ns.formatRam(ns.getPurchasedServerMaxRam()) + " RAM");
     ns.tprint("  initially " + initialCount + " purchased servers available");
 
+    if (getPurchasedServerNames(ns).length >= ns.getPurchasedServerLimit()) {
+        ns.tprint(allServersBoughtMsg);
+    }
+
     while (canKeepUpgradingPserv(ns)) {
         // Check, if we do not have reached the max server limit
         if (getPurchasedServerNames(ns).length < ns.getPurchasedServerLimit()) {
             // Check if we have enough money to purchase a server
             if (getHomeServerMoney(ns) > ns.getPurchasedServerCost(TARGET_PURCHASE_RAM)) {
-                ns.purchaseServer(getNextPurchaseServerName(ns), TARGET_PURCHASE_RAM);
+                const nextServerName = getNextPurchaseServerName(ns);
+                ns.purchaseServer(nextServerName, TARGET_PURCHASE_RAM);
+
+                
+
+                // Ausgeben, wenn der letzte Server gekauft wurde
+                if (getPurchasedServerNames(ns).length >= ns.getPurchasedServerLimit()) {
+                    ns.tprint(allServersBoughtMsg);
+                }
             }
         }
 
@@ -31,6 +44,8 @@ export async function keepBuyingPserv(ns: NS) {
     
             if (getHomeServerMoney(ns) > server.upgradeRamCost) {
                 ns.upgradePurchasedServer(server.hostname, server.nextRam);
+
+                ns.toast("Upgraded Pserv " + server.hostname + " to " + ns.formatRam(server.nextRam));
             }
         }
         

@@ -6,7 +6,7 @@ import { GangStatusScript } from "./status/statusGang";
 import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { printTable } from "./table";
-import { HasStatus, MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
+import { MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
 import { BackdooredServersStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { distinct } from "./library";
@@ -77,6 +77,10 @@ function errorEmptyOrWrongAction(ns: NS) {
 }
 
 export async function main(ns: NS) {
+    // TODO: Singularity: Upgrade Home CPU/Ram, Automatic Backdoor of servers (if possible), singularity special module
+    // TODO: Short-Aliases for special modules
+    // TODO: try to get the module names recursively, so they could potentially be nested
+
     if (ns.args.length === 0) {
         errorEmptyOrWrongAction(ns);
         return;

@@ -57,7 +57,7 @@ export class PservCountStatusProperty extends StatusProperty {
     }
 
     getValue(ns: NS): string {
-        return "" + getPurchasedServerNames(ns).length;
+        return String(getPurchasedServerNames(ns).length) + " / " + String(ns.getPurchasedServerLimit());
     }
 }
 
