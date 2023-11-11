@@ -7,7 +7,7 @@ import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { printTable } from "./table";
 import { MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
-import { BackdooredServersStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
+import { BackdooredServersStatusProperty, GangMemberStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { distinct } from "./library";
 
@@ -63,6 +63,7 @@ const PROPERTIES: StatusProperty[] = [
     RootServersStatusProperty.INSTANCE,
     BackdooredServersStatusProperty.INSTANCE,
     KarmaStatusProperty.INSTANCE,
+    GangMemberStatusProperty.INSTANCE
 ]
 
 const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
@@ -190,7 +191,7 @@ function printModules(ns: NS) {
 
 function printStatus(ns: NS) {
     let statusFromExecutors = STATUS_SCRIPTS.map(it => it.getStatus(ns));
-    let statusFromProperties = PROPERTIES.map(it => it.getStatus(ns));
+    let statusFromProperties = PROPERTIES.filter(it => it.isUsable(ns)).map(it => it.getStatus(ns));
 
     let matrix = [
         ...statusFromExecutors,

@@ -286,6 +286,10 @@ export abstract class StatusProperty implements HasStatus {
     isMutable() : boolean {
         return false;
     }
+
+    isUsable(ns: NS) : boolean {
+        return true;
+    }
 }
 
 export abstract class MutableStatusProperty extends StatusProperty {

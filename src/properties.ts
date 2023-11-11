@@ -132,3 +132,19 @@ export class HomeRamStatusProperty extends StatusProperty {
         return ns.formatRam(getHomeUsedRam(ns)) + " / " + ns.formatRam(getHomeMaxRam(ns));
     }
 };
+
+export class GangMemberStatusProperty extends StatusProperty {
+    static INSTANCE = new GangMemberStatusProperty();
+
+    constructor() {
+        super("gangMembers", "Gang Members");
+    }
+
+    getValue(ns: NS): string {
+        return String(ns.gang.getMemberNames().length)
+    }
+
+    isUsable(ns: NS): boolean {
+        return ns.gang.inGang();
+    }
+}
