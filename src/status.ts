@@ -53,6 +53,10 @@ const SPECIALS: SpecialModule[] = [
         name: "gainmoney",
         scriptFilter: () => [HackingStatusScript.NAME, GangStatusScript.NAME]
     },
+    {
+        name: "singularity",
+        scriptFilter: () => [BuyProgramsStatusScript.NAME, UpgradeHomeStatusScript.NAME]
+    },
 ];
 
 const PROPERTIES: StatusProperty[] = [
@@ -82,10 +86,9 @@ function errorEmptyOrWrongAction(ns: NS) {
 }
 
 export async function main(ns: NS) {
-    // TODO: Singularity: Automatic Backdoor of servers (if possible), singularity special module
-    // TODO: Short-Aliases for special modules
-    // TODO: try to get the module names recursively, so they could potentially be nested
+    // TODO: Status-Skript in Fragmente aufteilen, die dann vom Hauptskript gespawnt werden => Spart hoffentlich eine Menge RAM pro Aufruf
     // TODO: Properties namespacing/grouping, with some default output, e.g. "run status.js status gang" shows gang related outputs?
+    // TODO: Ggf dem "status start" als Parameter mitgeben können, das Script auf einem anderen Server zustarten? Analog zu sowas wie das GANG Script, evtl mit speziellen Aliasen (nextAvailable, nächster Server mit genug Ram)
 
     if (ns.args.length === 0) {
         errorEmptyOrWrongAction(ns);
