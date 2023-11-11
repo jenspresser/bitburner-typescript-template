@@ -9,7 +9,7 @@ export function getBackdoorInfos(ns: NS) {
 export function getBackdoorInfosForServers(ns: NS, serverList: string[]) : BackdoorInfo[] {
     let playerInfo = getPlayerInfo(ns);
 
-    return serverList.map(server => {
+    return serverList.filter(it => it !== "home").map(server => {
         let portsRequired = ns.getServerNumPortsRequired(server);
         let levelRequired = ns.getServerRequiredHackingLevel(server);
         let backdoorInstalled = ns.getServer(server)?.backdoorInstalled ?? false;
