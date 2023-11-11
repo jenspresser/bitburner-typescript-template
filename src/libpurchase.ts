@@ -30,7 +30,7 @@ export async function keepBuyingPserv(ns: NS) {
                 const nextServerName = getNextPurchaseServerName(ns);
                 ns.purchaseServer(nextServerName, TARGET_PURCHASE_RAM);
 
-                
+                ns.toast("Purchased new Pserv " + nextServerName);
 
                 // Ausgeben, wenn der letzte Server gekauft wurde
                 if (getPurchasedServerNames(ns).length >= ns.getPurchasedServerLimit()) {
