@@ -148,3 +148,35 @@ export class GangMemberStatusProperty extends StatusProperty {
         return ns.gang.inGang();
     }
 }
+
+export class GangPowerStatusProperty extends StatusProperty {
+    static INSTANCE = new GangPowerStatusProperty();
+
+    constructor() {
+        super("gangPower", "Gang Power");
+    }
+
+    getValue(ns: NS): string {
+        return ns.formatNumber(ns.gang.getGangInformation().power);
+    }
+
+    isUsable(ns: NS): boolean {
+        return ns.gang.inGang();
+    }
+}
+
+export class GangTerritoryStatusProperty extends StatusProperty {
+    static INSTANCE = new GangTerritoryStatusProperty();
+
+    constructor() {
+        super("gangTerritory", "Gang Territory");
+    }
+
+    getValue(ns: NS): string {
+        return ns.formatPercent(ns.gang.getGangInformation().territory);
+    }
+
+    isUsable(ns: NS): boolean {
+        return ns.gang.inGang();
+    }
+}

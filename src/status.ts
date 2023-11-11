@@ -7,7 +7,7 @@ import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { printTable } from "./table";
 import { MutableStatusProperty, StatusProperty, StatusScript } from "./libscripts";
-import { BackdooredServersStatusProperty, GangMemberStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
+import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { distinct } from "./library";
 
@@ -63,7 +63,9 @@ const PROPERTIES: StatusProperty[] = [
     RootServersStatusProperty.INSTANCE,
     BackdooredServersStatusProperty.INSTANCE,
     KarmaStatusProperty.INSTANCE,
-    GangMemberStatusProperty.INSTANCE
+    GangMemberStatusProperty.INSTANCE,
+    GangPowerStatusProperty.INSTANCE,
+    GangTerritoryStatusProperty.INSTANCE
 ]
 
 const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
