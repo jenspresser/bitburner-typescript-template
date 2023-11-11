@@ -14,6 +14,12 @@ export async function main(ns: NS) {
 
         ns.toast("Installed Backdoor on Server " + target);
 
+        let factions = ns.singularity.checkFactionInvitations();
+
+        for(let faction of factions) {
+            ns.singularity.joinFaction(faction);
+        }
+
         connectToTarget(ns, "home");
     }
 }
