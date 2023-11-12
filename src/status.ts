@@ -11,6 +11,7 @@ import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerSta
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { distinct } from "./library";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
+import { JoiningFactionsStatusScript } from "./status/statusJoiningFactions";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -20,7 +21,8 @@ const STATUS_SCRIPTS = [
     StockStatusScript.INSTANCE,
     ShareStatusScript.INSTANCE,
     BuyProgramsStatusScript.INSTANCE,
-    UpgradeHomeStatusScript.INSTANCE
+    UpgradeHomeStatusScript.INSTANCE,
+    JoiningFactionsStatusScript.INSTANCE
 ]
 
 type SpecialModule = {
@@ -55,7 +57,7 @@ const SPECIALS: SpecialModule[] = [
     },
     {
         name: "singularity",
-        scriptFilter: () => [BuyProgramsStatusScript.NAME, UpgradeHomeStatusScript.NAME]
+        scriptFilter: () => [BuyProgramsStatusScript.NAME, UpgradeHomeStatusScript.NAME, JoiningFactionsStatusScript.NAME]
     },
 ];
 
@@ -86,10 +88,6 @@ function errorEmptyOrWrongAction(ns: NS) {
 }
 
 export async function main(ns: NS) {
-    // TODO: Status-Skript in Fragmente aufteilen, die dann vom Hauptskript gespawnt werden => Spart hoffentlich eine Menge RAM pro Aufruf
-    // TODO: Properties namespacing/grouping, with some default output, e.g. "run status.js status gang" shows gang related outputs?
-    // TODO: Ggf dem "status start" als Parameter mitgeben können, das Script auf einem anderen Server zustarten? Analog zu sowas wie das GANG Script, evtl mit speziellen Aliasen (nextAvailable, nächster Server mit genug Ram)
-
     if (ns.args.length === 0) {
         errorEmptyOrWrongAction(ns);
         return;

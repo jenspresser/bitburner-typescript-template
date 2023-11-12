@@ -286,6 +286,7 @@ export const GANG = new Script("gang/gang.js");
 // Singularity Scripts
 export const BUY_PROGRAMS = new Script("singularity/keepBuyingPrograms.js");
 export const UPGRADE_HOME = new Script("singularity/keepUpgradingHome.js");
+export const JOINING_FACTIONS = new Script("singularity/keepJoiningFaction.js");
 
 
 export abstract class StatusProperty implements HasStatus {
