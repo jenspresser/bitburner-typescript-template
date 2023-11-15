@@ -31,6 +31,7 @@ export async function keepBuyingPserv(ns: NS) {
                 ns.purchaseServer(nextServerName, TARGET_PURCHASE_RAM);
 
                 ns.toast("Purchased new Pserv " + nextServerName);
+                ns.print("Purchased new Pserv " + nextServerName);
 
                 // Ausgeben, wenn der letzte Server gekauft wurde
                 if (getPurchasedServerNames(ns).length >= ns.getPurchasedServerLimit()) {
@@ -45,7 +46,11 @@ export async function keepBuyingPserv(ns: NS) {
             if (getHomeServerMoney(ns) > server.upgradeRamCost) {
                 ns.upgradePurchasedServer(server.hostname, server.nextRam);
 
-                ns.toast("Upgraded Pserv " + server.hostname + " to " + ns.formatRam(server.nextRam));
+                ns.print("Upgraded Pserv " + server.hostname + " to " + ns.formatRam(server.nextRam));
+
+                if(server.nextRam === ns.getPurchasedServerMaxRam()) {
+                    ns.toast("Maxed out Pserv " + server.hostname + " at " + ns.formatRam(server.nextRam));
+                }
             }
         }
         
