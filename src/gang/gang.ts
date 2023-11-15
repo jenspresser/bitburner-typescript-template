@@ -307,7 +307,7 @@ function taskValueWithFormula(ns: NS, gangInfo: GangGenInfo, member: string, tas
 		moneyGain *= 0.75;
 	}
 
-	if (ns.getServerMoneyAvailable("home") > 10e12) {
+	if (ns.getServerMoneyAvailable("home") > 10e14) {
 		// if we got all augmentations, money from gangs is probably not relevant anymore; so focus on respect
 		// set money gain at least to respect gain in case of low money gain tasks like terrorism
 		moneyGain /= 100; // compare money to respect gain value; give respect more priority
