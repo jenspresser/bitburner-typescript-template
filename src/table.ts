@@ -22,7 +22,7 @@ export const rightBlock: string = '▐'
 export const leftBlock: string = '▌'
 export const downBlock: string = '▄';
 
-type TableOptions = {
+export type TableOptions = {
     header?: string[],
     horizontalSeparator?: string|string[],
     align?: string|string[],
@@ -36,6 +36,16 @@ type TableOptions = {
  */
 export function printTable(ns: NS, matrix: any[][], {header, horizontalSeparator, align}: TableOptions = {}) {
     ns.tprint(createTableString(matrix, {header: header, horizontalSeparator: horizontalSeparator, align: align}));
+}
+
+/**
+ * @param {NS} ns
+ * @param {string[][]} matrix
+ * @param {string} horizontalSeparator: both, first, last, all
+ * @param {string} align: left, right, center
+ */
+export function logTable(ns: NS, matrix: any[][], {header, horizontalSeparator, align}: TableOptions = {}) {
+    ns.print(createTableString(matrix, {header: header, horizontalSeparator: horizontalSeparator, align: align}));
 }
 
 /**

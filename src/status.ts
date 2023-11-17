@@ -5,7 +5,7 @@ import { PservStatusScript } from "./status/statusPserv";
 import { GangStatusScript } from "./status/statusGang";
 import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
-import { printTable } from "./table";
+import { TableOptions, logTable, printTable } from "./table";
 import { MutableStatusProperty, StatusProperty, StatusScript, UPGRADE_HOME } from "./libscripts";
 import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
@@ -101,7 +101,7 @@ export async function main(ns: NS) {
     }
 
     if (action === "status") {
-        printStatus(ns);
+        await printStatus(ns);
         return;
     }
 
@@ -195,19 +195,73 @@ function printModules(ns: NS) {
     SPECIALS.forEach(it => ns.tprint("\t[" + it.name + "] => [" + it.scriptFilter() + "]"));
 }
 
-function printStatus(ns: NS) {
-    let statusFromExecutors = STATUS_SCRIPTS.map(it => it.getStatus(ns));
-    let statusFromProperties = PROPERTIES.filter(it => it.isUsable(ns)).map(it => it.getStatus(ns));
+async function printStatus(ns: NS) {
+    let shouldTail = ns.args[1] === "tail";
+    let intervalInSeconds = Number(ns.args[2]) || 1;
 
-    let matrix = [
-        ...statusFromExecutors,
-        ["Property", "Value"],
-        ...statusFromProperties
-    ]
+    if(shouldTail) {
+        ns.disableLog('ALL');
+        ns.tail();
+        ns.resizeTail(450, 800);
+        ns.moveTail(1900, 10);
 
-    printTable(ns, matrix, {
-        header: ["Module", "State"],
-        horizontalSeparator: ["first", String(statusFromExecutors.length)],
-        align: ["left", "right"]
-    });
+        let intervalInMillis = intervalInSeconds * 1000;
+
+        while(true) {
+            StatusMatrix.create(ns).printToLog(ns); 
+            await ns.sleep(intervalInMillis);
+
+            ns.clearLog();
+        }
+    } else {
+        // Print one time to terminal, then exit
+        StatusMatrix.create(ns).printToTerminal(ns);
+    }
+}
+
+class StatusMatrix {
+    statusFromExecutors : [string, string][];
+    statusFromProperties : [string, string][];
+    
+    constructor(statusFromExecutors : [string, string][], statusFromProperties : [string, string][]) {
+        this.statusFromExecutors = statusFromExecutors;
+        this.statusFromProperties = statusFromProperties;
+    }
+
+    printToTerminal(ns: NS) {
+        printTable(ns, this.getMatrix(), this.getTableOptions());
+    }
+
+    printToLog(ns: NS) {
+        logTable(ns, this.getMatrix(), this.getTableOptions());
+    }
+
+    getMatrix() : string[][] {
+        let matrix = [
+            ...this.statusFromExecutors,
+            ["Property", "Value"],
+            ...this.statusFromProperties
+        ]
+    
+        return matrix;
+    }
+
+    getDividerRowNum() : number {
+        return this.statusFromExecutors.length;
+    }
+
+    getTableOptions() : TableOptions {
+        return {
+            header: ["Module", "State"],
+            horizontalSeparator: ["first", String(this.getDividerRowNum())],
+            align: ["left", "right"]
+        }
+    }
+
+    static create(ns: NS) : StatusMatrix {
+        let statusFromExecutors = STATUS_SCRIPTS.map(it => it.getStatus(ns));
+        let statusFromProperties = PROPERTIES.filter(it => it.isUsable(ns)).map(it => it.getStatus(ns));
+
+        return new StatusMatrix(statusFromExecutors, statusFromProperties);
+    }
 }
