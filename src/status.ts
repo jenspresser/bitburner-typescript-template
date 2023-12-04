@@ -12,6 +12,7 @@ import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { distinct } from "./library";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
 import { JoiningFactionsStatusScript } from "./status/statusJoiningFactions";
+import { BuyAugmentationsStatusScript } from "./status/statusBuyAugmentations";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -22,7 +23,8 @@ const STATUS_SCRIPTS = [
     ShareStatusScript.INSTANCE,
     BuyProgramsStatusScript.INSTANCE,
     UpgradeHomeStatusScript.INSTANCE,
-    JoiningFactionsStatusScript.INSTANCE
+    JoiningFactionsStatusScript.INSTANCE,
+    BuyAugmentationsStatusScript.INSTANCE
 ]
 
 type SpecialModule = {
@@ -57,7 +59,7 @@ const SPECIALS: SpecialModule[] = [
     },
     {
         name: "singularity",
-        scriptFilter: () => [BuyProgramsStatusScript.NAME, UpgradeHomeStatusScript.NAME, JoiningFactionsStatusScript.NAME]
+        scriptFilter: () => [BuyProgramsStatusScript.NAME, UpgradeHomeStatusScript.NAME, JoiningFactionsStatusScript.NAME, BuyAugmentationsStatusScript.NAME]
     },
 ];
 
