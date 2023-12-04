@@ -1,4 +1,4 @@
-import { GangGenInfo, GangMemberInfo, GangTaskStats, NS } from "@ns";
+import { GangGenInfo, GangMemberInfo, NS } from "@ns";
 import { getHomeServerMoney, hasFormulaAPI } from "/library";
 
 /** @param {NS} ns **/
