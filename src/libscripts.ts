@@ -128,12 +128,20 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
         }
     }
 
-    getModuleNames() {
+    getModuleNames() : string[] {
         if (this.statusAlias) {
             return [this.statusAlias, this.statusName]
         } else {
             return [this.statusName];
         }
+    }
+
+    matchesName(otherName: string) : boolean {
+        return this.getModuleNames().includes(otherName);
+    }
+
+    matchesAnyName(otherNames: string[]) : boolean {
+        return otherNames.filter(it => this.matchesName(it)).length > 0;
     }
 
     getStatus(ns: NS): [string, string] {

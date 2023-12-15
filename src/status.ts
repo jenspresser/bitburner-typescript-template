@@ -6,10 +6,10 @@ import { GangStatusScript } from "./status/statusGang";
 import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { TableOptions, logTable, printTable } from "./table";
-import { MutableStatusProperty, StatusProperty, StatusScript, UPGRADE_HOME } from "./libscripts";
+import { MutableStatusProperty, Script, StatusProperty, StatusScript, UPGRADE_HOME } from "./libscripts";
 import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
-import { distinct } from "./library";
+import { checkArgExists, distinct, getArgs } from "./library";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
 import { JoiningFactionsStatusScript } from "./status/statusJoiningFactions";
 import { BuyAugmentationsStatusScript } from "./status/statusBuyAugmentations";
@@ -29,38 +29,51 @@ const STATUS_SCRIPTS = [
 
 type SpecialModule = {
     name: string,
-    scriptFilter: () => string[]
+    scriptFilter: () => StatusScript[]
 };
 
 const SPECIALS: SpecialModule[] = [
     {
         name: "all",
-        scriptFilter: () => STATUS_SCRIPTS.map(it => it.statusName)
+        scriptFilter: () => STATUS_SCRIPTS
     },
     {
         name: "simple",
-        scriptFilter: () => [HackingStatusScript.NAME, HacknetStatusScript.NAME, PservStatusScript.NAME]
+        scriptFilter: () => [HackingStatusScript.INSTANCE, HacknetStatusScript.INSTANCE, PservStatusScript.INSTANCE]
     },
     {
         name: "simplegang",
-        scriptFilter: () => [HackingStatusScript.NAME, HacknetStatusScript.NAME, PservStatusScript.NAME, GangStatusScript.NAME]
+        scriptFilter: () => [HackingStatusScript.INSTANCE, HacknetStatusScript.INSTANCE, PservStatusScript.INSTANCE, GangStatusScript.INSTANCE]
     },
     {
         name: "hackandgang",
-        scriptFilter: () => [HackingStatusScript.NAME, GangStatusScript.NAME]
+        scriptFilter: () => [HackingStatusScript.INSTANCE, GangStatusScript.INSTANCE]
     },
     {
         name: "spendmoney",
-        scriptFilter: () => [HacknetStatusScript.NAME, PservStatusScript.NAME]
+        scriptFilter: () => [HacknetStatusScript.INSTANCE, PservStatusScript.INSTANCE]
     },
     {
         name: "gainmoney",
-        scriptFilter: () => [HackingStatusScript.NAME, GangStatusScript.NAME]
+        scriptFilter: () => [HackingStatusScript.INSTANCE, GangStatusScript.INSTANCE]
     },
     {
         name: "singularity",
-        scriptFilter: () => [BuyProgramsStatusScript.NAME, UpgradeHomeStatusScript.NAME, JoiningFactionsStatusScript.NAME, BuyAugmentationsStatusScript.NAME]
+        scriptFilter: () => [BuyProgramsStatusScript.INSTANCE, UpgradeHomeStatusScript.INSTANCE, JoiningFactionsStatusScript.INSTANCE, BuyAugmentationsStatusScript.INSTANCE]
     },
+    {
+        name: "advanced",
+        scriptFilter: () => [
+            HackingStatusScript.INSTANCE, 
+            HacknetStatusScript.INSTANCE, 
+            PservStatusScript.INSTANCE,
+            GangStatusScript.INSTANCE,
+            BuyProgramsStatusScript.INSTANCE, 
+            UpgradeHomeStatusScript.INSTANCE, 
+            JoiningFactionsStatusScript.INSTANCE, 
+            BuyAugmentationsStatusScript.INSTANCE
+        ]
+    }
 ];
 
 const PROPERTIES: StatusProperty[] = [
@@ -90,12 +103,12 @@ function errorEmptyOrWrongAction(ns: NS) {
 }
 
 export async function main(ns: NS) {
-    if (ns.args.length === 0) {
+    if (getArgs(ns).length === 0) {
         errorEmptyOrWrongAction(ns);
         return;
     }
 
-    const action: string = String(ns.args[0]);
+    const action: string = String(getArgs(ns)[0]);
 
     if (!availableActions.includes(action)) {
         errorEmptyOrWrongAction(ns);
@@ -118,7 +131,7 @@ export async function main(ns: NS) {
     }
 
     if (startStopActions.includes(action)) {
-        if (ns.args.length === 1) {
+        if (getArgs(ns).length === 1) {
             ns.tprint("Need to specify which modules to [" + action + "]");
             printModules(ns);
             return;
@@ -126,11 +139,19 @@ export async function main(ns: NS) {
 
         let modules = getModulesFromArgs(ns);
 
+        let shouldTailStatus = checkArgExists(ns, "++tail");
+
         ns.tprint("Try to " + action + " modules: [" + modules + "]");
         let scripts = getModuleScripts(modules);
 
         for (let script of scripts) {
             script.onAction(ns, action);
+        }
+
+        ns.tprint("... Should Tail Status: ", shouldTailStatus);
+
+        if(shouldTailStatus) {
+            await printTailStatus(ns);
         }
     }
 }
@@ -138,13 +159,13 @@ export async function main(ns: NS) {
 function setProperty(ns: NS) {
     const availableProperties = MUTABLE_PROPERTIES.map(it => it.name);
 
-    if (ns.args.length < 3) {
+    if (getArgs(ns).length < 3) {
         ns.tprint("Must call 'property' with at least a property name and value");
         ns.tprint("available properties: " + availableProperties.join(", "));
         return;
     }
 
-    let propertyName = String(ns.args[1]);
+    let propertyName = String(getArgs(ns)[1]);
     let property = MUTABLE_PROPERTIES.find(it => it.name === propertyName);
 
     if (!property) {
@@ -152,7 +173,7 @@ function setProperty(ns: NS) {
         return;
     }
 
-    let propertyValue = String(ns.args[2]);
+    let propertyValue = String(getArgs(ns)[2]);
 
     ns.tprint("Setting property [" + propertyName + "] to value [" + propertyValue + "]");
 
@@ -161,17 +182,19 @@ function setProperty(ns: NS) {
 }
 
 function getModulesFromArgs(ns: NS): string[] {
-    let modulesArgs = ns.args.splice(1).map(it => String(it));
+    let modulesArgs = getArgs(ns).splice(1).map(it => String(it));
+
     let availableModuleNames = STATUS_SCRIPTS.flatMap(it => it.getModuleNames());
-    let specialModuleAliases = SPECIALS.map(it => it.name); 
+    let specialModuleAliases = SPECIALS.map(it => it.name);
+    let excludeModules = modulesArgs.filter(it => it.startsWith("--")).map(it => it.replace("--", ""));
 
     let modules : string[] = [];
 
     for(let moduleArg of modulesArgs) {
-        if(availableModuleNames.includes(moduleArg)) {
+        if(availableModuleNames.includes(moduleArg) && !excludeModules.includes(moduleArg)) {
             modules.push(moduleArg);
         } else if(specialModuleAliases.includes(moduleArg)) {
-            modules.push(...getModulesFromSpecialModuleAlias(moduleArg));
+            modules.push(...getModulesFromSpecialModuleAlias(moduleArg, excludeModules));
         }
     }
 
@@ -186,8 +209,8 @@ function getModuleScripts(modules: string[]): StatusScript[] {
     });
 }
 
-function getModulesFromSpecialModuleAlias(specialModuleAlias: string) : string[] {
-    return SPECIALS.find(it => it.name === specialModuleAlias)?.scriptFilter() ?? [];
+function getModulesFromSpecialModuleAlias(specialModuleAlias: string, excludeModules: string[]) : string[] {
+    return SPECIALS.find(it => it.name === specialModuleAlias)?.scriptFilter()?.filter(it => !it.matchesAnyName(excludeModules)).map(it => it.statusName) ?? [];
 }
 
 function printModules(ns: NS) {
@@ -198,26 +221,34 @@ function printModules(ns: NS) {
 }
 
 async function printStatus(ns: NS) {
-    let shouldTail = ns.args[1] === "tail";
-    let intervalInSeconds = Number(ns.args[2]) || 1;
+    let shouldTail = getArgs(ns)[1] === "tail";
 
     if(shouldTail) {
-        ns.disableLog('ALL');
-        ns.tail();
-        ns.resizeTail(450, 800);
-        ns.moveTail(1900, 10);
-
-        let intervalInMillis = intervalInSeconds * 1000;
-
-        while(true) {
-            StatusMatrix.create(ns).printToLog(ns); 
-            await ns.sleep(intervalInMillis);
-
-            ns.clearLog();
-        }
+        await printTailStatus(ns);
     } else {
-        // Print one time to terminal, then exit
-        StatusMatrix.create(ns).printToTerminal(ns);
+        await printTailSimple(ns);
+    }
+}
+
+async function printTailSimple(ns: NS) {
+    // Print one time to terminal, then exit
+    StatusMatrix.create(ns).printToTerminal(ns);
+}
+
+async function printTailStatus(ns: NS) {
+    ns.disableLog('ALL');
+    ns.tail();
+    ns.resizeTail(450, 800);
+    ns.moveTail(1900, 10);
+
+    let intervalInSeconds = Number(getArgs(ns)[2]) || 1;
+    let intervalInMillis = intervalInSeconds * 1000;
+
+    while(true) {
+        StatusMatrix.create(ns).printToLog(ns); 
+        await ns.sleep(intervalInMillis);
+
+        ns.clearLog();
     }
 }
 

@@ -108,6 +108,28 @@ export class ServerData {
     }
 }
 
+export function getArgs(ns: NS) : (string|number|boolean)[] {
+    let args : (string|number|boolean)[] = [];
+
+    for(let arg of ns.args) {
+        args.push(arg);
+    }
+
+    return args;
+}
+
+export function checkArgExists(ns: NS, checkArg: string) : boolean {
+    for(let arg of ns.args) {
+        ns.tprint("ARG: " + arg);
+
+        if(checkArg === String(arg)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 /**
  * @param {string} hostname
  * @param {number} ram
