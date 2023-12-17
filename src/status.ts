@@ -148,8 +148,6 @@ export async function main(ns: NS) {
             script.onAction(ns, action);
         }
 
-        ns.tprint("... Should Tail Status: ", shouldTailStatus);
-
         if(shouldTailStatus) {
             await printTailStatus(ns);
         }

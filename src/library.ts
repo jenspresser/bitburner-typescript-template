@@ -120,8 +120,6 @@ export function getArgs(ns: NS) : (string|number|boolean)[] {
 
 export function checkArgExists(ns: NS, checkArg: string) : boolean {
     for(let arg of ns.args) {
-        ns.tprint("ARG: " + arg);
-
         if(checkArg === String(arg)) {
             return true;
         }
