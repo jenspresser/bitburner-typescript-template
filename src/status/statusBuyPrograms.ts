@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { BUY_PROGRAMS, SingleScriptOnHomeStatusScript } from "/libscripts";
+import { BUY_PROGRAMS, ModuleName, SingleScriptOnHomeStatusScript } from "/libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -7,10 +7,10 @@ export async function main(ns: NS) {
 }
 
 export class BuyProgramsStatusScript extends SingleScriptOnHomeStatusScript {
-  static NAME = "buyPrograms";
+  static NAME = new ModuleName("buyPrograms", "bp");
   static INSTANCE = new BuyProgramsStatusScript();
 
   constructor() {
-    super(BUY_PROGRAMS, BuyProgramsStatusScript.NAME, "Buy Programs", "bp");
+    super(BUY_PROGRAMS, BuyProgramsStatusScript.NAME, "Buy Programs");
   }
 }

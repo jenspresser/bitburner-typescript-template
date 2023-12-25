@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { HACKNET, SingleScriptOnHomeStatusScript } from "/libscripts";
+import { HACKNET, ModuleName, SingleScriptOnHomeStatusScript } from "/libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -7,10 +7,10 @@ export async function main(ns: NS) {
 }
 
 export class HacknetStatusScript extends SingleScriptOnHomeStatusScript {
-  static NAME = "hacknet";
+  static NAME = new ModuleName("hacknet", "hn");
   static INSTANCE = new HacknetStatusScript();
 
   constructor() {
-    super(HACKNET, HacknetStatusScript.NAME, "Purchase Hacknet on", "hn");
+    super(HACKNET, HacknetStatusScript.NAME, "Purchase Hacknet on");
   }
 }

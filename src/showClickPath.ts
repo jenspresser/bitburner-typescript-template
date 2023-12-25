@@ -6,7 +6,7 @@ import { findPath, PathResult, printHelp } from "/libpath";
 export async function main(ns: NS) {
 	const executable = "clickpath";
 
-	let shouldBackdoor = ns.args.filter(it => ["backdoor", "bd", "b"].indexOf(it.toString()) > -1).length > 0;
+	let shouldBackdoor = ns.args.some(it => ["backdoor", "bd", "b"].includes(it.toString()));
 
 	if (ns.args.length === 0 || ns.args[0] === "list") {
 		printHelp(ns, executable);

@@ -4,7 +4,7 @@ import { findPath, PathResult, printHelp } from "/libpath";
 /** @param {NS} ns **/
 export async function main(ns: NS) {
 	const executable = "path";
-	let shouldBackdoor = ns.args.filter(it => ["backdoor", "bd", "b"].indexOf(it.toString()) > -1).length > 0;
+	let shouldBackdoor = ns.args.some(it => ["backdoor", "bd", "b"].includes(it.toString()));
 
 	if (ns.args.length === 0 || ns.args[0] === "list") {
 		printHelp(ns, executable);

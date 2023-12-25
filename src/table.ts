@@ -121,7 +121,7 @@ export function createTableString(matrix: any[][], {header, horizontalSeparator,
         }
     }
 
-    let hasAnySeparatorFirst = separatorPerRow.filter(it => it === 0).length > 0;
+    let hasAnySeparatorFirst = separatorPerRow.some(it => it === 0);
     if (hasHeader && !hasAnySeparatorFirst) {
         let headerSeperatorArray = [];
         for (let colLength of lengthPerColumn) {

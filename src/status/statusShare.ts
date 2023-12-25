@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { getServersWithRootAccess } from "/libserver";
-import { DistributedTaskStatusScript, SHARE } from "/libscripts";
+import { DistributedTaskStatusScript, ModuleName, SHARE } from "/libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -8,11 +8,11 @@ export async function main(ns: NS) {
 }
 
 export class ShareStatusScript extends DistributedTaskStatusScript {
-  static NAME = "share";
+  static NAME = new ModuleName("share", "sh");
   static INSTANCE = new ShareStatusScript();
 
   constructor() {
-    super(SHARE, ShareStatusScript.NAME, "Share", "sh");
+    super(SHARE, ShareStatusScript.NAME, "Share");
   }
 
   startOnServer(ns: NS, server: string): void {

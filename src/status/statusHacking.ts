@@ -3,6 +3,7 @@ import {
   ALL_HACK_SCRIPTS,
   DISTRIBUTEHACK,
   MASTERHACK,
+  ModuleName,
   SingleScriptOnHomeStatusScript
 } from "/libscripts";
 
@@ -12,11 +13,11 @@ export async function main(ns: NS) {
 }
 
 export class HackingStatusScript extends SingleScriptOnHomeStatusScript {
-  static NAME = "hacking";
+  static NAME = new ModuleName("hacking", "h");
   static INSTANCE = new HackingStatusScript();
 
   constructor() {
-    super(DISTRIBUTEHACK, HackingStatusScript.NAME, "Hacking", "h");
+    super(DISTRIBUTEHACK, HackingStatusScript.NAME, "Hacking");
   }
 
   afterStop(ns: NS): void {
@@ -36,5 +37,4 @@ export class HackingStatusScript extends SingleScriptOnHomeStatusScript {
   isRunningOnServer(ns: NS, server: string): boolean {
     return MASTERHACK.isRunningOnServer(ns, server);
   }
-
 }

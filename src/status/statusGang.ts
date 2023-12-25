@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { getGangScriptServer } from "/gang/libgang";
-import { DistributedTaskStatusScript, GANG } from "/libscripts";
+import { DistributedTaskStatusScript, GANG, ModuleName } from "/libscripts";
 import { HackingStatusScript } from "/status/statusHacking";
 
 /** @param {NS} ns */
@@ -11,11 +11,11 @@ export async function main(ns: NS) {
 
 
 export class GangStatusScript extends DistributedTaskStatusScript {
-    static NAME = "gang";
+    static NAME = new ModuleName("gang", "g");
     static INSTANCE = new GangStatusScript();
 
     constructor() {
-        super(GANG, GangStatusScript.NAME, "Gang", "g");
+        super(GANG, GangStatusScript.NAME, "Gang");
     }
 
     beforeStart(ns: NS): void {

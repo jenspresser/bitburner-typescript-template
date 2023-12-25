@@ -1,6 +1,28 @@
 import { NS, RunOptions } from "@ns";
 import { getServersWithRootAccess } from "./libserver";
 
+export class ModuleName {
+    name: string;
+    alias: string;
+
+    constructor(name: string, alias: string) {
+        this.name = name;
+        this.alias = alias;
+    }
+
+    matches(givenName: string) : boolean {
+        return givenName === this.name || givenName === this.alias;
+    }
+
+    getModuleNames() : string[] {
+        return [this.name, this.alias];
+    }
+
+    toString() : string {
+        return this.name + " (" + this.alias + ")";
+    }
+}
+
 export class Script {
     scriptName: string;
     scriptPath: string;
@@ -97,14 +119,12 @@ export interface CanStartStop {
 }
 
 export abstract class StatusScript implements HasRunningStatus, CanStartStop {
-    statusName: string;
+    statusName: ModuleName;
     statusOutput: string;
-    statusAlias?: string;
 
-    constructor(statusName: string, statusOutput: string, statusAlias?: string) {
+    constructor(statusName: ModuleName, statusOutput: string) {
         this.statusName = statusName;
         this.statusOutput = statusOutput;
-        this.statusAlias = statusAlias;
     }
 
     onMain(ns: NS) {
@@ -129,11 +149,7 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
     }
 
     getModuleNames() : string[] {
-        if (this.statusAlias) {
-            return [this.statusAlias, this.statusName]
-        } else {
-            return [this.statusName];
-        }
+        return this.statusName.getModuleNames();
     }
 
     matchesName(otherName: string) : boolean {
@@ -141,7 +157,7 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
     }
 
     matchesAnyName(otherNames: string[]) : boolean {
-        return otherNames.filter(it => this.matchesName(it)).length > 0;
+        return otherNames.some(it => this.matchesName(it));
     }
 
     getStatus(ns: NS): [string, string] {
@@ -170,8 +186,8 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
 
 export abstract class SingleScriptOnHomeStatusScript extends StatusScript {
     script: Script;
-    constructor(script: Script, statusName: string, statusOutput: string, statusAlias?: string) {
-        super(statusName, statusOutput, statusAlias);
+    constructor(script: Script, statusName: ModuleName, statusOutput: string) {
+        super(statusName, statusOutput);
         this.script = script;
     }
 
@@ -205,8 +221,8 @@ export abstract class SingleScriptOnHomeStatusScript extends StatusScript {
 
 export abstract class DistributedTaskStatusScript extends StatusScript {
     script: Script;
-    constructor(script: Script, statusName: string, statusOutput: string, statusAlias?: string) {
-        super(statusName, statusOutput, statusAlias);
+    constructor(script: Script, statusName: ModuleName, statusOutput: string) {
+        super(statusName, statusOutput);
         this.script = script;
     }
 

@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { JOINING_FACTIONS, SingleScriptOnHomeStatusScript } from "/libscripts";
+import { JOINING_FACTIONS, ModuleName, SingleScriptOnHomeStatusScript } from "/libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -7,10 +7,10 @@ export async function main(ns: NS) {
 }
 
 export class JoiningFactionsStatusScript extends SingleScriptOnHomeStatusScript {
-  static NAME = "joinFactions";
+  static NAME = new ModuleName("joinFactions", "jf");
   static INSTANCE = new JoiningFactionsStatusScript();
 
   constructor() {
-    super(JOINING_FACTIONS, JoiningFactionsStatusScript.NAME, "Joining Factions", "jf");
+    super(JOINING_FACTIONS, JoiningFactionsStatusScript.NAME, "Joining Factions");
   }
 }

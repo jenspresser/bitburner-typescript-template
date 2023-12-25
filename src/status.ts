@@ -6,7 +6,7 @@ import { GangStatusScript } from "./status/statusGang";
 import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { TableOptions, logTable, printTable } from "./table";
-import { MutableStatusProperty, Script, StatusProperty, StatusScript, UPGRADE_HOME } from "./libscripts";
+import { ModuleName, MutableStatusProperty, Script, StatusProperty, StatusScript, UPGRADE_HOME } from "./libscripts";
 import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { checkArgExists, distinct, getArgs } from "./library";
@@ -28,41 +28,41 @@ const STATUS_SCRIPTS = [
 ]
 
 type SpecialModule = {
-    name: string,
+    name: ModuleName,
     scriptFilter: () => StatusScript[]
 };
 
 const SPECIALS: SpecialModule[] = [
     {
-        name: "all",
+        name: new ModuleName("all", "all"),
         scriptFilter: () => STATUS_SCRIPTS
     },
     {
-        name: "simple",
+        name: new ModuleName("simple", "s"),
         scriptFilter: () => [HackingStatusScript.INSTANCE, HacknetStatusScript.INSTANCE, PservStatusScript.INSTANCE]
     },
     {
-        name: "simplegang",
+        name: new ModuleName("simplegang", "sg"),
         scriptFilter: () => [HackingStatusScript.INSTANCE, HacknetStatusScript.INSTANCE, PservStatusScript.INSTANCE, GangStatusScript.INSTANCE]
     },
     {
-        name: "hackandgang",
+        name: new ModuleName("hackandgang", "hg"),
         scriptFilter: () => [HackingStatusScript.INSTANCE, GangStatusScript.INSTANCE]
     },
     {
-        name: "spendmoney",
+        name: new ModuleName("spendmoney", "sm"),
         scriptFilter: () => [HacknetStatusScript.INSTANCE, PservStatusScript.INSTANCE]
     },
     {
-        name: "gainmoney",
+        name: new ModuleName("gainmoney", "gm"),
         scriptFilter: () => [HackingStatusScript.INSTANCE, GangStatusScript.INSTANCE]
     },
     {
-        name: "singularity",
+        name: new ModuleName("singularity", "sin"),
         scriptFilter: () => [BuyProgramsStatusScript.INSTANCE, UpgradeHomeStatusScript.INSTANCE, JoiningFactionsStatusScript.INSTANCE, BuyAugmentationsStatusScript.INSTANCE]
     },
     {
-        name: "advanced",
+        name: new ModuleName("advanced", "adv"),
         scriptFilter: () => [
             HackingStatusScript.INSTANCE, 
             HacknetStatusScript.INSTANCE, 
@@ -191,7 +191,7 @@ function getModulesFromArgs(ns: NS): string[] {
     for(let moduleArg of modulesArgs) {
         if(availableModuleNames.includes(moduleArg) && !excludeModules.includes(moduleArg)) {
             modules.push(moduleArg);
-        } else if(specialModuleAliases.includes(moduleArg)) {
+        } else if(specialModuleAliases.some(it => it.matches(moduleArg))) {
             modules.push(...getModulesFromSpecialModuleAlias(moduleArg, excludeModules));
         }
     }
@@ -208,14 +208,14 @@ function getModuleScripts(modules: string[]): StatusScript[] {
 }
 
 function getModulesFromSpecialModuleAlias(specialModuleAlias: string, excludeModules: string[]) : string[] {
-    return SPECIALS.find(it => it.name === specialModuleAlias)?.scriptFilter()?.filter(it => !it.matchesAnyName(excludeModules)).map(it => it.statusName) ?? [];
+    return SPECIALS.find(it => it.name.matches(specialModuleAlias))?.scriptFilter()?.filter(it => !it.matchesAnyName(excludeModules)).map(it => it.statusName.name) ?? [];
 }
 
 function printModules(ns: NS) {
     ns.tprint("Available Modules: ")
-    STATUS_SCRIPTS.forEach(it => ns.tprint("\t[" + it.getModuleNames() + "]"));
+    STATUS_SCRIPTS.forEach(it => ns.tprint("\t[" + it.statusName + "]"));
     ns.tprint("\t--------------------------");
-    SPECIALS.forEach(it => ns.tprint("\t[" + it.name + "] => [" + it.scriptFilter() + "]"));
+    SPECIALS.forEach(it => ns.tprint("\t[" + it.name + "] => [" + it.scriptFilter().map(it => it.statusName).join(", ") + "]"));
 }
 
 async function printStatus(ns: NS) {

@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { PSERV, SingleScriptOnHomeStatusScript } from "/libscripts";
+import { ModuleName, PSERV, SingleScriptOnHomeStatusScript } from "/libscripts";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -7,10 +7,10 @@ export async function main(ns: NS) {
 }
 
 export class PservStatusScript extends SingleScriptOnHomeStatusScript {
-  static NAME = "pserv";
+  static NAME = new ModuleName("pserv", "ps");
   static INSTANCE = new PservStatusScript();
 
   constructor() {
-    super(PSERV, PservStatusScript.NAME, "Purchase Pserv on", "ps");
+    super(PSERV, PservStatusScript.NAME, "Purchase Pserv on");
   }
 }
