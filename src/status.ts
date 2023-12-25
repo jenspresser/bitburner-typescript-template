@@ -212,10 +212,7 @@ function getModulesFromSpecialModuleAlias(specialModuleAlias: string, excludeMod
 }
 
 function printModules(ns: NS) {
-    ns.tprint("Available Modules: ")
-    STATUS_SCRIPTS.forEach(it => ns.tprint("\t[" + it.statusName + "]"));
-    ns.tprint("\t--------------------------");
-    SPECIALS.forEach(it => ns.tprint("\t[" + it.name + "] => [" + it.scriptFilter().map(it => it.statusName).join(", ") + "]"));
+    ModuleMatrix.create(ns).printToTerminal(ns);
 }
 
 async function printStatus(ns: NS) {
@@ -224,11 +221,11 @@ async function printStatus(ns: NS) {
     if(shouldTail) {
         await printTailStatus(ns);
     } else {
-        await printTailSimple(ns);
+        await printSimple(ns);
     }
 }
 
-async function printTailSimple(ns: NS) {
+async function printSimple(ns: NS) {
     // Print one time to terminal, then exit
     StatusMatrix.create(ns).printToTerminal(ns);
 }
@@ -247,6 +244,49 @@ async function printTailStatus(ns: NS) {
         await ns.sleep(intervalInMillis);
 
         ns.clearLog();
+    }
+}
+
+class ModuleMatrix {
+    modules : [string, string][];
+    specialModules: [string, string][];
+
+    constructor(modules: [string, string][], specialModules : [string, string][]) {
+        this.modules = modules;
+        this.specialModules = specialModules;
+    }
+
+    getMatrix() : string[][] {
+        let matrix = [
+            ...this.modules,
+            ["Special Name","Special Alias"],
+            ...this.specialModules
+        ];
+
+        return matrix;
+    }
+
+    getDividerRowNum() : number {
+        return this.modules.length;
+    }
+
+    getTableOptions() : TableOptions {
+        return {
+            header: ["Name", "Alias"],
+            horizontalSeparator: ["first", String(this.getDividerRowNum())],
+            align: ["left", "right"]
+        }
+    }
+
+    printToTerminal(ns: NS) {
+        printTable(ns, this.getMatrix(), this.getTableOptions());
+    }
+
+    static create(ns: NS) : ModuleMatrix {
+        let modules = STATUS_SCRIPTS.map(it => it.getModuleNames());
+        let specialModules = SPECIALS.map(it => it.name.getModuleNames());
+
+        return new ModuleMatrix(modules, specialModules);
     }
 }
 

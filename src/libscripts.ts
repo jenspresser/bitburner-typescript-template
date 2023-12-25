@@ -14,7 +14,7 @@ export class ModuleName {
         return givenName === this.name || givenName === this.alias;
     }
 
-    getModuleNames() : string[] {
+    getModuleNames() : [string, string] {
         return [this.name, this.alias];
     }
 
@@ -148,7 +148,7 @@ export abstract class StatusScript implements HasRunningStatus, CanStartStop {
         }
     }
 
-    getModuleNames() : string[] {
+    getModuleNames() : [string, string] {
         return this.statusName.getModuleNames();
     }
 
