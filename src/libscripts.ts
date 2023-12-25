@@ -33,7 +33,7 @@ export class Script {
     }
 
     ram(ns: NS): number {
-        return ns.getScriptRam(this.scriptName);
+        return Math.ceil(ns.getScriptRam(this.scriptName));
     }
 
     isRunningOnServerWithSpec(ns: NS, server: string, ...args: (string | number | boolean)[]): boolean {

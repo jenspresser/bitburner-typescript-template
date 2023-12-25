@@ -4,7 +4,7 @@ import { canRunGangOnHome } from "/libram";
 import { GANG } from "/libscripts";
 
 export function getGangScriptRam(ns: NS) : number {
-    return Math.ceil(GANG.ram(ns));
+    return GANG.ram(ns);
 }
 
 export function canRunGang(ns: NS) : boolean {
