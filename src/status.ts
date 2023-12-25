@@ -248,10 +248,10 @@ async function printTailStatus(ns: NS) {
 }
 
 class ModuleMatrix {
-    modules : [string, string][];
-    specialModules: [string, string][];
+    modules : string[][];
+    specialModules: string[][];
 
-    constructor(modules: [string, string][], specialModules : [string, string][]) {
+    constructor(modules: string[][], specialModules : string[][]) {
         this.modules = modules;
         this.specialModules = specialModules;
     }
@@ -259,7 +259,7 @@ class ModuleMatrix {
     getMatrix() : string[][] {
         let matrix = [
             ...this.modules,
-            ["Special Name","Special Alias"],
+            ["Special Name","Special Alias", "Includes"],
             ...this.specialModules
         ];
 
@@ -272,9 +272,9 @@ class ModuleMatrix {
 
     getTableOptions() : TableOptions {
         return {
-            header: ["Name", "Alias"],
+            header: ["Name", "Alias", ""],
             horizontalSeparator: ["first", String(this.getDividerRowNum())],
-            align: ["left", "right"]
+            align: ["left", "right", "left"]
         }
     }
 
@@ -283,8 +283,8 @@ class ModuleMatrix {
     }
 
     static create(ns: NS) : ModuleMatrix {
-        let modules = STATUS_SCRIPTS.map(it => it.getModuleNames());
-        let specialModules = SPECIALS.map(it => it.name.getModuleNames());
+        let modules = STATUS_SCRIPTS.map(it => [it.statusName.name, it.statusName.alias, ""]);
+        let specialModules = SPECIALS.map(it => [it.name.name, it.name.alias, it.scriptFilter().map(it => it.statusName).join(", ")]);
 
         return new ModuleMatrix(modules, specialModules);
     }
