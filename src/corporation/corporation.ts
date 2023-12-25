@@ -1,28 +1,27 @@
-import { CityName, Corporation, CorporationInfo, Division, NS } from "@ns";
+import { CorporationInfo, Division, NS } from "@ns";
+import { CityType, CITIES } from "/library";
 
-function getFirstDivision(ns: NS) : Division {
-	const corp = getCorp(ns);
-
-	return ns.corporation.getDivision(corp.divisions[0]);
+function getFirstDivision(ns: NS): Division {
+	return ns.corporation.getDivision((getCorp(ns)).divisions[0]);
 }
 
-function getCorp(ns: NS) : CorporationInfo {
+function getCorp(ns: NS): CorporationInfo {
 	return ns.corporation.getCorporation();
 }
 
 export async function main(ns: NS) {
 	ns.disableLog("disableLog"); ns.disableLog("sleep");
 
-	if (!ns.corporation.hasCorporation) {
+	if (!ns.corporation.hasCorporation()) {
 		let wasCreated = ns.corporation.createCorporation("jcorp", true);
 
-		if(!wasCreated) {
+		if (!wasCreated) {
 			ns.tprint("Could not create Corporation, probably not enough money");
 			return;
 		}
 	}
 
-	var corp : CorporationInfo = ns.corporation.getCorporation();
+	var corp: CorporationInfo = getCorp(ns);
 
 	if (corp.divisions.length < 1) {
 		// initial Company setup
@@ -32,9 +31,7 @@ export async function main(ns: NS) {
 	}
 
 	while (true) {
-		corp = getCorp(ns);
-
-		for (const divisionName of corp.divisions.reverse()) {
+		for (const divisionName of getCorp(ns).divisions.reverse()) {
 			let division = ns.corporation.getDivision(divisionName);
 
 			upgradeWarehouses(ns, division);
@@ -52,12 +49,12 @@ export async function main(ns: NS) {
 	}
 }
 
-async function hireEmployees(ns: NS, division: Division, productCity : CityName = CityName.Sector12) {
+async function hireEmployees(ns: NS, division: Division, productCity: CityType = "Sector-12") {
 	var employees = ns.corporation.getOffice(division.name, productCity).numEmployees;
-	while (ns.corporation.getCorporation().funds > (cities.length * ns.corporation.getOfficeSizeUpgradeCost(division.name, productCity, 3))) {
+	while (ns.corporation.getCorporation().funds > (CITIES.length * ns.corporation.getOfficeSizeUpgradeCost(division.name, productCity, 3))) {
 		// upgrade all cities + 3 employees if sufficient funds
 		ns.print(division.name + " Upgrade office size");
-		for (const city of cities) {
+		for (const city of CITIES) {
 			ns.corporation.upgradeOfficeSize(division.name, city, 3);
 			for (var i = 0; i < 3; i++) {
 				await ns.corporation.hireEmployee(division.name, city);
@@ -66,7 +63,7 @@ async function hireEmployees(ns: NS, division: Division, productCity : CityName 
 	}
 	if (ns.corporation.getOffice(division.name, productCity).numEmployees > employees) {
 		// set jobs after hiring people just in case we hire lots of people at once and setting jobs is slow
-		for (const city of cities) {
+		for (const city of CITIES) {
 			employees = ns.corporation.getOffice(division.name, city).numEmployees;
 			if (ns.corporation.hasResearched(division.name, "Market-TA.II")) {
 				// TODO: Simplify here. ProductCity config can always be used
@@ -104,17 +101,26 @@ async function hireEmployees(ns: NS, division: Division, productCity : CityName 
 	}
 }
 
+const PURCHASE_WAREHOUSE_COST = 5100000000;
+
 function upgradeWarehouses(ns: NS, division: Division) {
-	for (const city of cities) {
+	for (const city of CITIES) {
 		// check if warehouses are near max capacity and upgrade if needed
-		var cityWarehouse = ns.corporation.getWarehouse(division.name, city);
-		if (cityWarehouse.sizeUsed > 0.9 * cityWarehouse.size) {
-			if (ns.corporation.getCorporation().funds > ns.corporation.getUpgradeWarehouseCost(division.name, city)) {
-				ns.print(division.name + " Upgrade warehouse in " + city);
-				ns.corporation.upgradeWarehouse(division.name, city);
+		if (ns.corporation.hasWarehouse(division.name, city)) {
+			var cityWarehouse = ns.corporation.getWarehouse(division.name, city);
+			if (cityWarehouse.sizeUsed > 0.9 * cityWarehouse.size) {
+				if (getCorp(ns).funds > ns.corporation.getUpgradeWarehouseCost(division.name, city)) {
+					ns.print(division.name + " Upgrade warehouse in " + city);
+					ns.corporation.upgradeWarehouse(division.name, city);
+				}
+			}
+		} else {
+			if(getCorp(ns).funds > PURCHASE_WAREHOUSE_COST) {
+				ns.corporation.purchaseWarehouse(division.name, city);
 			}
 		}
 	}
+
 	if (ns.corporation.getUpgradeLevel("Wilson Analytics") > 20) {
 		// Upgrade AdVert.Inc after a certain amount of Wilson Analytivs upgrades are available
 		if (ns.corporation.getCorporation().funds > (4 * ns.corporation.getHireAdVertCost(division.name))) {
@@ -145,14 +151,14 @@ function upgradeCorp(ns: NS) {
 	}
 }
 
-async function trickInvest(ns: NS, division: Division, productCity : CityName = CityName.Sector12) {
+async function trickInvest(ns: NS, division: Division, productCity: CityType = "Sector-12") {
 	ns.print("Prepare to trick investors")
 	for (var product of division.products) {
 		// stop selling products
 		ns.corporation.sellProduct(division.name, productCity, product, "0", "MP", true);
 	}
 
-	for (const city of cities) {
+	for (const city of CITIES) {
 		// put all employees into production to produce as fast as possible 
 		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
 
@@ -169,7 +175,7 @@ async function trickInvest(ns: NS, division: Division, productCity : CityName = 
 	let allWarehousesFull = false;
 	while (!allWarehousesFull) {
 		allWarehousesFull = true;
-		for (const city of cities) {
+		for (const city of CITIES) {
 			if (ns.corporation.getWarehouse(division.name, city).sizeUsed <= (0.98 * ns.corporation.getWarehouse(division.name, city).size)) {
 				allWarehousesFull = false;
 				break;
@@ -181,7 +187,7 @@ async function trickInvest(ns: NS, division: Division, productCity : CityName = 
 
 	var initialInvestFunds = ns.corporation.getInvestmentOffer().funds;
 	ns.print("Initial investmant offer: " + ns.nFormat(initialInvestFunds, "0.0a"));
-	for (const city of cities) {
+	for (const city of CITIES) {
 		// put all employees into business to sell as much as possible 
 		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
 		await ns.corporation.setAutoJobAssignment(division.name, city, "Operations", 0);
@@ -206,7 +212,7 @@ async function trickInvest(ns: NS, division: Division, productCity : CityName = 
 
 	ns.print("Funds after  public: " + ns.nFormat(ns.corporation.getCorporation().funds, "0.0a"));
 
-	for (const city of cities) {
+	for (const city of CITIES) {
 		// set employees back to normal operation
 		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
 		await ns.corporation.setAutoJobAssignment(division.name, city, "Business", 0);
@@ -273,7 +279,7 @@ function newProduct(ns: NS, division: Division) {
 	//ns.print("Products: " + division.products);
 	var productNumbers = [];
 	for (var productName of division.products) {
-		let product = ns.corporation.getProduct(division.name, CityName.Sector12, productName);
+		let product = ns.corporation.getProduct(division.name, "Sector-12", productName);
 		if (product.developmentProgress < 100) {
 			ns.print(division.name + " Product development progress: " + product.developmentProgress.toFixed(1) + "%");
 			return false;
@@ -334,17 +340,17 @@ function newProduct(ns: NS, division: Division) {
 	return true;
 }
 
-async function initCities(ns: NS, division: Division, productCity: CityName = CityName.Sector12) {
-	for (const city of cities) {
+async function initCities(ns: NS, division: Division, productCity: CityType = "Sector-12") {
+	for (const city of CITIES) {
 		ns.print("Expand " + division.name + " to City " + city);
-		if (!division.cities.includes(city)) {
+		if (!division.cities.some(it => it.toString() === productCity.toString())) {
 			ns.corporation.expandCity(division.name, city);
 			ns.corporation.purchaseWarehouse(division.name, city);
 		}
 
 		//ns.corporation.setSmartSupply(division.name, city, true); // does not work anymore, bug?
 
-		if (city != productCity) {
+		if (city.toString() !== productCity.toString()) {
 			// setup employees
 			for (let i = 0; i < 3; i++) {
 				await ns.corporation.hireEmployee(division.name, city);
@@ -391,7 +397,7 @@ async function initialCorpUpgrade(ns: NS) {
 	ns.corporation.levelUpgrade("FocusWires");
 }
 
-const cities = [CityName.Sector12, CityName.Aevum, CityName.Volhaven, CityName.Chongqing, CityName.NewTokyo, CityName.Ishima];
+
 
 const upgradeList = [
 	// lower priority value -> upgrade faster

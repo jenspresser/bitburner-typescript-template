@@ -149,3 +149,6 @@ export function onlyUnique(value: any, index: number, array: any[]) {
 export function distinct<Type>(arr: Type[]) : Type[] {
     return arr.filter(onlyUnique);
 }
+
+export type CityType = "Sector-12" | "Aevum" | "Volhaven" | "Chongqing" | "New Tokyo" | "Ishima";
+export const CITIES : CityType[]= ["Sector-12", "Aevum", "Volhaven", "Chongqing", "New Tokyo", "Ishima"];
