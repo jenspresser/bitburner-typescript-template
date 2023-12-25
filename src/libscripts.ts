@@ -313,6 +313,8 @@ export const UPGRADE_HOME = new Script("singularity/keepUpgradingHome.js");
 export const JOINING_FACTIONS = new Script("singularity/keepJoiningFaction.js");
 export const BUY_AUGMENTATIONS = new Script("singularity/keepBuyingAugmentations.js");
 
+// Corporation Script
+export const CORPORATION = new Script("corporation/corporation.js");
 
 export abstract class StatusProperty implements HasStatus {
     name: string;

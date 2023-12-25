@@ -13,6 +13,7 @@ import { checkArgExists, distinct, getArgs } from "./library";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
 import { JoiningFactionsStatusScript } from "./status/statusJoiningFactions";
 import { BuyAugmentationsStatusScript } from "./status/statusBuyAugmentations";
+import { CorporationStatusScript } from "./status/statusCorporation";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -24,7 +25,8 @@ const STATUS_SCRIPTS = [
     BuyProgramsStatusScript.INSTANCE,
     UpgradeHomeStatusScript.INSTANCE,
     JoiningFactionsStatusScript.INSTANCE,
-    BuyAugmentationsStatusScript.INSTANCE
+    BuyAugmentationsStatusScript.INSTANCE,
+    CorporationStatusScript.INSTANCE
 ]
 
 type SpecialModule = {
