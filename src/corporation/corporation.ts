@@ -1,5 +1,6 @@
 import { CorporationInfo, Division, NS } from "@ns";
 import { CityType, CITIES } from "/library";
+import { WarehouseAPI } from '../../NetscriptDefinitions';
 
 const JOB_RESEARCH_DEVELOPMENT = "Research & Development";
 const JOB_OPERATIONS = "Operations";
@@ -163,19 +164,23 @@ async function trickInvest(ns: NS, division: Division, productCity: CityType = "
 	ns.print("Prepare to trick investors")
 	for (var product of division.products) {
 		// stop selling products
-		ns.corporation.sellProduct(division.name, productCity, product, "0", "MP", true);
+		ns.corporation.sellProduct(division.name, productCity, product, "0", "0", true);
 	}
 
-	for (const city of CITIES) {
-		// put all employees into production to produce as fast as possible 
-		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
+	initCities(ns, division, productCity);
 
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_ENGINEER, 0);
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_MANAGEMENT, 0);
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_RESEARCH_DEVELOPMENT, 0);
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, employees - 2); // workaround for bug
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, employees - 1); // workaround for bug
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, employees);
+	for (const city of CITIES) {
+		if(division.cities.map(it => it.toString()).includes(city.toString())) {
+			// put all employees into production to produce as fast as possible 
+			const employees = ns.corporation.getOffice(division.name, city).numEmployees;
+
+			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, 0);
+			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_ENGINEER, 0);
+			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_BUSINESS, 0);
+			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_MANAGEMENT, 0);
+			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_RESEARCH_DEVELOPMENT, 0);
+			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, employees);
+		}		
 	}
 
 	ns.print("Wait for warehouses to fill up")
@@ -199,8 +204,6 @@ async function trickInvest(ns: NS, division: Division, productCity: CityType = "
 		// put all employees into business to sell as much as possible 
 		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
 		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, 0);
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_BUSINESS, employees - 2); // workaround for bug
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_BUSINESS, employees - 1); // workaround for bug
 		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_BUSINESS, employees);
 	}
 	for (var product of division.products) {
@@ -282,8 +285,6 @@ function doResearch(ns: NS, division: Division) {
 		}
 	}
 }
-
-const RESEARCH_CAPACITY_I = "";
 
 function newProduct(ns: NS, division: Division) {
 	//ns.print("Products: " + division.products);
