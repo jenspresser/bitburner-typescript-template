@@ -194,7 +194,7 @@ async function trickInvest(ns: NS, division: Division, productCity: CityType = "
 	ns.print("Warehouses are full, start selling");
 
 	var initialInvestFunds = ns.corporation.getInvestmentOffer().funds;
-	ns.print("Initial investmant offer: " + ns.nFormat(initialInvestFunds, "0.0a"));
+	ns.print("Initial investmant offer: " + ns.formatNumber(initialInvestFunds));
 	for (const city of CITIES) {
 		// put all employees into business to sell as much as possible 
 		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
@@ -213,12 +213,12 @@ async function trickInvest(ns: NS, division: Division, productCity: CityType = "
 		await ns.sleep(200);
 	}
 
-	ns.print("Investment offer for 10% shares: " + ns.nFormat(ns.corporation.getInvestmentOffer().funds, "0.0a"));
-	ns.print("Funds before public: " + ns.nFormat(ns.corporation.getCorporation().funds, "0.0a"));
+	ns.print("Investment offer for 10% shares: " + ns.formatNumber(ns.corporation.getInvestmentOffer().funds));
+	ns.print("Funds before public: " + ns.formatNumber(ns.corporation.getCorporation().funds));
 
 	ns.corporation.goPublic(800e6);
 
-	ns.print("Funds after  public: " + ns.nFormat(ns.corporation.getCorporation().funds, "0.0a"));
+	ns.print("Funds after  public: " + ns.formatNumber(ns.corporation.getCorporation().funds));
 
 	for (const city of CITIES) {
 		// set employees back to normal operation
@@ -336,7 +336,7 @@ function newProduct(ns: NS, division: Division) {
 	var productInvest = 1e9;
 	if (ns.corporation.getCorporation().funds < (2 * productInvest)) {
 		if (ns.corporation.getCorporation().funds <= 0) {
-			ns.print("WARN negative funds, cannot start new product development " + ns.nFormat(ns.corporation.getCorporation().funds, "0.0a"));
+			ns.print("WARN negative funds, cannot start new product development " + ns.formatNumber(ns.corporation.getCorporation().funds));
 			return;
 			// productInvest = 0; // product development with 0 funds not possible if corp has negative funds
 		}
