@@ -174,22 +174,27 @@ async function trickInvest(ns: NS, division: Division, productCity: CityType = "
 			// put all employees into production to produce as fast as possible 
 			const employees = ns.corporation.getOffice(division.name, city).numEmployees;
 
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, 0);
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_ENGINEER, 0);
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_BUSINESS, 0);
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_MANAGEMENT, 0);
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_RESEARCH_DEVELOPMENT, 0);
+			await resetEmployeeJobs(ns, division, productCity);
 			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, employees);
 		}		
 	}
 
 	ns.print("Wait for warehouses to fill up")
-	//ns.print("Warehouse usage: " + refWarehouse.sizeUsed + " of " + refWarehouse.size);
+	
+	let citiesWithWarehouse : CityType[] = [];
+	for (const city of CITIES) {
+		if(ns.corporation.hasWarehouse(division.name, city)) {
+			citiesWithWarehouse.push(city);
+		}
+	}
+
 	let allWarehousesFull = false;
 	while (!allWarehousesFull) {
 		allWarehousesFull = true;
-		for (const city of CITIES) {
-			if (ns.corporation.getWarehouse(division.name, city).sizeUsed <= (0.98 * ns.corporation.getWarehouse(division.name, city).size)) {
+		for (const city of citiesWithWarehouse) {
+			const warehouse = ns.corporation.getWarehouse(division.name, city);
+			
+			if (warehouse.sizeUsed <= (0.98 * warehouse.size)) {
 				allWarehousesFull = false;
 				break;
 			}
@@ -203,7 +208,7 @@ async function trickInvest(ns: NS, division: Division, productCity: CityType = "
 	for (const city of CITIES) {
 		// put all employees into business to sell as much as possible 
 		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, 0);
+		await resetEmployeeJobs(ns, division, productCity);
 		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_BUSINESS, employees);
 	}
 	for (var product of division.products) {
@@ -226,7 +231,7 @@ async function trickInvest(ns: NS, division: Division, productCity: CityType = "
 	for (const city of CITIES) {
 		// set employees back to normal operation
 		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_BUSINESS, 0);
+		await resetEmployeeJobs(ns, division, productCity);
 		if (city == productCity) {
 			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, 1);
 			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_ENGINEER, (employees - 2));
@@ -366,6 +371,7 @@ async function initCities(ns: NS, division: Division, productCity: CityType = "S
 			for (let i = 0; i < 3; i++) {
 				await ns.corporation.hireEmployee(division.name, city);
 			}
+			await resetEmployeeJobs(ns, division, productCity);
 			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_RESEARCH_DEVELOPMENT, 3);
 		}
 		else {
@@ -380,6 +386,7 @@ async function initCities(ns: NS, division: Division, productCity: CityType = "S
 			for (let i = 0; i < newEmployees + 3; i++) {
 				await ns.corporation.hireEmployee(division.name, productCity);
 			}
+			await resetEmployeeJobs(ns, division, productCity);
 			await ns.corporation.setAutoJobAssignment(division.name, productCity, JOB_OPERATIONS, 4);
 			await ns.corporation.setAutoJobAssignment(division.name, productCity, JOB_ENGINEER, 6);
 			await ns.corporation.setAutoJobAssignment(division.name, productCity, JOB_MANAGEMENT, 2);
@@ -391,6 +398,15 @@ async function initCities(ns: NS, division: Division, productCity: CityType = "S
 	}
 
 	ns.corporation.makeProduct(division.name, productCity, "Product-0", 1e9, 1e9);
+}
+
+async function resetEmployeeJobs(ns: NS, division: Division, productCity: CityType = "Sector-12") {
+	await ns.corporation.setAutoJobAssignment(division.name, productCity, JOB_OPERATIONS, 0);
+	await ns.corporation.setAutoJobAssignment(division.name, productCity, JOB_ENGINEER, 0);
+	await ns.corporation.setAutoJobAssignment(division.name, productCity, JOB_BUSINESS, 0);
+	await ns.corporation.setAutoJobAssignment(division.name, productCity, JOB_MANAGEMENT, 0);
+	await ns.corporation.setAutoJobAssignment(division.name, productCity, JOB_RESEARCH_DEVELOPMENT, 0);
+	await ns.corporation.setAutoJobAssignment(division.name, productCity, JOB_TRAINING, 0);
 }
 
 async function initialCorpUpgrade(ns: NS) {
