@@ -283,6 +283,8 @@ function doResearch(ns: NS, division: Division) {
 	}
 }
 
+const RESEARCH_CAPACITY_I = "";
+
 function newProduct(ns: NS, division: Division) {
 	//ns.print("Products: " + division.products);
 	var productNumbers = [];
@@ -308,9 +310,9 @@ function newProduct(ns: NS, division: Division) {
 
 	var numProducts = 3;
 	// amount of products which can be sold in parallel is 3; can be upgraded
-	if (ns.corporation.hasResearched(division.name, "Upgrade: Capacity.I")) {
+	if (ns.corporation.hasResearched(division.name, "uPgrade: Capacity.I")) {
 		numProducts++;
-		if (ns.corporation.hasResearched(division.name, "Upgrade: Capacity.II")) {
+		if (ns.corporation.hasResearched(division.name, "uPgrade: Capacity.II")) {
 			numProducts++;
 		}
 	}
