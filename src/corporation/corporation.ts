@@ -245,9 +245,9 @@ async function trickInvest(ns: NS, division: Division, productCity: CityType = "
 	}
 
 	// with gained money, expand to the most profitable division
-	ns.corporation.expandIndustry("Healthcare", "Healthcare");
-	let secondDivision = ns.corporation.getDivision(ns.corporation.getCorporation().divisions[1]);
-	await initCities(ns, secondDivision);
+	//ns.corporation.expandIndustry("Healthcare", "Healthcare");
+	//let secondDivision = ns.corporation.getDivision(ns.corporation.getCorporation().divisions[1]);
+	// await initCities(ns, secondDivision);
 }
 
 function doResearch(ns: NS, division: Division) {
