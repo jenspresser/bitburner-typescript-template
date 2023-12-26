@@ -50,13 +50,7 @@ export async function main(ns: NS) {
 			await newProduct(ns, division);
 			await doResearch(ns, division);
 		}
-		
-		//if (corp.divisions.length < 2 && corp.numShares == corp.totalShares) {
-		if (corp.divisions.length < 2 ) {
-			if (getFirstDivision(ns).products.length > 2) {
-				await trickInvest(ns, getFirstDivision(ns));
-			}
-		}
+
 		await ns.sleep(5000);
 	}
 }
@@ -162,92 +156,6 @@ function upgradeCorp(ns: NS) {
 		ns.print("Unlock Government Partnership")
 		ns.corporation.purchaseUnlock("Government Partnership");
 	}
-}
-
-async function trickInvest(ns: NS, division: Division, productCity: CityType = "Sector-12") {
-	ns.print("Prepare to trick investors")
-	for (var product of division.products) {
-		// stop selling products
-		await ns.corporation.sellProduct(division.name, productCity, product, "0", "0", true);
-	}
-
-	await initCities(ns, division, productCity);
-
-	for (const city of getExpandedCities(division)) {
-		// put all employees into production to produce as fast as possible 
-		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
-
-		ns.print(employees + " Emps to Operations in " + city);
-
-		await resetEmployeeJobs(ns, division, city);
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, employees);
-	}
-
-	ns.print("Wait for warehouses to fill up")
-	
-	let citiesWithWarehouse = getCitiesWithWarehouse(ns, division);
-
-	let allWarehousesFull = false;
-	while (!allWarehousesFull) {
-		allWarehousesFull = true;
-		for (const city of citiesWithWarehouse) {
-			const warehouse = ns.corporation.getWarehouse(division.name, city);
-			
-			if (warehouse.sizeUsed <= (0.98 * warehouse.size)) {
-				allWarehousesFull = false;
-				break;
-			}
-		}
-		await ns.sleep(5000);
-	}
-	ns.print("Warehouses are full, start selling");
-
-	var initialInvestFunds = ns.corporation.getInvestmentOffer().funds;
-	ns.print("Initial investmant offer: " + ns.formatNumber(initialInvestFunds));
-	for (const city of getExpandedCities(division)) {
-		// put all employees into business to sell as much as possible 
-		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
-		await resetEmployeeJobs(ns, division, city);
-		await ns.corporation.setAutoJobAssignment(division.name, city, JOB_BUSINESS, employees);
-	}
-	for (var product of division.products) {
-		// sell products again
-		await ns.corporation.sellProduct(division.name, productCity, product, "MAX", "MP", true);
-	}
-
-	while (ns.corporation.getInvestmentOffer().funds < (4 * initialInvestFunds)) {
-		// wait until the stored products are sold, which should lead to huge investment offers
-		await ns.sleep(200);
-	}
-
-	ns.print("Investment offer for 10% shares: " + ns.formatNumber(ns.corporation.getInvestmentOffer().funds));
-	ns.print("Funds before public: " + ns.formatNumber(ns.corporation.getCorporation().funds));
-
-	if(!getCorp(ns).public) {
-		ns.corporation.goPublic(800e6);
-	}
-
-	ns.print("Funds after  public: " + ns.formatNumber(ns.corporation.getCorporation().funds));
-
-	for (const city of getExpandedCities(division)) {
-		// set employees back to normal operation
-		const employees = ns.corporation.getOffice(division.name, city).numEmployees;
-		await resetEmployeeJobs(ns, division, city);
-		if (city == productCity) {
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, 1);
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_ENGINEER, (employees - 2));
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_MANAGEMENT, 1);
-		}
-		else {
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_OPERATIONS, 1);
-			await ns.corporation.setAutoJobAssignment(division.name, city, JOB_RESEARCH_DEVELOPMENT, (employees - 1));
-		}
-	}
-
-	// with gained money, expand to the most profitable division
-	//ns.corporation.expandIndustry("Healthcare", "Healthcare");
-	//let secondDivision = ns.corporation.getDivision(ns.corporation.getCorporation().divisions[1]);
-	// await initCities(ns, secondDivision);
 }
 
 function doResearch(ns: NS, division: Division) {
