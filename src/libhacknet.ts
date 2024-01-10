@@ -3,9 +3,6 @@ import { getHomeServerMoney } from "library";
 
 const MAX_HACKNET_NODES = 30;
 
-/** 
- * @param {NS} ns
- */
 export async function keepBuyingHacknet(ns: NS) {
     let hacknet = ns.hacknet;
 
@@ -22,7 +19,7 @@ export async function keepBuyingHacknet(ns: NS) {
         }
 
         let upgradeableNodeLevel = getUpgradeableHacknetNodeLevel(hacknet, ns);
-        ns.print("  next upgradeable Level hacknet node: " + upgradeableNodeLevel)
+        ns.print("  next upgradeable Level hacknet node: " + upgradeableNodeLevel);
 
         if (upgradeableNodeLevel > -1) {
             ns.print("    can upgrade node level and affort it");
@@ -30,7 +27,7 @@ export async function keepBuyingHacknet(ns: NS) {
         }
 
         let upgradeableNodeRam = getUpgradeableHacknetNodeRam(hacknet, ns);
-        ns.print("  next upgradeable RAM hacknet node: " + upgradeableNodeRam)
+        ns.print("  next upgradeable RAM hacknet node: " + upgradeableNodeRam);
 
         if (upgradeableNodeRam > -1) {
             ns.print("       can upgrade node RAM and affort it");
@@ -38,12 +35,21 @@ export async function keepBuyingHacknet(ns: NS) {
         }
 
         let upgradeableNodeCore = getUpgradeableHacknetNodeCore(hacknet, ns);
-        ns.print("  next upgradeable Core hacknet node: " + upgradeableNodeCore)
+        ns.print("  next upgradeable Core hacknet node: " + upgradeableNodeCore);
 
         if (upgradeableNodeCore > -1) {
             ns.print("       can upgrade node core and affort it");
             hacknet.upgradeCore(upgradeableNodeCore);
         }
+
+        let upgradeableServerCache = getUpgradeableHacknetServerCache(hacknet, ns);
+        ns.print("  next upgradeable Cache hacknet node: " + upgradeableServerCache);
+
+        if(upgradeableServerCache > -1) {
+            ns.print("       can upgrade server cache and afford it");
+            hacknet.upgradeCache(upgradeableServerCache, 1);
+        }
+
         await ns.sleep(10);
     } 
     
@@ -54,10 +60,6 @@ function printOnStop(ns :NS) {
     ns.tprint("Cannot keep upgrading hacknet: Max Server count and fully upgraded");
 }
 
-/** 
- * @param {Hacknet} hacknet
- * @return {Boolean}
- */
 export function canKeepUpgradingHacknet(hacknet: Hacknet) {
     if (canBuyHacknetNode(hacknet)) {
         return true;
@@ -70,10 +72,6 @@ export function canKeepUpgradingHacknet(hacknet: Hacknet) {
     return false;
 }
 
-/** 
- * @param {Hacknet} hacknet
- * @return {Boolean}
- */
 export function canBuyHacknetNode(hacknet: Hacknet) {
     //
     if (hacknet.numNodes() < MAX_HACKNET_NODES) {
@@ -83,11 +81,6 @@ export function canBuyHacknetNode(hacknet: Hacknet) {
     return false;
 }
 
-
-/** 
- * @param {Hacknet} hacknet
- * @return {Boolean}
- */
 export function canUpgradeAnyHacknetNode(hacknet: Hacknet) {
     for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNode(hacknet, index)) {
@@ -98,10 +91,6 @@ export function canUpgradeAnyHacknetNode(hacknet: Hacknet) {
     return false;
 }
 
-/** 
- * @param {Hacknet} hacknet
- * @return {Number}
- */
 export function getUpgradeableHacknetNode(hacknet: Hacknet) {
     for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNode(hacknet, index)) {
@@ -112,12 +101,6 @@ export function getUpgradeableHacknetNode(hacknet: Hacknet) {
     return -1;
 }
 
-
-/** 
- * @param {Hacknet} hacknet
- * @param {NS} ns
- * @return {Number}
- */
 export function getUpgradeableHacknetNodeLevel(hacknet: Hacknet, ns: NS) {
     for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNodeLevel(hacknet, index) && hacknet.getLevelUpgradeCost(index) < getHomeServerMoney(ns)) {
@@ -127,11 +110,7 @@ export function getUpgradeableHacknetNodeLevel(hacknet: Hacknet, ns: NS) {
 
     return -1;
 }
-/** 
- * @param {Hacknet} hacknet
- * @param {NS} ns
- * @return {Number}
- */
+
 export function getUpgradeableHacknetNodeRam(hacknet: Hacknet, ns: NS) {
     for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNodeRam(hacknet, index) && hacknet.getRamUpgradeCost(index) < getHomeServerMoney(ns)) {
@@ -141,12 +120,8 @@ export function getUpgradeableHacknetNodeRam(hacknet: Hacknet, ns: NS) {
 
     return -1;
 }
-/** 
- * @param {Hacknet} hacknet
- * @param {NS} ns
- * @return {Number}
- */
-export function getUpgradeableHacknetNodeCore(hacknet: Hacknet, ns: NS) {
+
+export function getUpgradeableHacknetNodeCore(hacknet: Hacknet, ns: NS) : number  {
     for (let index = 0; index < hacknet.numNodes(); index++) {
         if (canUpgradeHacknetNodeCore(hacknet, index) && hacknet.getCoreUpgradeCost(index) < getHomeServerMoney(ns)) {
             return index;
@@ -156,11 +131,17 @@ export function getUpgradeableHacknetNodeCore(hacknet: Hacknet, ns: NS) {
     return -1;
 }
 
-/** 
- * @param {Hacknet} hacknet
- * @param {Number} index
- * @return {Boolean}
- */
+export function getUpgradeableHacknetServerCache(hacknet: Hacknet, ns: NS) : number {
+    for (let index = 0; index < hacknet.numNodes(); index++) {
+        if (canUpgradeHacknetServerCache(hacknet, index) && hacknet.getCacheUpgradeCost(index, 1) < getHomeServerMoney(ns)) {
+            return index;
+        }
+    }
+
+    return -1;
+
+}
+
 export function canUpgradeHacknetNode(hacknet: Hacknet, index: number) {
     if (canUpgradeHacknetNodeLevel(hacknet, index)) {
         return true;
@@ -175,11 +156,7 @@ export function canUpgradeHacknetNode(hacknet: Hacknet, index: number) {
     return false;
 }
 
-/** 
- * @param {Hacknet} hacknet
- * @param {Number} index
- * @return {Boolean}
- */
+
 export function canUpgradeHacknetNodeLevel(hacknet: Hacknet, index: number) {
     if (hacknet.getLevelUpgradeCost(index) < Infinity) {
         return true;
@@ -188,11 +165,7 @@ export function canUpgradeHacknetNodeLevel(hacknet: Hacknet, index: number) {
     return false;
 }
 
-/** 
- * @param {Hacknet} hacknet
- * @param {Number} index
- * @return {Boolean}
- */
+
 export function canUpgradeHacknetNodeCore(hacknet: Hacknet, index: number) {
     if (hacknet.getCoreUpgradeCost(index) < Infinity) {
         return true;
@@ -201,11 +174,14 @@ export function canUpgradeHacknetNodeCore(hacknet: Hacknet, index: number) {
     return false;
 }
 
-/** 
- * @param {Hacknet} hacknet
- * @param {Number} index
- * @return {Boolean}
- */
+export function canUpgradeHacknetServerCache(hacknet: Hacknet, index: number) {
+    if (hacknet.getCacheUpgradeCost(index) < Infinity) {
+        return true;
+    }
+
+    return false;
+}
+
 export function canUpgradeHacknetNodeRam(hacknet: Hacknet, index: number) {
     if (hacknet.getRamUpgradeCost(index) < Infinity) {
         return true;
