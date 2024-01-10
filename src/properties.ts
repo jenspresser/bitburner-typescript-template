@@ -1,11 +1,13 @@
 import { NS } from "@ns";
 import { MODE_FILE_NAME, TARGET_MODE_DEFAULT, persistTargetMode, readTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
-import { MutableStatusProperty, StatusProperty } from "./libscripts";
+import { HacknetMutableStatusProperty, MutableStatusProperty, StatusProperty } from "./libscripts";
 import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
 import { getProgramCount } from "./libprograms";
 import { getHomeMaxRam, getHomeUsedRam } from "./libram";
+import { readHacknetModeStatus, readHacknetModes, setHacknetModes, writeHacknetModeStatus } from "./libhacknet";
+import { HacknetStatusScript } from "./status/statusHacknet";
 
 export class TargetModeStatusProperty extends MutableStatusProperty {
     static INSTANCE = new TargetModeStatusProperty();
@@ -34,6 +36,22 @@ export class TargetModeStatusProperty extends MutableStatusProperty {
 
     afterSet(ns: NS): void {
         HackingStatusScript.INSTANCE.restart(ns);
+    }
+}
+
+export class HacknetPurchaseModeStatusProperty extends HacknetMutableStatusProperty {
+    static INSTANCE = new HacknetPurchaseModeStatusProperty();
+
+    constructor() {
+        super("purchase", "hacknetPurchase", "Hacknet Purchase Mode?");
+    }
+}
+
+export class HacknetHashToMoneyModeStatusProperty extends HacknetMutableStatusProperty {
+    static INSTANCE = new HacknetHashToMoneyModeStatusProperty();
+
+    constructor() {
+        super("hash_to_money", "hacknetHashToMoney", "Hacknet HashToMoney Mode?");
     }
 }
 

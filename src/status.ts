@@ -7,7 +7,7 @@ import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { TableOptions, logTable, printTable } from "./table";
 import { ModuleName, MutableStatusProperty, Script, StatusProperty, StatusScript, UPGRADE_HOME } from "./libscripts";
-import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
+import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HacknetHashToMoneyModeStatusProperty, HacknetPurchaseModeStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { checkArgExists, distinct, getArgs } from "./library";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
@@ -80,6 +80,8 @@ const SPECIALS: SpecialModule[] = [
 
 const PROPERTIES: StatusProperty[] = [
     TargetModeStatusProperty.INSTANCE,
+    HacknetPurchaseModeStatusProperty.INSTANCE,
+    HacknetHashToMoneyModeStatusProperty.INSTANCE,
     HomeRamStatusProperty.INSTANCE,
     ProgramCountStatusProperty.INSTANCE,
     PservCountStatusProperty.INSTANCE,

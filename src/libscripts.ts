@@ -1,5 +1,7 @@
 import { NS, RunOptions } from "@ns";
 import { getServersWithRootAccess } from "./libserver";
+import { HACKNET_DEFAULT_MODE, HacknetMode, readHacknetModeStatus, writeHacknetModeStatus } from "./libhacknet";
+import { HacknetStatusScript } from "./status/statusHacknet";
 
 export class ModuleName {
     name: string;
@@ -275,7 +277,7 @@ export abstract class DistributedTaskStatusScript extends StatusScript {
 
 
 // Hacknet Script
-export const HACKNET = new Script("keepBuyingHacknet.js");
+export const HACKNET = new Script("keepHandlingHacknet.js");
 
 // Pserv Scripts
 export const PSERV = new Script("keepBuyingPserv.js");
@@ -356,5 +358,31 @@ export abstract class MutableStatusProperty extends StatusProperty {
 
     isMutable(): boolean {
         return true;
+    }
+}
+
+export abstract class HacknetMutableStatusProperty extends MutableStatusProperty {
+    modeName: HacknetMode
+
+    constructor(modeName: HacknetMode, name: string, output: string ) {
+        super(name, output);
+        this.modeName = modeName;
+    }
+
+    getValue(ns: NS): string {
+        return readHacknetModeStatus(ns, this.modeName) ? "true" : "false"
+    }
+
+    setValue(ns: NS, value: string): void {
+        let newIsActive = ["on","true","active"].includes(value);
+        writeHacknetModeStatus(ns, this.modeName, newIsActive);
+    }
+
+    getDefaultValue(ns: NS): string {
+        return HACKNET_DEFAULT_MODE[this.modeName] ? "true" : "false";
+    }
+    
+    afterSet(ns: NS): void {
+        HacknetStatusScript.INSTANCE.restart(ns);
     }
 }

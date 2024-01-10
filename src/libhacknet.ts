@@ -1,15 +1,49 @@
 import { Hacknet, NS } from "@ns";
 import { getHomeServerMoney } from "library";
+import { MODE_FILE_NAME } from "./hack/libhack";
+
+export const HACKNET_MODE_FILENAME = "_hacknet_mode.txt";
+export const HACKNET_DEFAULT_MODE : HacknetModes = {
+    purchase: true,
+    hash_to_money: true
+} ;
+
+export type HacknetModes = {
+    purchase: boolean,
+    hash_to_money: boolean
+}
+export type HacknetMode = keyof HacknetModes;
 
 const MAX_HACKNET_NODES = 30;
 
-export async function keepBuyingHacknet(ns: NS) {
+export async function keepHandlingHacknet(ns: NS) {
     let hacknet = ns.hacknet;
 
-    ns.print("Start keepBuyingHacknet");
+    ns.print("Start keepHandlingHacknet");
 
-    while (canKeepUpgradingHacknet(hacknet)) {
-        ns.print("  canKeepUpgradingHacknet ");
+    while(true) {
+        let modes = readHacknetModes(ns);
+
+        if( modes.purchase && canKeepUpgradingHacknet(hacknet) ) {
+            keepBuyingHacknet(ns, hacknet);
+        }
+        if( modes.hash_to_money ) {
+            spendHashesForMoney(ns, hacknet);
+        }
+
+        await ns.sleep(1000);
+    }
+}
+
+function spendHashesForMoney(ns: NS, hacknet: Hacknet) {
+    const CASH_HASH_UPGRADE = "Sell for Money";
+    if(hacknet.numHashes() > hacknet.hashCost(CASH_HASH_UPGRADE)) {
+        hacknet.spendHashes(CASH_HASH_UPGRADE);
+    }
+}
+
+function keepBuyingHacknet(ns: NS, hacknet: Hacknet) {
+    ns.print("  canKeepUpgradingHacknet ");
 
         if (canBuyHacknetNode(hacknet)) {
             if (hacknet.getPurchaseNodeCost() < getHomeServerMoney(ns)) {
@@ -49,15 +83,6 @@ export async function keepBuyingHacknet(ns: NS) {
             ns.print("       can upgrade server cache and afford it");
             hacknet.upgradeCache(upgradeableServerCache, 1);
         }
-
-        await ns.sleep(10);
-    } 
-    
-    printOnStop(ns);
-}
-
-function printOnStop(ns :NS) {
-    ns.tprint("Cannot keep upgrading hacknet: Max Server count and fully upgraded");
 }
 
 export function canKeepUpgradingHacknet(hacknet: Hacknet) {
@@ -189,3 +214,36 @@ export function canUpgradeHacknetNodeRam(hacknet: Hacknet, index: number) {
 
     return false;
 }
+
+export function setHacknetModes(ns: NS, modes: HacknetModes) {
+    let modeJson = JSON.stringify(modes);
+    ns.write(MODE_FILE_NAME, modeJson, "w");
+}
+
+export function getHacknetModes(ns: NS) : HacknetModes {
+    if(!ns.fileExists(HACKNET_MODE_FILENAME)) {
+        setHacknetModes(ns, HACKNET_DEFAULT_MODE);    
+    }
+
+    return readHacknetModes(ns);
+}
+
+export function readHacknetModes(ns: NS) : HacknetModes {
+    let modeJson = ns.read(MODE_FILE_NAME);
+    let modes : HacknetModes = JSON.parse(modeJson);
+
+    return modes;
+}
+
+export function readHacknetModeStatus(ns: NS, modeName: HacknetMode) : boolean {
+    return readHacknetModes(ns)[modeName];
+}
+
+export function writeHacknetModeStatus(ns: NS, modeName: HacknetMode, newStatus: boolean) {
+    let modes = readHacknetModes(ns);
+
+    modes[modeName] = newStatus;
+
+    setHacknetModes(ns, modes);
+}
+
