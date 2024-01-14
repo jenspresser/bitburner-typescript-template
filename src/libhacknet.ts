@@ -50,6 +50,8 @@ export async function keepBuyingHacknet(ns: NS) {
             hacknet.upgradeCache(upgradeableServerCache, 1);
         }
 
+        hashesToMoney(hacknet);
+
         await ns.sleep(10);
     } 
     
@@ -58,6 +60,13 @@ export async function keepBuyingHacknet(ns: NS) {
 
 function printOnStop(ns :NS) {
     ns.tprint("Cannot keep upgrading hacknet: Max Server count and fully upgraded");
+}
+
+export function hashesToMoney(hacknet: Hacknet) {
+    const upgradeName = "Sell for Money";
+    if(hacknet.numHashes() > hacknet.hashCost(upgradeName)) {
+        hacknet.spendHashes(upgradeName);
+    }
 }
 
 export function canKeepUpgradingHacknet(hacknet: Hacknet) {
