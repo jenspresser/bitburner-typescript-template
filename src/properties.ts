@@ -1,7 +1,7 @@
 import { NS } from "@ns";
 import { MODE_FILE_NAME, TARGET_MODE_DEFAULT, persistTargetMode, readTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
-import { MutableStatusProperty, StatusProperty } from "./libscripts";
+import { AbstractFeatureToggleStatusProperty, MutableStatusProperty, StatusProperty } from "./libscripts";
 import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
 import { getProgramCount } from "./libprograms";
@@ -178,5 +178,13 @@ export class GangTerritoryStatusProperty extends StatusProperty {
 
     isUsable(ns: NS): boolean {
         return ns.gang.inGang();
+    }
+}
+
+export class HacknetHackFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+    static INSTANCE = new HacknetHackFeatureToggleStatusProperty();
+
+    constructor() {
+        super("hacknetHack", "Hacknet Hacking", "hacknet_hack");
     }
 }

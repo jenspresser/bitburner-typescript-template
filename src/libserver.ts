@@ -2,6 +2,7 @@ import { NS } from "@ns";
 import { uploadScripts } from "./library";
 
 export const PURCHASE_SERVER_PREFIX = "pserv-";
+export const HACKNET_SERVER_PREFIX = "hacknet-server-";
 
 export const FACTION_SERVERS = [
   "CSEC",

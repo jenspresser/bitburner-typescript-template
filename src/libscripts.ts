@@ -1,5 +1,6 @@
 import { NS, RunOptions } from "@ns";
 import { getServersWithRootAccess } from "./libserver";
+import { isFeatureActive, FeatureToggleType, DEFAULT_FEATURES, AllFeatureToggles } from './libproperties';
 
 export class ModuleName {
     name: string;
@@ -356,5 +357,28 @@ export abstract class MutableStatusProperty extends StatusProperty {
 
     isMutable(): boolean {
         return true;
+    }
+}
+
+export abstract class AbstractFeatureToggleStatusProperty extends MutableStatusProperty {
+    toggleType: FeatureToggleType
+
+    constructor(name: string, output: string, toggleType: FeatureToggleType) {
+        super(name, output);
+        this.toggleType = toggleType;
+    }
+
+    getValue(ns: NS): string {
+        return isFeatureActive(ns, this.toggleType) ? "true" : "false";
+    }
+
+    getDefaultValue(ns: NS): string {
+        return DEFAULT_FEATURES[this.toggleType] ? "true" : "false";
+    }
+
+    setValue(ns: NS, value: string): void {
+        let newStatus : boolean = "true" === value;
+
+        AllFeatureToggles.setFeatureToggle(ns, this.toggleType, newStatus);
     }
 }

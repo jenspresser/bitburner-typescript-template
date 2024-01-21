@@ -1,10 +1,11 @@
 import { NS } from "@ns";
-import { getServersWithRootAccess } from "/libserver";
+import { HACKNET_SERVER_PREFIX, getServersWithRootAccess } from "/libserver";
 import { getHomeMaxRam } from "/libram";
 import { distributeScripts } from "/libserver";
 import { calcHomeReserveRam } from "/libram";
 import { MODE_FILE_NAME, crawlRootAccess, setTargetMode } from "/hack/libhack"
 import { MASTERHACK } from "/libscripts";
+import { isFeatureActive } from "/libproperties";
 
 
 /** @param {NS} ns */
@@ -46,9 +47,13 @@ export async function distributeHack(ns: NS) {
 async function distributeOnRootServers(ns: NS) {
   let masters = getRootServers(ns);
 
+  if(!isFeatureActive(ns, "hacknet_hack")) {
+    masters = masters.filter(it => !it.startsWith(HACKNET_SERVER_PREFIX));
+  }
+
   for (let master of masters) {
     await setupMasterHack(ns, master);
-    await ns.sleep(Math.random() * 1000);
+    await ns.sleep(Math.random() * 100);
   }
 }
 
