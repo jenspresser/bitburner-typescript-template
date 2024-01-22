@@ -54,11 +54,15 @@ export async function keepBuyingHacknet(ns: NS) {
         }
 
         if(isFeatureActive(ns, "hacknet_money")) {
-            hashesToMoney(hacknet);
+            buyHashUpgrade(hacknet, "Sell for Money")
         }
 
         if(isFeatureActive(ns, "hacknet_corpo")) {
-            hashesToCorporationFunds(hacknet);
+            buyHashUpgrade(hacknet, "Sell for Corporation Funds");
+        }
+
+        if(isFeatureActive(ns, "hacknet_research")) {
+            buyHashUpgrade(hacknet, "Exchange for Corporation Research");
         }
 
 
@@ -72,15 +76,7 @@ function printOnStop(ns :NS) {
     ns.tprint("Cannot keep upgrading hacknet: Max Server count and fully upgraded");
 }
 
-export function hashesToMoney(hacknet: Hacknet) {
-    buyHashUpgrade(hacknet, "Sell for Money");
-}
-
-export function hashesToCorporationFunds(hacknet: Hacknet) {
-    buyHashUpgrade(hacknet, "Sell for Corporation Funds");
-}
-
-type UpgradeName = "Sell for Money"|"Sell for Corporation Funds"
+type UpgradeName = "Sell for Money" | "Sell for Corporation Funds" | "Exchange for Corporation Research";
 function buyHashUpgrade(hacknet: Hacknet, upgradeName: UpgradeName) {
     if(hacknet.numHashes() > hacknet.hashCost(upgradeName)) {
         hacknet.spendHashes(upgradeName);

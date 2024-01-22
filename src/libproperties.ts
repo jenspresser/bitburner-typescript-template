@@ -8,7 +8,8 @@ export type FeatureToggles = {
     hacknet_hack: boolean,
     hacknet_purchase: boolean,
     hacknet_money: boolean,
-    hacknet_corpo: boolean
+    hacknet_corpo: boolean,
+    hacknet_research: boolean
 }
 export type FeatureToggleType = keyof FeatureToggles
 
@@ -16,7 +17,8 @@ export const DEFAULT_FEATURES : FeatureToggles = {
     "hacknet_hack": false,
     "hacknet_purchase": true,
     "hacknet_money": true,
-    "hacknet_corpo": false
+    "hacknet_corpo": false,
+    "hacknet_research": false
 }
 
 export function isFeatureActive(ns: NS, featureToggleType: FeatureToggleType) : boolean {

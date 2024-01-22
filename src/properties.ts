@@ -213,3 +213,11 @@ export class HacknetCorpoFeatureToggleStatusProperty extends AbstractFeatureTogg
         super("hacknet.money", "Hacknet Corpo Money", "hacknet_corpo");
     }
 }
+
+export class HacknetResearchFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+    static INSTANCE = new HacknetResearchFeatureToggleStatusProperty();
+
+    constructor() {
+        super("hacknet.research", "Hacknet Corpo Research", "hacknet_research");
+    }
+}
