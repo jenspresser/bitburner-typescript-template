@@ -221,8 +221,18 @@ function setProperty(ns: NS) {
 
     ns.tprint("Setting property [" + propertyName + "] to value [" + propertyValue + "]");
 
-    property.setValue(ns, propertyValue);
-    property.afterSet(ns);
+    if(property.isValidValue(ns, propertyValue)) {
+        property.setValue(ns, propertyValue);
+        property.afterSet(ns);
+    } else {
+        ns.tprint("Invalid value [" + propertyValue + "] for property [" + propertyName + "]");
+
+        let validVals = property.getValidValues(ns);
+
+        if(validVals && validVals.length > 0) {
+            ns.tprint("  Valid values: " + validVals.join(", "));
+        }
+    }
 }
 
 function getModulesFromArgs(ns: NS): string[] {

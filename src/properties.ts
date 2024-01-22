@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { MODE_FILE_NAME, TARGET_MODES, TARGET_MODE_DEFAULT, persistTargetMode, readTargetMode } from "./hack/libhack";
+import { MODE_FILE_NAME, TARGET_MODES, TARGET_MODE_DEFAULT, getAllTargetModes, persistTargetMode, readTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
 import { MutableStatusProperty, StatusProperty } from "./libscripts";
 import { AbstractFeatureToggleStatusProperty } from "./libproperties";
@@ -38,7 +38,15 @@ export class TargetModeStatusProperty extends MutableStatusProperty {
     }
 
     getAutoSuggestValues(): string[] {
-        return TARGET_MODES;
+        return getAllTargetModes();
+    }
+
+    getValidValues(ns: NS): string[] | null | undefined {
+        return getAllTargetModes();
+    }
+
+    isValidValue(ns: NS, value: string): boolean {
+        return getAllTargetModes().includes(value);
     }
 
 }

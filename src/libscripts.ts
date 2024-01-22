@@ -350,6 +350,14 @@ export abstract class MutableStatusProperty extends StatusProperty {
 
     abstract getAutoSuggestValues() : string[];
 
+    isValidValue(ns: NS, value: string) : boolean {
+        return true;
+    }
+
+    getValidValues(ns: NS) : string[]|undefined|null {
+        return null;
+    }
+
     initialize(ns: NS) {
         this.setValue(ns, this.getDefaultValue(ns));
     }

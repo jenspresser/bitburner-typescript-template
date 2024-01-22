@@ -19,6 +19,13 @@ export const TARGET_MODES = [
 	TARGET_MODE_MONEY
 ]
 
+export function getAllTargetModes() : string[] {
+	let fastModes = Array.from(Array(5).keys()).map(it => TARGET_MODE_FAST.concat((it+1).toString()));
+	let moneyModes = Array.from(Array(5).keys()).map(it => TARGET_MODE_MONEY.concat((it+1).toString()));
+
+	return [TARGET_MODE_ROUNDROBIN, TARGET_MODE_SINGLE, ...fastModes, ...moneyModes];
+}
+
 /** 
  * @param {NS} ns
  * @returns {string}
@@ -200,8 +207,10 @@ export function setTargetMode(ns: NS, targetMode: string) {
  * @param {string} targetMode
  */
 export async function persistTargetMode(ns: NS, targetMode: string) {
-	ns.write(MODE_FILE_NAME, targetMode, "w");
-	setTargetMode(ns, targetMode);
+	if(getAllTargetModes().includes(targetMode)) {
+		ns.write(MODE_FILE_NAME, targetMode, "w");
+		setTargetMode(ns, targetMode);
+	}
 }
 
 /** 
