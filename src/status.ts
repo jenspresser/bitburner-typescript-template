@@ -188,9 +188,15 @@ export function autocomplete(data: any, args: string[]) : string[] {
     }
 
     if(START_STOP_ACTIONS.includes(args[0])) {
-        let action = args[0];
+        const moduleNames = ModuleMatrix.create().getAutoSuggestModules();
 
-        return ModuleMatrix.create().getAutoSuggestModules();
+        if(args[args.length-1].startsWith("---")) {
+            return moduleNames.map(it => "---".concat(it));
+        } else if(args[args.length-1].startsWith("++")) {
+            return ["++tail"]
+        }
+        
+        return moduleNames;
     }
 
     return [];
@@ -224,7 +230,7 @@ function getModulesFromArgs(ns: NS): string[] {
 
     let availableModuleNames = STATUS_SCRIPTS.flatMap(it => it.getModuleNames());
     let specialModuleAliases = SPECIALS.map(it => it.name);
-    let excludeModules = modulesArgs.filter(it => it.startsWith("--")).map(it => it.replace("--", ""));
+    let excludeModules = modulesArgs.filter(it => it.startsWith("---")).map(it => it.replace("---", ""));
 
     let modules : string[] = [];
 
