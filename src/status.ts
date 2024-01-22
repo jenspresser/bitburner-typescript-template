@@ -99,7 +99,7 @@ const PROPERTIES: StatusProperty[] = [
 ]
 
 const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
-    .filter(it => it.isMutable)
+    .filter(it => it.isMutable())
     .map(it => (it as MutableStatusProperty));
 
 const startStopActions: string[] = ["start", "stop", "restart"];
