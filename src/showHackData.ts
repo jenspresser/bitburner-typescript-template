@@ -50,3 +50,7 @@ export async function main(ns: NS) {
 
 	printTable(ns, matrix, {header: ServerHackData.toHeaderArray()});
 }
+
+export function autocomplete(data: any, args: string[]) : string[] {
+	return ["name", "money", "maxmoney", "seclevel", "minseclevel", "rqhacklvl", "hacktime", "weakentime", "growtime"];
+}

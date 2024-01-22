@@ -224,6 +224,7 @@ export function getServerHackDataList(ns: NS, serverNames: string[] = []) : Serv
 		: getNodeServersWithRootAccess(ns);
 
 	return useServerNames
+		.filter(it => !it.startsWith("hacknet-server"))
 		.map(server => getServerHackData(ns, server));
 }
 
