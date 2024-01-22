@@ -1,6 +1,7 @@
 import { NS } from "@ns";
 import { getServerInfo, ServerInfo } from "libserver";
 import { printTable } from "table";
+import { getArgs } from './library';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -16,7 +17,7 @@ export async function main(ns: NS) {
         return;
     }
 
-    for (let arg of ns.args) {
+    for (let arg of getArgs(ns)) {
         if (arg === "root") {
             servers = servers.filter(it => it.hasRoot);
         }
@@ -61,4 +62,8 @@ export async function main(ns: NS) {
     let matrix : any[][] = servers.map(it => it.toArray(ns));
 
     printTable(ns, matrix, {header: ServerInfo.toHeaderArray()});
+}
+
+export function autocomplete(data: any, args: string[]) : string[] {
+    return ["root", "pserv", "nodes", "ram8", "ram16", "ram32", "ram64", "ram128", "byroot", "byram", "byname"]
 }
