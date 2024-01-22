@@ -7,7 +7,7 @@ import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { TableOptions, logTable, printTable } from "./table";
 import { ModuleName, MutableStatusProperty, Script, StatusProperty, StatusScript, UPGRADE_HOME } from "./libscripts";
-import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HacknetHackFeatureToggleStatusProperty, HacknetMoneyFeatureToggleStatusProperty, HacknetPurchaseFeatureToggleStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
+import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HacknetCorpoFeatureToggleStatusProperty, HacknetHackFeatureToggleStatusProperty, HacknetMoneyFeatureToggleStatusProperty, HacknetPurchaseFeatureToggleStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty } from "./properties";
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { checkArgExists, distinct, getArgs } from "./library";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
@@ -83,6 +83,7 @@ const PROPERTIES: StatusProperty[] = [
     HacknetHackFeatureToggleStatusProperty.INSTANCE,
     HacknetPurchaseFeatureToggleStatusProperty.INSTANCE,
     HacknetMoneyFeatureToggleStatusProperty.INSTANCE,
+    HacknetCorpoFeatureToggleStatusProperty.INSTANCE,
     HomeRamStatusProperty.INSTANCE,
     ProgramCountStatusProperty.INSTANCE,
     PservCountStatusProperty.INSTANCE,

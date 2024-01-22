@@ -7,14 +7,16 @@ const FEATURE_TOGGLE_FILENAME = "__feature_toggles.txt";
 export type FeatureToggles = {
     hacknet_hack: boolean,
     hacknet_purchase: boolean,
-    hacknet_money: boolean
+    hacknet_money: boolean,
+    hacknet_corpo: boolean
 }
 export type FeatureToggleType = keyof FeatureToggles
 
 export const DEFAULT_FEATURES : FeatureToggles = {
     "hacknet_hack": false,
     "hacknet_purchase": true,
-    "hacknet_money": true
+    "hacknet_money": true,
+    "hacknet_corpo": false
 }
 
 export function isFeatureActive(ns: NS, featureToggleType: FeatureToggleType) : boolean {

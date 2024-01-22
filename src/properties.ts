@@ -186,7 +186,7 @@ export class HacknetHackFeatureToggleStatusProperty extends AbstractFeatureToggl
     static INSTANCE = new HacknetHackFeatureToggleStatusProperty();
 
     constructor() {
-        super("hacknetHack", "Hacknet Hacking", "hacknet_hack");
+        super("hacknet.hack", "Hacknet Hacking", "hacknet_hack");
     }
 }
 
@@ -194,7 +194,7 @@ export class HacknetPurchaseFeatureToggleStatusProperty extends AbstractFeatureT
     static INSTANCE = new HacknetPurchaseFeatureToggleStatusProperty();
 
     constructor() {
-        super("hacknetPurchase", "Hacknet Purchase", "hacknet_purchase");
+        super("hacknet.purchase", "Hacknet Purchase", "hacknet_purchase");
     }
 }
 
@@ -202,6 +202,14 @@ export class HacknetMoneyFeatureToggleStatusProperty extends AbstractFeatureTogg
     static INSTANCE = new HacknetMoneyFeatureToggleStatusProperty();
 
     constructor() {
-        super("hacknetMoney", "Hacknet Money", "hacknet_money");
+        super("hacknet.money", "Hacknet Money", "hacknet_money");
+    }
+}
+
+export class HacknetCorpoFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+    static INSTANCE = new HacknetCorpoFeatureToggleStatusProperty();
+
+    constructor() {
+        super("hacknet.money", "Hacknet Corpo Money", "hacknet_corpo");
     }
 }

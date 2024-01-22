@@ -57,6 +57,11 @@ export async function keepBuyingHacknet(ns: NS) {
             hashesToMoney(hacknet);
         }
 
+        if(isFeatureActive(ns, "hacknet_corpo")) {
+            hashesToCorporationFunds(hacknet);
+        }
+
+
         await ns.sleep(10);
     } 
     
@@ -68,7 +73,15 @@ function printOnStop(ns :NS) {
 }
 
 export function hashesToMoney(hacknet: Hacknet) {
-    const upgradeName = "Sell for Money";
+    buyHashUpgrade(hacknet, "Sell for Money");
+}
+
+export function hashesToCorporationFunds(hacknet: Hacknet) {
+    buyHashUpgrade(hacknet, "Sell for Corporation Funds");
+}
+
+type UpgradeName = "Sell for Money"|"Sell for Corporation Funds"
+function buyHashUpgrade(hacknet: Hacknet, upgradeName: UpgradeName) {
     if(hacknet.numHashes() > hacknet.hashCost(upgradeName)) {
         hacknet.spendHashes(upgradeName);
     }
