@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { MODE_FILE_NAME, TARGET_MODE_DEFAULT, persistTargetMode, readTargetMode } from "./hack/libhack";
+import { MODE_FILE_NAME, TARGET_MODES, TARGET_MODE_DEFAULT, persistTargetMode, readTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
 import { MutableStatusProperty, StatusProperty } from "./libscripts";
 import { AbstractFeatureToggleStatusProperty } from "./libproperties";
@@ -36,6 +36,11 @@ export class TargetModeStatusProperty extends MutableStatusProperty {
     afterSet(ns: NS): void {
         HackingStatusScript.INSTANCE.restart(ns);
     }
+
+    getAutoSuggestValues(): string[] {
+        return TARGET_MODES;
+    }
+
 }
 
 export class ProgramCountStatusProperty extends StatusProperty {

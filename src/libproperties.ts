@@ -83,4 +83,8 @@ export abstract class AbstractFeatureToggleStatusProperty extends MutableStatusP
     afterSet(ns: NS): void {
         HacknetStatusScript.INSTANCE.restart(ns);
     }
+
+    getAutoSuggestValues(): string[] {
+        return ["true", "false"];
+    }
 }

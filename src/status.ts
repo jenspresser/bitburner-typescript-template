@@ -102,11 +102,13 @@ const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
     .filter(it => it.isMutable())
     .map(it => (it as MutableStatusProperty));
 
-const startStopActions: string[] = ["start", "stop", "restart"];
-const availableActions: string[] = ["status", "modules", "property", ...startStopActions];
+const MUTABLE_PROPERTY_NAMES : string[] = MUTABLE_PROPERTIES.map(it => it.name);
+
+const START_STOP_ACTIONS: string[] = ["start", "stop", "restart"];
+const AVAILABLE_ACTIONS: string[] = ["status", "modules", "property", ...START_STOP_ACTIONS];
 
 function errorEmptyOrWrongAction(ns: NS) {
-    ns.tprint("first parameter must be one of: " + availableActions.join(", "));
+    ns.tprint("first parameter must be one of: " + AVAILABLE_ACTIONS.join(", "));
 }
 
 export async function main(ns: NS) {
@@ -117,7 +119,7 @@ export async function main(ns: NS) {
 
     const action: string = String(getArgs(ns)[0]);
 
-    if (!availableActions.includes(action)) {
+    if (!AVAILABLE_ACTIONS.includes(action)) {
         errorEmptyOrWrongAction(ns);
         return;
     }
@@ -137,7 +139,7 @@ export async function main(ns: NS) {
         return;
     }
 
-    if (startStopActions.includes(action)) {
+    if (START_STOP_ACTIONS.includes(action)) {
         if (getArgs(ns).length === 1) {
             ns.tprint("Need to specify which modules to [" + action + "]");
             printModules(ns);
@@ -161,12 +163,43 @@ export async function main(ns: NS) {
     }
 }
 
-function setProperty(ns: NS) {
-    const availableProperties = MUTABLE_PROPERTIES.map(it => it.name);
+export function autocomplete(data: any, args: string[]) : string[] {
+    if(args.length === 0 || (args.length === 1 && !AVAILABLE_ACTIONS.includes(args[0]) ) ) {
+        return AVAILABLE_ACTIONS;
+    }
 
+    if( args[0] === "property") {
+        if(args.length === 1 || (args.length === 2 && !MUTABLE_PROPERTY_NAMES.includes(args[1]))) {
+            return MUTABLE_PROPERTY_NAMES;
+        }
+
+        if(MUTABLE_PROPERTY_NAMES.includes(args[1])) {
+            const propertyName = args[1];
+            let mutableProperty = MUTABLE_PROPERTIES.find(it => it.name === propertyName);
+
+            if(mutableProperty) {
+                let autosuggestValues = mutableProperty.getAutoSuggestValues();
+
+                if(autosuggestValues && autosuggestValues.length > 0) {
+                    return autosuggestValues;
+                }
+            }
+        }
+    }
+
+    if(START_STOP_ACTIONS.includes(args[0])) {
+        let action = args[0];
+
+        return ModuleMatrix.create().getAutoSuggestModules();
+    }
+
+    return [];
+}
+
+function setProperty(ns: NS) {
     if (getArgs(ns).length < 3) {
         ns.tprint("Must call 'property' with at least a property name and value");
-        ns.tprint("available properties: " + availableProperties.join(", "));
+        ns.tprint("available properties: " + MUTABLE_PROPERTY_NAMES.join(", "));
         return;
     }
 
@@ -174,7 +207,7 @@ function setProperty(ns: NS) {
     let property = MUTABLE_PROPERTIES.find(it => it.name === propertyName);
 
     if (!property) {
-        ns.tprint("invalid property " + propertyName + "; available properties: [" + availableProperties.join(", ") + "]");
+        ns.tprint("invalid property " + propertyName + "; available properties: [" + MUTABLE_PROPERTY_NAMES.join(", ") + "]");
         return;
     }
 
@@ -219,7 +252,7 @@ function getModulesFromSpecialModuleAlias(specialModuleAlias: string, excludeMod
 }
 
 function printModules(ns: NS) {
-    ModuleMatrix.create(ns).printToTerminal(ns);
+    ModuleMatrix.create().printToTerminal(ns);
 }
 
 async function printStatus(ns: NS) {
@@ -285,11 +318,18 @@ class ModuleMatrix {
         }
     }
 
+    getAutoSuggestModules() : string[] {
+        let statusScripts = STATUS_SCRIPTS.map(it => it.statusName.name);
+        let specialModules = SPECIALS.map(it => it.name.name);
+
+        return [...statusScripts, ...specialModules];
+    }
+
     printToTerminal(ns: NS) {
         printTable(ns, this.getMatrix(), this.getTableOptions());
     }
 
-    static create(ns: NS) : ModuleMatrix {
+    static create() : ModuleMatrix {
         let modules = STATUS_SCRIPTS.map(it => [it.statusName.name, it.statusName.alias, ""]);
         let specialModules = SPECIALS.map(it => [it.name.name, it.name.alias, it.scriptFilter().map(it => it.statusName).join(", ")]);
 

@@ -348,6 +348,8 @@ export abstract class MutableStatusProperty extends StatusProperty {
 
     abstract getDefaultValue(ns: NS): string;
 
+    abstract getAutoSuggestValues() : string[];
+
     initialize(ns: NS) {
         this.setValue(ns, this.getDefaultValue(ns));
     }
