@@ -1,6 +1,7 @@
 import { NS } from "@ns";
 import { terminalInput } from "/libterminal";
 import { findPath, PathResult, printHelp } from "/libpath";
+import { getServerNames } from "./libserver";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -31,6 +32,9 @@ export async function main(ns: NS) {
 	}
 }
 
+export function autocomplete(data: any, args: string[]) : string[] {
+	return data["servers"];
+}
 
 /**
  * @param {PathResult} pathResult

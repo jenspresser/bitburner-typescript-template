@@ -27,3 +27,7 @@ export async function main(ns: NS) {
 	}
 }
 
+export function autocomplete(data: any, args: string[]) : string[] {
+	return data["servers"];
+}
+
