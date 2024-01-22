@@ -63,6 +63,8 @@ export async function main(ns: NS) {
 		return;
 	}
 
+	ns.print(serverToHackFrom + ", ram: " + ns.formatRam(serverMaxRAM), ", used: " + ns.formatRam(ns.getServerUsedRam(serverToHackFrom)), ", grow RAM: ", ns.formatRam(GROW.ram(ns)));
+
 	// Main loop - will terminate if no RAM available
 	while (3 < (possibleThreads = Math.floor((serverMaxRAM - ns.getServerUsedRam(serverToHackFrom)) / GROW.ram(ns)))) {
 		currentServerMoney = ns.getServerMoneyAvailable(target);
