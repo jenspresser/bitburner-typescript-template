@@ -1,15 +1,20 @@
 import { NS } from "@ns";
-import { MutableStatusProperty } from "./libscripts";
+import { HACKNET, MutableStatusProperty } from "./libscripts";
+import { HacknetStatusScript } from "./status/statusHacknet";
 
 const FEATURE_TOGGLE_FILENAME = "__feature_toggles.txt";
 
 export type FeatureToggles = {
-    hacknet_hack: boolean
+    hacknet_hack: boolean,
+    hacknet_purchase: boolean,
+    hacknet_hash2money: boolean
 }
 export type FeatureToggleType = keyof FeatureToggles
 
 export const DEFAULT_FEATURES : FeatureToggles = {
-    "hacknet_hack": true
+    "hacknet_hack": false,
+    "hacknet_purchase": true,
+    "hacknet_hash2money": true
 }
 
 export function isFeatureActive(ns: NS, featureToggleType: FeatureToggleType) : boolean {
@@ -69,5 +74,9 @@ export abstract class AbstractFeatureToggleStatusProperty extends MutableStatusP
         let newStatus: boolean = "true" === value;
 
         AllFeatureToggles.setFeatureToggle(ns, this.toggleType, newStatus);
+    }
+
+    afterSet(ns: NS): void {
+        HacknetStatusScript.INSTANCE.restart(ns);
     }
 }

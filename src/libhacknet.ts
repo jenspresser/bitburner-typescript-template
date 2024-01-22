@@ -1,5 +1,6 @@
 import { Hacknet, NS } from "@ns";
 import { getHomeServerMoney } from "library";
+import { isFeatureActive } from "./libproperties";
 
 const MAX_HACKNET_NODES = 30;
 
@@ -11,46 +12,50 @@ export async function keepBuyingHacknet(ns: NS) {
     while (canKeepUpgradingHacknet(hacknet)) {
         ns.print("  canKeepUpgradingHacknet ");
 
-        if (canBuyHacknetNode(hacknet)) {
-            if (hacknet.getPurchaseNodeCost() < getHomeServerMoney(ns)) {
-                ns.print("    can buy node and afford it");
-                hacknet.purchaseNode();
+        if (isFeatureActive(ns, "hacknet_purchase")) {
+            if (canBuyHacknetNode(hacknet)) {
+                if (hacknet.getPurchaseNodeCost() < getHomeServerMoney(ns)) {
+                    ns.print("    can buy node and afford it");
+                    hacknet.purchaseNode();
+                }
+            }
+    
+            let upgradeableNodeLevel = getUpgradeableHacknetNodeLevel(hacknet, ns);
+            ns.print("  next upgradeable Level hacknet node: " + upgradeableNodeLevel);
+    
+            if (upgradeableNodeLevel > -1) {
+                ns.print("    can upgrade node level and affort it");
+                hacknet.upgradeLevel(upgradeableNodeLevel);
+            }
+    
+            let upgradeableNodeRam = getUpgradeableHacknetNodeRam(hacknet, ns);
+            ns.print("  next upgradeable RAM hacknet node: " + upgradeableNodeRam);
+    
+            if (upgradeableNodeRam > -1) {
+                ns.print("       can upgrade node RAM and affort it");
+                hacknet.upgradeRam(upgradeableNodeRam);
+            }
+    
+            let upgradeableNodeCore = getUpgradeableHacknetNodeCore(hacknet, ns);
+            ns.print("  next upgradeable Core hacknet node: " + upgradeableNodeCore);
+    
+            if (upgradeableNodeCore > -1) {
+                ns.print("       can upgrade node core and affort it");
+                hacknet.upgradeCore(upgradeableNodeCore);
+            }
+    
+            let upgradeableServerCache = getUpgradeableHacknetServerCache(hacknet, ns);
+            ns.print("  next upgradeable Cache hacknet node: " + upgradeableServerCache);
+    
+            if(upgradeableServerCache > -1) {
+                ns.print("       can upgrade server cache and afford it");
+                hacknet.upgradeCache(upgradeableServerCache, 1);
             }
         }
 
-        let upgradeableNodeLevel = getUpgradeableHacknetNodeLevel(hacknet, ns);
-        ns.print("  next upgradeable Level hacknet node: " + upgradeableNodeLevel);
-
-        if (upgradeableNodeLevel > -1) {
-            ns.print("    can upgrade node level and affort it");
-            hacknet.upgradeLevel(upgradeableNodeLevel);
+        if(isFeatureActive(ns, "hacknet_hash2money")) {
+            hashesToMoney(hacknet);
         }
-
-        let upgradeableNodeRam = getUpgradeableHacknetNodeRam(hacknet, ns);
-        ns.print("  next upgradeable RAM hacknet node: " + upgradeableNodeRam);
-
-        if (upgradeableNodeRam > -1) {
-            ns.print("       can upgrade node RAM and affort it");
-            hacknet.upgradeRam(upgradeableNodeRam);
-        }
-
-        let upgradeableNodeCore = getUpgradeableHacknetNodeCore(hacknet, ns);
-        ns.print("  next upgradeable Core hacknet node: " + upgradeableNodeCore);
-
-        if (upgradeableNodeCore > -1) {
-            ns.print("       can upgrade node core and affort it");
-            hacknet.upgradeCore(upgradeableNodeCore);
-        }
-
-        let upgradeableServerCache = getUpgradeableHacknetServerCache(hacknet, ns);
-        ns.print("  next upgradeable Cache hacknet node: " + upgradeableServerCache);
-
-        if(upgradeableServerCache > -1) {
-            ns.print("       can upgrade server cache and afford it");
-            hacknet.upgradeCache(upgradeableServerCache, 1);
-        }
-
-        hashesToMoney(hacknet);
 
         await ns.sleep(10);
     } 

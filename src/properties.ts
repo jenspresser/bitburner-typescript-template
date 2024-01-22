@@ -189,3 +189,19 @@ export class HacknetHackFeatureToggleStatusProperty extends AbstractFeatureToggl
         super("hacknetHack", "Hacknet Hacking", "hacknet_hack");
     }
 }
+
+export class HacknetPurchaseFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+    static INSTANCE = new HacknetPurchaseFeatureToggleStatusProperty();
+
+    constructor() {
+        super("hacknetPurchase", "Hacknet Purchase", "hacknet_purchase");
+    }
+}
+
+export class HacknetHash2MoneyFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+    static INSTANCE = new HacknetHash2MoneyFeatureToggleStatusProperty();
+
+    constructor() {
+        super("hacknetHash2Money", "Hacknet Hash2Money", "hacknet_hash2money");
+    }
+}
