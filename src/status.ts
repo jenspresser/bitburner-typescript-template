@@ -106,7 +106,7 @@ const startStopActions: string[] = ["start", "stop", "restart"];
 const availableActions: string[] = ["status", "modules", "property", ...startStopActions];
 
 function errorEmptyOrWrongAction(ns: NS) {
-    ns.tprint("first parameter must be one of " + availableActions);
+    ns.tprint("first parameter must be one of: " + availableActions.join(", "));
 }
 
 export async function main(ns: NS) {
