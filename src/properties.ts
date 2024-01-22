@@ -198,10 +198,10 @@ export class HacknetPurchaseFeatureToggleStatusProperty extends AbstractFeatureT
     }
 }
 
-export class HacknetHash2MoneyFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
-    static INSTANCE = new HacknetHash2MoneyFeatureToggleStatusProperty();
+export class HacknetMoneyFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+    static INSTANCE = new HacknetMoneyFeatureToggleStatusProperty();
 
     constructor() {
-        super("hacknetHash2Money", "Hacknet Hash2Money", "hacknet_hash2money");
+        super("hacknetMoney", "Hacknet Money", "hacknet_money");
     }
 }

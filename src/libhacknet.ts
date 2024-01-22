@@ -53,7 +53,7 @@ export async function keepBuyingHacknet(ns: NS) {
             }
         }
 
-        if(isFeatureActive(ns, "hacknet_hash2money")) {
+        if(isFeatureActive(ns, "hacknet_money")) {
             hashesToMoney(hacknet);
         }
 
