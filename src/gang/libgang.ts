@@ -1,5 +1,4 @@
 import { NS } from "@ns";
-import { ServerInfo, getServerInfo } from "/libserver";
 import { canRunGangOnHome } from "/libram";
 import { GANG } from "/libscripts";
 
@@ -14,19 +13,12 @@ export function canRunGang(ns: NS) : boolean {
 export function getGangScriptServer(ns: NS) : string|undefined {
     if(canRunGangOnHome(ns)) {
         return "home"
-    }
+    } 
 
-    const gangScriptRam = getGangScriptRam(ns);
+    const IRON_GYM = "iron-gym";
 
-    const candidateServers = getServerInfo(ns)
-        .filter(server => server.hostname !== "home")
-        .filter(server => server.hasRoot)
-        .filter(server => server.maxRam > gangScriptRam);
-
-    candidateServers.sort(ServerInfo.sortByRamAsc());
-
-    if(candidateServers.length > 0) {
-        return candidateServers[0].hostname;
+    if(ns.hasRootAccess(IRON_GYM)) {
+        return IRON_GYM;
     }
 
     return undefined;
