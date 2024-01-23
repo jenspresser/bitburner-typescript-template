@@ -223,7 +223,7 @@ export class HacknetCorpoFeatureToggleStatusProperty extends AbstractFeatureTogg
     static INSTANCE = new HacknetCorpoFeatureToggleStatusProperty();
 
     constructor() {
-        super("hacknet.money", "Hacknet Corpo Money", "hacknet_corpo");
+        super("hacknet.corpo", "Hacknet Corpo Money", "hacknet_corpo");
     }
 }
 
