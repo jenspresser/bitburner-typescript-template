@@ -1,9 +1,11 @@
-import { NS } from "@ns";
-//
-//  Company Lookup Metadata
-//
 
-export const companyMeta = [
+export type CompanyMeta = {
+	companyName: string,
+	stockSymbol: string,
+	serverName: string
+}
+
+export const companyMeta : CompanyMeta[] = [
 	{
 		'companyName': '.',
 		'stockSymbol': '',

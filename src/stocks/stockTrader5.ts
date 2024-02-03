@@ -1,9 +1,11 @@
 import { NS } from "@ns";
+
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
     // Logging
     ns.disableLog('ALL');
     ns.tail();
+    ns.resizeTail(650, 800);
 
     // Globals
     const scriptTimer = 2000; // Time script waits
@@ -26,47 +28,7 @@ export async function main(ns) {
     const decimalPlaces = 3;
 
 
-    // Functions
-    // Use nFormat for values it can work with
-    function format(number) {
-        if (Math.abs(number) < 1e-6) {
-            number = 0;
-        }
-
-        const answer = ns.formatNumber(number);
-
-        if (answer === "NaN") {
-            return `${number}`;
-        }
-
-        return answer;
-    }
-
-    // numeral.js doesn't properly format numbers that are too big or too small
-    // So, we will supply our own function for values over 't'
-    function formatReallyBigNumber(number) {
-        if (number === Infinity) return "∞";
-
-        // Format numbers q+ properly
-        for (let i = 0; i < extraFormats.length; i++) {
-            if (extraFormats[i] < number && number <= extraFormats[i] * 1000) {
-                return format(number / extraFormats[i], "0." + "0".repeat(decimalPlaces)) + extraNotations[i];
-            }
-        }
-
-        // Use nFormat for numbers it can format
-        if (Math.abs(number) < 1000) {
-            return format(number, "0." + "0".repeat(decimalPlaces));
-        }
-
-        const str = format(number, "0." + "0".repeat(decimalPlaces) + "a");
-
-        if (str === "NaN") return format(number, "0." + " ".repeat(decimalPlaces) + "e+0");
-
-        return str;
-    }
-
-    function buyPositions(stock) {
+    function buyPositions(stock: string) {
         let position = ns.stock.getPosition(stock);
         let maxShares = (ns.stock.getMaxShares(stock) * maxSharePercent) - position[0];
         let maxSharesShort = (ns.stock.getMaxShares(stock) * maxSharePercent) - position[2];
@@ -83,7 +45,7 @@ export async function main(ns) {
                 let boughtFor = ns.stock.buyStock(stock, shares);
 
                 if (boughtFor > 0) {
-                    let message = 'Bought ' + Math.round(shares) + ' Long shares of ' + stock + ' for ' + formatReallyBigNumber(boughtFor);
+                    let message = 'Bought ' + Math.round(shares) + ' Long shares of ' + stock + ' for ' + ns.formatNumber(boughtFor);
 
                     ns.toast(message, 'success', toastDuration);
                 }
@@ -98,7 +60,7 @@ export async function main(ns) {
                     let boughtFor = ns.stock.buyShort(stock, shares);
 
                     if (boughtFor > 0) {
-                        let message = 'Bought ' + Math.round(shares) + ' Short shares of ' + stock + ' for ' + formatReallyBigNumber(boughtFor);
+                        let message = 'Bought ' + Math.round(shares) + ' Short shares of ' + stock + ' for ' + ns.formatNumber(boughtFor);
 
                         ns.toast(message, 'success', toastDuration);
                     }
@@ -107,7 +69,7 @@ export async function main(ns) {
         }
     }
 
-    function sellIfOutsideThreshdold(stock) {
+    function sellIfOutsideThreshdold(stock: string) {
         let position = ns.stock.getPosition(stock);
         let forecast = ns.stock.getForecast(stock);
 
@@ -186,8 +148,8 @@ export async function main(ns) {
 
         // Output Script Status
         ns.print("---------------------------------------");
-        ns.print('Current Stock Worth: ' + formatReallyBigNumber(currentWorth));
-        ns.print('Current Net Worth: ' + formatReallyBigNumber(currentWorth + ns.getPlayer().money));
+        ns.print('Current Stock Worth: ' + ns.formatNumber(currentWorth));
+        ns.print('Current Net Worth: ' + ns.formatNumber(currentWorth + ns.getPlayer().money));
         ns.print(new Date().toLocaleTimeString() + ' - Running ...');
         ns.print("---------------------------------------");
 
