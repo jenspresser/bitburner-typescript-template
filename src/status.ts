@@ -292,14 +292,16 @@ async function printSimple(ns: NS) {
 async function printTailStatus(ns: NS) {
     ns.disableLog('ALL');
     ns.tail();
-    ns.resizeTail(450, 800);
     ns.moveTail(1900, 10);
 
     let intervalInSeconds = Number(getArgs(ns)[2]) || 1;
     let intervalInMillis = intervalInSeconds * 1000;
 
     while(true) {
-        StatusMatrix.create(ns).printToLog(ns); 
+        const statusMatrix = StatusMatrix.create(ns);
+        statusMatrix.printToLog(ns); 
+        statusMatrix.resizeTailWindow(ns);
+        
         await ns.sleep(intervalInMillis);
 
         ns.clearLog();
@@ -395,6 +397,18 @@ class StatusMatrix {
             horizontalSeparator: ["first", String(this.getDividerRowNum())],
             align: ["left", "right"]
         }
+    }
+
+    resizeTailWindow(ns: NS) {
+        const rowSize = 26;
+        const width = 450;
+        const numHeaderRows = 6;
+        const numExecutors = this.statusFromExecutors.length;
+        const numProperties = this.statusFromProperties.length;
+
+        const heigth = (rowSize * numExecutors) + (rowSize * numProperties) + (rowSize * numHeaderRows) + rowSize
+
+        ns.resizeTail(width, heigth);
     }
 
     static create(ns: NS) : StatusMatrix {
