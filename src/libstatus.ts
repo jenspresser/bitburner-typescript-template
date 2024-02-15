@@ -68,10 +68,39 @@ export class StatusAccess {
         ns.write(STATUS_FILE, statusJson, "w");
     }
 
+    getRunningModules() : string[] {
+        return this.status.runningModules;
+    }
+
+    setRunningModules(newModules: string[]) {
+        this.status.runningModules = newModules;
+
+        this.persist();
+    }
+
+    addRunningModules(addModules: string[]) {
+        let newModules : string[]= this.status.runningModules;
+        
+        let distinctAddableModules = addModules.filter(it => !newModules.includes(it));
+        newModules.push(...distinctAddableModules);
+
+        this.status.runningModules = newModules;
+
+        this.persist();
+    }
+
+    removeRunningModules(removeModules: string[]) {
+        let newModules : string[]= this.status.runningModules.filter(it => !removeModules.includes(it));
+        
+        this.status.runningModules = newModules;
+
+        this.persist();
+    }
+
     setFeatureToggle(toggle: FeatureToggleType, newStatus: boolean) {
         this.status.featureToggles[toggle] = newStatus;
 
-        StatusAccess.writeStatusFile(this.ns, this.status);
+        this.persist();
     }
 
     isFeatureActive(featureToggle: FeatureToggleType) : boolean {
@@ -81,10 +110,14 @@ export class StatusAccess {
     setStringProperty(property: StringPropertyType, newValue: string) {
         this.status.stringProperties[property] = newValue;
 
-        StatusAccess.writeStatusFile(this.ns, this.status);
+        this.persist();
     }
 
     getStringProperty(property: StringPropertyType) : string {
         return this.status.stringProperties[property];
+    }
+
+    private persist() {
+        StatusAccess.writeStatusFile(this.ns, this.status);
     }
 }

@@ -3,8 +3,6 @@ import { HasStatus } from "./libscripts";
 import { DEFAULT_STATUS, FeatureToggleType, StatusAccess, StringPropertyType } from './libstatus';
 import { HacknetStatusScript } from "./status/statusHacknet"; 
 
-const FEATURE_TOGGLE_FILENAME = "__feature_toggles.txt";
-
 export function isFeatureActive(ns: NS, featureToggleType: FeatureToggleType) : boolean {
     return StatusAccess.getStatus(ns).isFeatureActive(featureToggleType);
 }

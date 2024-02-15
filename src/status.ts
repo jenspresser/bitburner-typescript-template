@@ -16,6 +16,7 @@ import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
 import { JoiningFactionsStatusScript } from "./status/statusJoiningFactions";
 import { BuyAugmentationsStatusScript } from "./status/statusBuyAugmentations";
 import { CorporationStatusScript } from "./status/statusCorporation";
+import { StatusAccess } from "./libstatus";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -142,12 +143,6 @@ export async function main(ns: NS) {
     }
 
     if (START_STOP_ACTIONS.includes(action)) {
-        if (getArgs(ns).length === 1) {
-            ns.tprint("Need to specify which modules to [" + action + "]");
-            printModules(ns);
-            return;
-        }
-
         let modules = getModulesFromArgs(ns);
 
         let shouldTailStatus = checkArgExists(ns, "++tail");
@@ -158,6 +153,8 @@ export async function main(ns: NS) {
         for (let script of scripts) {
             script.onAction(ns, action);
         }
+
+        StatusAccess.getStatus(ns).setRunningModules(StatusMatrix.create(ns).runningScripts);
 
         if(shouldTailStatus) {
             await printTailStatus(ns);
@@ -238,7 +235,11 @@ function setProperty(ns: NS) {
 }
 
 function getModulesFromArgs(ns: NS): string[] {
-    let modulesArgs = getArgs(ns).splice(1).map(it => String(it));
+    let modulesArgs : string[] = getArgs(ns).splice(1).map(it => String(it));
+
+    if(modulesArgs.length === 0) {
+        modulesArgs = StatusAccess.getStatus(ns).getRunningModules();
+    }
 
     let availableModuleNames = STATUS_SCRIPTS.flatMap(it => it.getModuleNames());
     let specialModuleAliases = SPECIALS.map(it => it.name);
@@ -356,10 +357,12 @@ class ModuleMatrix {
 }
 
 class StatusMatrix {
+    runningScripts : string[];
     statusFromExecutors : [string, string][];
     statusFromProperties : [string, string][];
     
-    constructor(statusFromExecutors : [string, string][], statusFromProperties : [string, string][]) {
+    constructor(runningScripts: string[], statusFromExecutors : [string, string][], statusFromProperties : [string, string][]) {
+        this.runningScripts = runningScripts;
         this.statusFromExecutors = statusFromExecutors;
         this.statusFromProperties = statusFromProperties;
     }
@@ -395,9 +398,10 @@ class StatusMatrix {
     }
 
     static create(ns: NS) : StatusMatrix {
+        let runningScripts = STATUS_SCRIPTS.filter(it => it.isRunning(ns)).map(it => it.statusName.name);
         let statusFromExecutors = STATUS_SCRIPTS.map(it => it.getStatus(ns));
         let statusFromProperties = PROPERTIES.filter(it => it.isUsable(ns)).map(it => it.getStatus(ns));
 
-        return new StatusMatrix(statusFromExecutors, statusFromProperties);
+        return new StatusMatrix( runningScripts, statusFromExecutors, statusFromProperties);
     }
 }

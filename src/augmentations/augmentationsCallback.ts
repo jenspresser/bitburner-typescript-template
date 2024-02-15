@@ -1,15 +1,13 @@
 import { NS } from "@ns";
 import { CORPORATION } from "/libscripts";
+import { StatusAccess } from "/libstatus";
 
 export async function main(ns: NS) {
     ns.tprint("### CALLBACK AFTER INSTALLING AUGMENTATIONS ###");
 
-    let callbackArgs = ["start","adv", "++tail"];
+    let lastModules = StatusAccess.getStatus(ns).getRunningModules();
 
-    if(ns.getServerMaxRam("home") > (3* CORPORATION.ram(ns)) ) {
-        // We have three times more RAM than needed for corpo script --> run with corpo
-        callbackArgs.push("corp");
-    }
+    let callbackArgs = ["start",...lastModules, "++tail"];
 
     ns.exec("/status.js", "home", 1, ...callbackArgs);
 }
