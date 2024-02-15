@@ -1,7 +1,7 @@
 import { NS } from "@ns";
-import { TARGET_MODE_DEFAULT, getAllTargetModes, persistTargetMode, readTargetMode } from "./hack/libhack";
+import { getAllTargetModes, setTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
-import { AbstractHacknetFeatureToggleStatusProperty, AbstractStringPropertyStatusProperty, MutableStatusProperty, StatusProperty } from "./libproperties";
+import { AbstractHacknetFeatureToggleStatusProperty, AbstractStringPropertyStatusProperty, StatusProperty } from "./libproperties";
 import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
 import { getProgramCount } from "./libprograms";
@@ -15,7 +15,7 @@ export class TargetModeStatusProperty extends AbstractStringPropertyStatusProper
     }
 
     afterSet(ns: NS): void {
-        persistTargetMode(ns, this.getValue(ns));
+        setTargetMode(ns, this.getValue(ns));
         HackingStatusScript.INSTANCE.restart(ns);
     }
 
