@@ -1,6 +1,6 @@
 import { NS } from "@ns";
-import { HACKNET, MutableStatusProperty } from "./libscripts";
 import { HacknetStatusScript } from "./status/statusHacknet";
+import { HasStatus } from "./libscripts";
 
 const FEATURE_TOGGLE_FILENAME = "__feature_toggles.txt";
 
@@ -57,6 +57,58 @@ export class AllFeatureToggles {
     }
 }
 
+export abstract class StatusProperty implements HasStatus {
+    name: string;
+    output: string;
+    constructor(name: string, output: string) {
+        this.name = name;
+        this.output = output;
+    }
+
+    abstract getValue(ns: NS): string;
+
+    getStatus(ns: NS): [string, string] {
+        return [this.output, this.getValue(ns)];
+    }
+
+    isMutable(): boolean {
+        return false;
+    }
+
+    isUsable(ns: NS): boolean {
+        return true;
+    }
+}
+
+export abstract class MutableStatusProperty extends StatusProperty {
+    constructor(name: string, output: string) {
+        super(name, output);
+    }
+
+    abstract setValue(ns: NS, value: string): void;
+
+    abstract getDefaultValue(ns: NS): string;
+
+    abstract getAutoSuggestValues(): string[];
+
+    isValidValue(ns: NS, value: string): boolean {
+        return true;
+    }
+
+    getValidValues(ns: NS): string[] | undefined | null {
+        return null;
+    }
+
+    initialize(ns: NS) {
+        this.setValue(ns, this.getDefaultValue(ns));
+    }
+
+    afterSet(ns: NS) { }
+
+    isMutable(): boolean {
+        return true;
+    }
+}
 
 export abstract class AbstractFeatureToggleStatusProperty extends MutableStatusProperty {
     toggleType: FeatureToggleType;

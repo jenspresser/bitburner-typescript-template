@@ -1,7 +1,8 @@
 import { NS } from "@ns";
 import { MODE_FILE_NAME, TARGET_MODES, TARGET_MODE_DEFAULT, getAllTargetModes, persistTargetMode, readTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
-import { MutableStatusProperty, StatusProperty } from "./libscripts";
+import { StatusProperty } from "./libproperties";
+import { MutableStatusProperty } from "./libproperties";
 import { AbstractFeatureToggleStatusProperty } from "./libproperties";
 import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
