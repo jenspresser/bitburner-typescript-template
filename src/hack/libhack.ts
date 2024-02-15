@@ -1,9 +1,9 @@
-import { NS, PortData } from "@ns";
+import { NS } from "@ns";
 import { getNodeServersWithRootAccess, getServersWithoutRootAccess } from "/libserver";
 import { isPortEmpty, PORT_NEXT_TARGET_INDEX, PORT_NEXT_TARGET_MODE } from "/PORTS";
 import { PROGRAM_BruteSSH, PROGRAM_FTPCrack, PROGRAM_HTTPWorm, PROGRAM_SQLInject, PROGRAM_relaySMTP, availablePortOpenerPrograms, isProgramAvailable } from "/libprograms";
+import { StatusAccess } from "/libstatus";
 
-export const MODE_FILE_NAME = "hack/_mode.txt";
 
 // TARGET MODES
 export const TARGET_MODE_ROUNDROBIN = "roundrobin";
@@ -208,17 +208,8 @@ export function setTargetMode(ns: NS, targetMode: string) {
  */
 export async function persistTargetMode(ns: NS, targetMode: string) {
 	if(getAllTargetModes().includes(targetMode)) {
-		ns.write(MODE_FILE_NAME, targetMode, "w");
+		StatusAccess.getStatus(ns).setStringProperty("targetMode", targetMode);
 		setTargetMode(ns, targetMode);
-	}
-}
-
-/** 
- * @param {NS} ns 
- * */
-export async function initializeTargetMode(ns: NS) {
-	if (!ns.fileExists(MODE_FILE_NAME)) {
-		persistTargetMode(ns, TARGET_MODE_DEFAULT);
 	}
 }
 

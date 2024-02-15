@@ -3,9 +3,10 @@ import { HACKNET_SERVER_PREFIX, getServersWithRootAccess } from "/libserver";
 import { getHomeMaxRam } from "/libram";
 import { distributeScripts } from "/libserver";
 import { calcHomeReserveRam } from "/libram";
-import { MODE_FILE_NAME, crawlRootAccess, setTargetMode } from "/hack/libhack"
+import { crawlRootAccess, setTargetMode } from "/hack/libhack"
 import { MASTERHACK } from "/libscripts";
 import { isFeatureActive } from "/libproperties";
+import { StatusAccess } from "/libstatus";
 
 
 /** @param {NS} ns */
@@ -13,12 +14,9 @@ export async function main(ns: NS) {
   ns.tprint("Start distributeHack!");
   await ns.sleep(1000);
 
-	if (ns.fileExists(MODE_FILE_NAME)) {
-		let initialTargetMode = ns.read(MODE_FILE_NAME);
-		setTargetMode(ns, initialTargetMode);
-
-		ns.tprint("Mode initialised to " + initialTargetMode);
-	}
+  let initialTargetMode = StatusAccess.getStatus(ns).getStringProperty("targetMode");
+  setTargetMode(ns, initialTargetMode);
+  ns.tprint("Mode initialised to " + initialTargetMode);
 
 	while (true) {
     ns.print("crawlRootAccess");

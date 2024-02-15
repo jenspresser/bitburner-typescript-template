@@ -1,40 +1,21 @@
 import { NS } from "@ns";
-import { MODE_FILE_NAME, TARGET_MODES, TARGET_MODE_DEFAULT, getAllTargetModes, persistTargetMode, readTargetMode } from "./hack/libhack";
+import { TARGET_MODE_DEFAULT, getAllTargetModes, persistTargetMode, readTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
-import { StatusProperty } from "./libproperties";
-import { MutableStatusProperty } from "./libproperties";
-import { AbstractFeatureToggleStatusProperty } from "./libproperties";
+import { AbstractHacknetFeatureToggleStatusProperty, AbstractStringPropertyStatusProperty, MutableStatusProperty, StatusProperty } from "./libproperties";
 import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
 import { getProgramCount } from "./libprograms";
 import { getHomeMaxRam, getHomeUsedRam } from "./libram";
 
-export class TargetModeStatusProperty extends MutableStatusProperty {
+export class TargetModeStatusProperty extends AbstractStringPropertyStatusProperty {
     static INSTANCE = new TargetModeStatusProperty();
 
     constructor() {
-        super("targetMode", "Target Mode");
-    }
-
-    getValue(ns: NS): string {
-        return readTargetMode(ns);
-    }
-
-    setValue(ns: NS, value: string): void {
-        persistTargetMode(ns, value);
-    }
-
-    getDefaultValue(ns: NS): string {
-        return TARGET_MODE_DEFAULT;
-    }
-
-    initialize(ns: NS): void {
-        if(!ns.fileExists(MODE_FILE_NAME)) {
-            this.setValue(ns, this.getDefaultValue(ns));
-        }
+        super("targetMode", "Target Mode", "targetMode");
     }
 
     afterSet(ns: NS): void {
+        persistTargetMode(ns, this.getValue(ns));
         HackingStatusScript.INSTANCE.restart(ns);
     }
 
@@ -196,7 +177,7 @@ export class GangTerritoryStatusProperty extends StatusProperty {
     }
 }
 
-export class HacknetHackFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+export class HacknetHackFeatureToggleStatusProperty extends AbstractHacknetFeatureToggleStatusProperty {
     static INSTANCE = new HacknetHackFeatureToggleStatusProperty();
 
     constructor() {
@@ -204,7 +185,7 @@ export class HacknetHackFeatureToggleStatusProperty extends AbstractFeatureToggl
     }
 }
 
-export class HacknetPurchaseFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+export class HacknetPurchaseFeatureToggleStatusProperty extends AbstractHacknetFeatureToggleStatusProperty {
     static INSTANCE = new HacknetPurchaseFeatureToggleStatusProperty();
 
     constructor() {
@@ -212,7 +193,7 @@ export class HacknetPurchaseFeatureToggleStatusProperty extends AbstractFeatureT
     }
 }
 
-export class HacknetMoneyFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+export class HacknetMoneyFeatureToggleStatusProperty extends AbstractHacknetFeatureToggleStatusProperty {
     static INSTANCE = new HacknetMoneyFeatureToggleStatusProperty();
 
     constructor() {
@@ -220,7 +201,7 @@ export class HacknetMoneyFeatureToggleStatusProperty extends AbstractFeatureTogg
     }
 }
 
-export class HacknetCorpoFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+export class HacknetCorpoFeatureToggleStatusProperty extends AbstractHacknetFeatureToggleStatusProperty {
     static INSTANCE = new HacknetCorpoFeatureToggleStatusProperty();
 
     constructor() {
@@ -228,7 +209,7 @@ export class HacknetCorpoFeatureToggleStatusProperty extends AbstractFeatureTogg
     }
 }
 
-export class HacknetResearchFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+export class HacknetResearchFeatureToggleStatusProperty extends AbstractHacknetFeatureToggleStatusProperty {
     static INSTANCE = new HacknetResearchFeatureToggleStatusProperty();
 
     constructor() {
