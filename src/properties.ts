@@ -35,13 +35,18 @@ export class TargetModeStatusProperty extends AbstractStringPropertyStatusProper
 
 export class ProgramCountStatusProperty extends StatusProperty {
     static INSTANCE = new ProgramCountStatusProperty();
+    static MAX_PROGRAMS = 5;
 
     constructor() {
         super("programCount", "Programs");
     }
 
     getValue(ns: NS): string {
-        return "" + getProgramCount(ns);
+        return  getProgramCount(ns) + " / " + ProgramCountStatusProperty.MAX_PROGRAMS;
+    }
+
+    isUsable(ns: NS): boolean {
+        return getProgramCount(ns) < ProgramCountStatusProperty.MAX_PROGRAMS;
     }
 }
 
@@ -54,6 +59,10 @@ export class PservCountStatusProperty extends StatusProperty {
 
     getValue(ns: NS): string {
         return String(getPurchasedServerNames(ns).length) + " / " + String(ns.getPurchasedServerLimit());
+    }
+
+    isUsable(ns: NS): boolean {
+        return getPurchasedServerNames(ns).length < ns.getPurchasedServerLimit();
     }
 }
 
@@ -103,6 +112,10 @@ export class RootServersStatusProperty extends StatusProperty {
     getValue(ns: NS): string {
         return String(getServersWithRootAccess(ns).length) + " / " + String(getServerNames(ns).length);
     }
+
+    isUsable(ns: NS): boolean {
+        return getServersWithRootAccess(ns).length < getServerNames(ns).length;
+    }
 }
 
 export class BackdooredServersStatusProperty extends StatusProperty {
@@ -141,7 +154,7 @@ export class GangMemberStatusProperty extends StatusProperty {
     }
 
     isUsable(ns: NS): boolean {
-        return ns.gang.inGang();
+        return ns.gang.inGang() && ns.gang.getMemberNames().length < 12;
     }
 }
 
@@ -157,7 +170,7 @@ export class GangPowerStatusProperty extends StatusProperty {
     }
 
     isUsable(ns: NS): boolean {
-        return ns.gang.inGang();
+        return ns.gang.inGang() && GangTerritoryStatusProperty.INSTANCE.isUsable(ns);
     }
 }
 
@@ -173,7 +186,7 @@ export class GangTerritoryStatusProperty extends StatusProperty {
     }
 
     isUsable(ns: NS): boolean {
-        return ns.gang.inGang();
+        return ns.gang.inGang() && ns.gang.getGangInformation().territory < 1.0;
     }
 }
 
