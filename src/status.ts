@@ -105,10 +105,12 @@ const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
     .filter(it => it.isMutable())
     .map(it => (it as MutableStatusProperty));
 
+type Action = "start" | "stop" | "restart" | "status" | "modules" | "property";
+
 const MUTABLE_PROPERTY_NAMES : string[] = MUTABLE_PROPERTIES.map(it => it.name);
 
-const START_STOP_ACTIONS: string[] = ["start", "stop", "restart"];
-const AVAILABLE_ACTIONS: string[] = ["status", "modules", "property", ...START_STOP_ACTIONS];
+const START_STOP_ACTIONS: Action[] = ["start", "stop", "restart"];
+const AVAILABLE_ACTIONS: Action[] = ["status", "modules", "property", ...START_STOP_ACTIONS];
 
 function errorEmptyOrWrongAction(ns: NS) {
     ns.tprint("first parameter must be one of: " + AVAILABLE_ACTIONS.join(", "));
@@ -120,7 +122,7 @@ export async function main(ns: NS) {
         return;
     }
 
-    const action: string = String(getArgs(ns)[0]);
+    const action: Action = String(getArgs(ns)[0]) as Action;
 
     if (!AVAILABLE_ACTIONS.includes(action)) {
         errorEmptyOrWrongAction(ns);
@@ -153,8 +155,8 @@ export async function main(ns: NS) {
         for (let script of scripts) {
             script.onAction(ns, action);
         }
-
-        StatusAccess.getStatus(ns).setRunningModules(StatusMatrix.create(ns).runningScripts);
+        
+        StatusAccess.getStatus(ns).setRunningModules(calcNewRunningModules(ns, modules, action));
 
         if(shouldTailStatus) {
             await printTailStatus(ns);
@@ -162,8 +164,19 @@ export async function main(ns: NS) {
     }
 }
 
+function calcNewRunningModules(ns: NS, modulesFromArgs: string[], action: Action) : string[] {
+    const statusAccess = StatusAccess.getStatus(ns);
+    if(action === "start") {
+        statusAccess.addRunningModules(modulesFromArgs);
+    } else if(action === "stop") {
+        statusAccess.removeRunningModules(modulesFromArgs);
+    }
+
+    return statusAccess.getRunningModules();
+}
+
 export function autocomplete(data: any, args: string[]) : string[] {
-    if(args.length === 0 || (args.length === 1 && !AVAILABLE_ACTIONS.includes(args[0]) ) ) {
+    if(args.length === 0 || (args.length === 1 && !AVAILABLE_ACTIONS.includes(args[0] as Action) ) ) {
         return AVAILABLE_ACTIONS;
     }
 
@@ -186,7 +199,7 @@ export function autocomplete(data: any, args: string[]) : string[] {
         }
     }
 
-    if(START_STOP_ACTIONS.includes(args[0])) {
+    if(START_STOP_ACTIONS.includes(args[0] as Action)) {
         const moduleNames = ModuleMatrix.create().getAutoSuggestModules();
 
         if(args[args.length-1].startsWith("---")) {
