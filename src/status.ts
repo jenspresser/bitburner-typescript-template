@@ -17,6 +17,8 @@ import { JoiningFactionsStatusScript } from "./status/statusJoiningFactions";
 import { BuyAugmentationsStatusScript } from "./status/statusBuyAugmentations";
 import { CorporationStatusScript } from "./status/statusCorporation";
 import { StatusAccess } from "./libstatus";
+import { ExecutableAction } from "./libaction";
+import { SaveMoneyExecutableAction, SpendMoneyExecutableAction } from "./actions";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -105,12 +107,19 @@ const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
     .filter(it => it.isMutable())
     .map(it => (it as MutableStatusProperty));
 
-type Action = "start" | "stop" | "restart" | "status" | "modules" | "property";
+type Action = "start" | "stop" | "restart" | "status" | "modules" | "property" | "execute";
 
 const MUTABLE_PROPERTY_NAMES : string[] = MUTABLE_PROPERTIES.map(it => it.name);
 
+const EXECUTABLE_ACTIONS: ExecutableAction[] = [
+    SaveMoneyExecutableAction.INSTANCE,
+    SpendMoneyExecutableAction.INSTANCE
+]
+
+const EXECUTABLE_ACTION_NAMES : string[] = EXECUTABLE_ACTIONS.map(it => it.name);
+
 const START_STOP_ACTIONS: Action[] = ["start", "stop", "restart"];
-const AVAILABLE_ACTIONS: Action[] = ["status", "modules", "property", ...START_STOP_ACTIONS];
+const AVAILABLE_ACTIONS: Action[] = ["status", "modules", "property", "execute", ...START_STOP_ACTIONS];
 
 function errorEmptyOrWrongAction(ns: NS) {
     ns.tprint("first parameter must be one of: " + AVAILABLE_ACTIONS.join(", "));
@@ -141,6 +150,11 @@ export async function main(ns: NS) {
 
     if (action === "property") {
         setProperty(ns);
+        return;
+    }
+
+    if (action === "execute") {
+        executeAction(ns);
         return;
     }
 
@@ -199,6 +213,12 @@ export function autocomplete(data: any, args: string[]) : string[] {
         }
     }
 
+    if( args[0] === "execute") {
+        if(args.length === 1 || (args.length === 2 && !EXECUTABLE_ACTION_NAMES.includes(args[1]))) {
+            return EXECUTABLE_ACTION_NAMES;
+        }
+    }
+
     if(START_STOP_ACTIONS.includes(args[0] as Action)) {
         const moduleNames = ModuleMatrix.create().getAutoSuggestModules();
 
@@ -246,6 +266,27 @@ function setProperty(ns: NS) {
         }
     }
 }
+
+function executeAction(ns: NS) {
+    if(getArgs(ns).length < 2) {
+        ns.tprint("Must call 'execute' with at least an action name");
+        ns.tprint("available properties: " + EXECUTABLE_ACTION_NAMES.join(", "));
+        return;
+    }
+
+    let actionName = String(getArgs(ns)[1]);
+    let executableAction = EXECUTABLE_ACTIONS.find(it => it.name === actionName);
+
+    if(!executableAction) {
+        ns.tprint("invalid action " + actionName + "; available actions: [" + EXECUTABLE_ACTION_NAMES.join(", ") + "]");
+        return;
+    }
+
+    let actionArgs = getArgs(ns).splice(0, 2);
+
+    executableAction.execute(ns, actionArgs);
+}
+
 
 function getModulesFromArgs(ns: NS): string[] {
     let modulesArgs : string[] = getArgs(ns).splice(1).map(it => String(it));
