@@ -118,18 +118,6 @@ export class RootServersStatusProperty extends StatusProperty {
     }
 }
 
-export class BackdooredServersStatusProperty extends StatusProperty {
-    static INSTANCE = new BackdooredServersStatusProperty();
-
-    constructor() {
-        super("backdooredServers", "Backdoor Count");
-    }
-
-    getValue(ns: NS): string {
-        return String(getServersWithBackdoor(ns).length) + " / " + String(getServersWithRootAccess(ns).length);
-    }
-};
-
 export class HomeRamStatusProperty extends StatusProperty {
     static INSTANCE = new HomeRamStatusProperty();
 
