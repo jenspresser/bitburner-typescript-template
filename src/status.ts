@@ -57,14 +57,6 @@ const SPECIALS: SpecialModule[] = [
         scriptFilter: () => [HackingStatusScript.INSTANCE, GangStatusScript.INSTANCE]
     },
     {
-        name: new ModuleName("spendmoney", "sm"),
-        scriptFilter: () => [HacknetStatusScript.INSTANCE, PservStatusScript.INSTANCE]
-    },
-    {
-        name: new ModuleName("gainmoney", "gm"),
-        scriptFilter: () => [HackingStatusScript.INSTANCE, GangStatusScript.INSTANCE]
-    },
-    {
         name: new ModuleName("singularity", "sin"),
         scriptFilter: () => [BuyProgramsStatusScript.INSTANCE, UpgradeHomeStatusScript.INSTANCE, JoiningFactionsStatusScript.INSTANCE, BuyAugmentationsStatusScript.INSTANCE]
     },
