@@ -9,7 +9,7 @@ import { TableOptions, logTable, printTable } from "./table";
 import { ModuleName, Script, StatusScript, UPGRADE_HOME } from "./libscripts";
 import { StatusProperty } from "./libproperties";
 import { MutableStatusProperty } from "./libproperties";
-import { BackdooredServersStatusProperty, GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HacknetCorpoFeatureToggleStatusProperty, HacknetHackFeatureToggleStatusProperty, HacknetMoneyFeatureToggleStatusProperty, HacknetPurchaseFeatureToggleStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty, HacknetResearchFeatureToggleStatusProperty } from './properties';
+import { GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HacknetCorpoFeatureToggleStatusProperty, HacknetHackFeatureToggleStatusProperty, HacknetMoneyFeatureToggleStatusProperty, HacknetPurchaseFeatureToggleStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty, HacknetResearchFeatureToggleStatusProperty } from './properties';
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { checkArgExists, distinct, getArgs } from "./library";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
@@ -88,7 +88,6 @@ const PROPERTIES: StatusProperty[] = [
     ScriptGainMoneyStatusProperty.INSTANCE,
     ScriptGainExperienceStatusProperty.INSTANCE,
     RootServersStatusProperty.INSTANCE,
-    BackdooredServersStatusProperty.INSTANCE,
     KarmaStatusProperty.INSTANCE,
     GangMemberStatusProperty.INSTANCE,
     GangPowerStatusProperty.INSTANCE,
