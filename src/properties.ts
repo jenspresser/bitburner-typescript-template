@@ -133,16 +133,18 @@ export class HomeRamStatusProperty extends StatusProperty {
 export class GangMemberStatusProperty extends StatusProperty {
     static INSTANCE = new GangMemberStatusProperty();
 
+    MAX_GANG_MEMBERS = 12;
+
     constructor() {
         super("gangMembers", "Gang Members");
     }
 
     getValue(ns: NS): string {
-        return String(ns.gang.getMemberNames().length)
+        return String(ns.gang.getMemberNames().length) + " / " + this.MAX_GANG_MEMBERS
     }
 
     isUsable(ns: NS): boolean {
-        return ns.gang.inGang() && ns.gang.getMemberNames().length < 12;
+        return ns.gang.inGang() && ns.gang.getMemberNames().length < this.MAX_GANG_MEMBERS;
     }
 }
 
