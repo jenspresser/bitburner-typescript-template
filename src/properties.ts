@@ -1,7 +1,7 @@
 import { NS } from "@ns";
 import { getAllTargetModes, setTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
-import { AbstractHacknetFeatureToggleStatusProperty, AbstractNumberPropertyStatusProperty, AbstractStringPropertyStatusProperty, StatusProperty } from "./libproperties";
+import { AbstractFeatureToggleStatusProperty, AbstractHacknetFeatureToggleStatusProperty, AbstractNumberPropertyStatusProperty, AbstractStringPropertyStatusProperty, StatusProperty } from "./libproperties";
 import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
 import { getProgramCount } from "./libprograms";
@@ -220,11 +220,19 @@ export class HacknetResearchFeatureToggleStatusProperty extends AbstractHacknetF
     }
 }
 
+export class AugmentationNeurofluxGovernorFeatureToggleStatusProperty extends AbstractFeatureToggleStatusProperty {
+    static INSTANCE = new AugmentationNeurofluxGovernorFeatureToggleStatusProperty();
+
+    constructor() {
+        super("augmentation.neuroflux_governor", "Neuroflux Governor", "augmentations_neuroflux_governor");
+    }
+}
+
 export class HacknetMaxLevelStatusProperty extends AbstractNumberPropertyStatusProperty {
     static INSTANCE = new HacknetMaxLevelStatusProperty();
 
     constructor() {
-        super("hacknetMaxLevel", "Hacknet Max Level", "hacknetMaxLevel");
+        super("hacknet.max.level", "Hacknet Max Level", "hacknet_max_level");
     }
 
     afterSet(ns: NS): void {
@@ -236,7 +244,7 @@ export class HacknetMaxCoreStatusProperty extends AbstractNumberPropertyStatusPr
     static INSTANCE = new HacknetMaxCoreStatusProperty();
 
     constructor() {
-        super("hacknetMaxCore", "Hacknet Max Cores", "hacknetMaxCores");
+        super("hacknet.max.cores", "Hacknet Max Cores", "hacknet_max_cores");
     }
 
     afterSet(ns: NS): void {
@@ -248,7 +256,7 @@ export class HacknetMaxServersStatusProperty extends AbstractNumberPropertyStatu
     static INSTANCE = new HacknetMaxServersStatusProperty();
 
     constructor() {
-        super("hacknetMaxServers", "Hacknet Max Servers", "hacknetMaxServers");
+        super("hacknet.max.servers", "Hacknet Max Servers", "hacknet_max_servers");
     }
 
     afterSet(ns: NS): void {

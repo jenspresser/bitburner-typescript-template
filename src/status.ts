@@ -9,7 +9,7 @@ import { TableOptions, logTable, printTable } from "./table";
 import { ModuleName, Script, StatusScript, UPGRADE_HOME } from "./libscripts";
 import { PropertyType, StatusProperty } from "./libproperties";
 import { MutableStatusProperty } from "./libproperties";
-import { GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HacknetCorpoFeatureToggleStatusProperty, HacknetHackFeatureToggleStatusProperty, HacknetMoneyFeatureToggleStatusProperty, HacknetPurchaseFeatureToggleStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty, HacknetResearchFeatureToggleStatusProperty, HacknetMaxCoreStatusProperty, HacknetMaxLevelStatusProperty, HacknetMaxServersStatusProperty } from './properties';
+import { GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HacknetCorpoFeatureToggleStatusProperty, HacknetHackFeatureToggleStatusProperty, HacknetMoneyFeatureToggleStatusProperty, HacknetPurchaseFeatureToggleStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty, HacknetResearchFeatureToggleStatusProperty, HacknetMaxCoreStatusProperty, HacknetMaxLevelStatusProperty, HacknetMaxServersStatusProperty, AugmentationNeurofluxGovernorFeatureToggleStatusProperty } from './properties';
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { checkArgExists, distinct, getArgs } from "./library";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
@@ -85,6 +85,7 @@ const PROPERTIES: StatusProperty<PropertyType>[] = [
     HacknetMaxCoreStatusProperty.INSTANCE,
     HacknetMaxLevelStatusProperty.INSTANCE,
     HacknetMaxServersStatusProperty.INSTANCE,
+    AugmentationNeurofluxGovernorFeatureToggleStatusProperty.INSTANCE,
     HomeRamStatusProperty.INSTANCE,
     ProgramCountStatusProperty.INSTANCE,
     PservCountStatusProperty.INSTANCE,

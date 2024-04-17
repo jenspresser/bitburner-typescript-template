@@ -3,11 +3,12 @@ import { NS } from "@ns";
 const STATUS_FILE = "__status.txt";
 
 export type FeatureToggles = {
-    hacknet_hack: boolean;
-    hacknet_purchase: boolean;
-    hacknet_money: boolean;
-    hacknet_corpo: boolean;
-    hacknet_research: boolean;
+    "hacknet_hack": boolean;
+    "hacknet_purchase": boolean;
+    "hacknet_money": boolean;
+    "hacknet_corpo": boolean;
+    "hacknet_research": boolean;
+    "augmentations_neuroflux_governor": boolean;
 };
 export type FeatureToggleType = keyof FeatureToggles;
 
@@ -17,9 +18,9 @@ export type StringProperties = {
 export type StringPropertyType = keyof StringProperties;
 
 export type NumberProperties = {
-    "hacknetMaxCores": number,
-    "hacknetMaxLevel": number,
-    "hacknetMaxServers": number
+    "hacknet_max_cores": number,
+    "hacknet_max_level": number,
+    "hacknet_max_servers": number
 }
 export type NumberPropertyType = keyof NumberProperties;
 
@@ -36,7 +37,8 @@ export const DEFAULT_FEATURE_TOGGLES: FeatureToggles = {
     "hacknet_purchase": true,
     "hacknet_money": true,
     "hacknet_corpo": false,
-    "hacknet_research": false
+    "hacknet_research": false,
+    "augmentations_neuroflux_governor": true
 };
 
 export const DEFAULT_STRING_PROPERTIES: StringProperties = {
@@ -44,9 +46,9 @@ export const DEFAULT_STRING_PROPERTIES: StringProperties = {
 }
 
 export const DEFAULT_NUMBER_PROPERTIES: NumberProperties = {
-    "hacknetMaxCores": 32,
-    "hacknetMaxLevel": 140,
-    "hacknetMaxServers": 16
+    "hacknet_max_cores": 32,
+    "hacknet_max_level": 140,
+    "hacknet_max_servers": 16
 }
 
 export const DEFAULT_STATUS : Status = {

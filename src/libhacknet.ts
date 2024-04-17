@@ -95,7 +95,7 @@ export function canKeepUpgradingHacknet(ns: NS, hacknet: Hacknet) {
 }
 
 export function canBuyHacknetNode(ns: NS, hacknet: Hacknet) {
-    const maxHacknetServers = StatusAccess.getStatus(ns).getNumberProperty("hacknetMaxServers");
+    const maxHacknetServers = StatusAccess.getStatus(ns).getNumberProperty("hacknet_max_servers");
 
     if (hacknet.numNodes() < maxHacknetServers) {
         return true;
@@ -181,7 +181,7 @@ export function canUpgradeHacknetNode(ns: NS, hacknet: Hacknet, index: number) {
 
 export function canUpgradeHacknetNodeLevel(ns: NS, hacknet: Hacknet, index: number) {
     const currentLevel = hacknet.getNodeStats(index).level;
-    const maxLevel = StatusAccess.getStatus(ns).getNumberProperty("hacknetMaxLevel");
+    const maxLevel = StatusAccess.getStatus(ns).getNumberProperty("hacknet_max_level");
 
     if(currentLevel >= maxLevel)     {
         return false;
@@ -196,7 +196,7 @@ export function canUpgradeHacknetNodeLevel(ns: NS, hacknet: Hacknet, index: numb
 
 export function canUpgradeHacknetNodeCore(ns: NS, hacknet: Hacknet, index: number) {
     const currentCores = hacknet.getNodeStats(index).cores;
-    const maxCores = StatusAccess.getStatus(ns).getNumberProperty("hacknetMaxCores");
+    const maxCores = StatusAccess.getStatus(ns).getNumberProperty("hacknet_max_cores");
 
     if(currentCores >= maxCores) {
         return false;

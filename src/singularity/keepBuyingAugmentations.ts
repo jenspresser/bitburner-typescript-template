@@ -1,5 +1,6 @@
 import { NS } from "@ns";
 import { getHomeServerMoney } from "/library";
+import { isFeatureActive } from "/libproperties";
 
 const NEUROFLUX_GOVERNOR = "NeuroFlux Governor";
 
@@ -42,11 +43,13 @@ export function purchaseAvailableAugmentations(ns: NS) {
             }
         }
 
-        for(let i = 1; i<= 100; i++) {
-            if(ns.singularity.getAugmentationBasePrice(NEUROFLUX_GOVERNOR) <= getHomeServerMoney(ns)) {
-                if(ns.singularity.purchaseAugmentation(faction, NEUROFLUX_GOVERNOR)) {
-                    ns.toast("Purchased Augmentation " + NEUROFLUX_GOVERNOR + " from " + faction);
-                    ns.print("Purchased Augmentation " + NEUROFLUX_GOVERNOR + " from " + faction);
+        if(isFeatureActive(ns, "augmentations_neuroflux_governor")) {
+            for(let i = 1; i<= 100; i++) {
+                if(ns.singularity.getAugmentationBasePrice(NEUROFLUX_GOVERNOR) <= getHomeServerMoney(ns)) {
+                    if(ns.singularity.purchaseAugmentation(faction, NEUROFLUX_GOVERNOR)) {
+                        ns.toast("Purchased Augmentation " + NEUROFLUX_GOVERNOR + " from " + faction);
+                        ns.print("Purchased Augmentation " + NEUROFLUX_GOVERNOR + " from " + faction);
+                    }
                 }
             }
         }
