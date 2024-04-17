@@ -40,12 +40,12 @@ export const DEFAULT_FEATURE_TOGGLES: FeatureToggles = {
 };
 
 export const DEFAULT_STRING_PROPERTIES: StringProperties = {
-    "targetMode": "single"
+    "targetMode": "fast3"
 }
 
 export const DEFAULT_NUMBER_PROPERTIES: NumberProperties = {
-    "hacknetMaxCores": 30,
-    "hacknetMaxLevel": 120,
+    "hacknetMaxCores": 32,
+    "hacknetMaxLevel": 140,
     "hacknetMaxServers": 16
 }
 
