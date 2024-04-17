@@ -16,9 +16,17 @@ export type StringProperties = {
 }
 export type StringPropertyType = keyof StringProperties;
 
+export type NumberProperties = {
+    "hacknetMaxCores": number,
+    "hacknetMaxLevel": number,
+    "hacknetMaxServers": number
+}
+export type NumberPropertyType = keyof NumberProperties;
+
 export type Status = {
     featureToggles: FeatureToggles,
     stringProperties: StringProperties,
+    numberProperties: NumberProperties,
     runningModules: string[],
     shouldTailStatus: boolean
 }
@@ -35,9 +43,16 @@ export const DEFAULT_STRING_PROPERTIES: StringProperties = {
     "targetMode": "single"
 }
 
+export const DEFAULT_NUMBER_PROPERTIES: NumberProperties = {
+    "hacknetMaxCores": 30,
+    "hacknetMaxLevel": 120,
+    "hacknetMaxServers": 16
+}
+
 export const DEFAULT_STATUS : Status = {
     featureToggles: DEFAULT_FEATURE_TOGGLES,
     stringProperties: DEFAULT_STRING_PROPERTIES,
+    numberProperties: DEFAULT_NUMBER_PROPERTIES,
     runningModules: ["simple"],
     shouldTailStatus: true
 }
@@ -107,14 +122,24 @@ export class StatusAccess {
         return this.status.featureToggles[featureToggle];
     }
 
+    getStringProperty(property: StringPropertyType) : string {
+        return this.status.stringProperties[property];
+    }
+
     setStringProperty(property: StringPropertyType, newValue: string) {
         this.status.stringProperties[property] = newValue;
 
         this.persist();
     }
 
-    getStringProperty(property: StringPropertyType) : string {
-        return this.status.stringProperties[property];
+    getNumberProperty(property: NumberPropertyType) : number {
+        return this.status.numberProperties[property];
+    }
+
+    setNumberProperty(property: NumberPropertyType, newValue: number) {
+        this.status.numberProperties[property] = newValue;
+
+        this.persist();
     }
 
     private persist() {

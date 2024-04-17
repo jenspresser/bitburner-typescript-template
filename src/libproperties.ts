@@ -1,13 +1,15 @@
 import { NS } from "@ns";
 import { HasStatus } from "./libscripts";
-import { DEFAULT_STATUS, FeatureToggleType, StatusAccess, StringPropertyType } from './libstatus';
+import { DEFAULT_STATUS, FeatureToggleType, NumberPropertyType, StatusAccess, StringPropertyType } from './libstatus';
 import { HacknetStatusScript } from "./status/statusHacknet"; 
+
+export type PropertyType = string|number;
 
 export function isFeatureActive(ns: NS, featureToggleType: FeatureToggleType) : boolean {
     return StatusAccess.getStatus(ns).isFeatureActive(featureToggleType);
 }
 
-export abstract class StatusProperty implements HasStatus {
+export abstract class StatusProperty<T extends PropertyType> implements HasStatus {
     name: string;
     output: string;
     constructor(name: string, output: string) {
@@ -15,10 +17,14 @@ export abstract class StatusProperty implements HasStatus {
         this.output = output;
     }
 
-    abstract getValue(ns: NS): string;
+    abstract getValue(ns: NS): T;
+
+    getValueString(ns: NS) : string {
+        return String(this.getValue(ns));
+    }
 
     getStatus(ns: NS): [string, string] {
-        return [this.output, this.getValue(ns)];
+        return [this.output, this.getValueString(ns)];
     }
 
     isMutable(): boolean {
@@ -30,22 +36,26 @@ export abstract class StatusProperty implements HasStatus {
     }
 }
 
-export abstract class MutableStatusProperty extends StatusProperty {
+export abstract class MutableStatusProperty<T extends PropertyType> extends StatusProperty<T> {
     constructor(name: string, output: string) {
         super(name, output);
     }
 
-    abstract setValue(ns: NS, value: string): void;
+    abstract setValue(ns: NS, value: T): void;
 
-    abstract getDefaultValue(ns: NS): string;
+    abstract getDefaultValue(ns: NS): T;
 
-    abstract getAutoSuggestValues(): string[];
+    abstract getAutoSuggestValues(): T[];
 
-    isValidValue(ns: NS, value: string): boolean {
+    getAutoSuggestValuesAsString() : string[] {
+        return this.getAutoSuggestValues().map(it => String(it));
+    }
+
+    isValidValue(ns: NS, value: T): boolean {
         return true;
     }
 
-    getValidValues(ns: NS): string[] | undefined | null {
+    getValidValues(ns: NS): T[] | undefined | null {
         return null;
     }
 
@@ -60,7 +70,7 @@ export abstract class MutableStatusProperty extends StatusProperty {
     }
 }
 
-export abstract class AbstractFeatureToggleStatusProperty extends MutableStatusProperty {
+export abstract class AbstractFeatureToggleStatusProperty extends MutableStatusProperty<string> {
     toggleType: FeatureToggleType;
 
     constructor(name: string, output: string, toggleType: FeatureToggleType) {
@@ -97,7 +107,7 @@ export abstract class AbstractHacknetFeatureToggleStatusProperty extends Abstrac
     }
 }
 
-export abstract class AbstractStringPropertyStatusProperty extends MutableStatusProperty {
+export abstract class AbstractStringPropertyStatusProperty extends MutableStatusProperty<string> {
     stringProperty: StringPropertyType
 
     constructor(name: string, output: string, stringProperty: StringPropertyType) {
@@ -118,6 +128,31 @@ export abstract class AbstractStringPropertyStatusProperty extends MutableStatus
     }
 
     getAutoSuggestValues(): string[] {
+        return [];
+    }
+}
+
+export abstract class AbstractNumberPropertyStatusProperty extends MutableStatusProperty<number> {
+    numberProperty: NumberPropertyType
+
+    constructor(name: string, output: string, numberProperty: NumberPropertyType) {
+        super(name, output);
+        this.numberProperty = numberProperty;
+    }
+
+    getValue(ns: NS): number {
+        return StatusAccess.getStatus(ns).getNumberProperty(this.numberProperty);
+    }
+
+    getDefaultValue(ns: NS): number {
+        return DEFAULT_STATUS.numberProperties[this.numberProperty];
+    }
+
+    setValue(ns: NS, value: number): void {
+        StatusAccess.getStatus(ns).setNumberProperty(this.numberProperty, value);
+    }
+
+    getAutoSuggestValues(): number[] {
         return [];
     }
 }

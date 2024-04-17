@@ -7,9 +7,9 @@ import { StockStatusScript } from "./status/statusStocks";
 import { ShareStatusScript } from "./status/statusShare";
 import { TableOptions, logTable, printTable } from "./table";
 import { ModuleName, Script, StatusScript, UPGRADE_HOME } from "./libscripts";
-import { StatusProperty } from "./libproperties";
+import { PropertyType, StatusProperty } from "./libproperties";
 import { MutableStatusProperty } from "./libproperties";
-import { GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HacknetCorpoFeatureToggleStatusProperty, HacknetHackFeatureToggleStatusProperty, HacknetMoneyFeatureToggleStatusProperty, HacknetPurchaseFeatureToggleStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty, HacknetResearchFeatureToggleStatusProperty } from './properties';
+import { GangMemberStatusProperty, GangPowerStatusProperty, GangTerritoryStatusProperty, HacknetCorpoFeatureToggleStatusProperty, HacknetHackFeatureToggleStatusProperty, HacknetMoneyFeatureToggleStatusProperty, HacknetPurchaseFeatureToggleStatusProperty, HomeRamStatusProperty, KarmaStatusProperty, ProgramCountStatusProperty, PservCountStatusProperty, RootServersStatusProperty, ScriptGainExperienceStatusProperty, ScriptGainMoneyStatusProperty, TargetModeStatusProperty, HacknetResearchFeatureToggleStatusProperty, HacknetMaxCoreStatusProperty, HacknetMaxLevelStatusProperty, HacknetMaxServersStatusProperty } from './properties';
 import { BuyProgramsStatusScript } from "./status/statusBuyPrograms";
 import { checkArgExists, distinct, getArgs } from "./library";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
@@ -75,13 +75,16 @@ const SPECIALS: SpecialModule[] = [
     }
 ];
 
-const PROPERTIES: StatusProperty[] = [
+const PROPERTIES: StatusProperty<PropertyType>[] = [
     TargetModeStatusProperty.INSTANCE,
     HacknetHackFeatureToggleStatusProperty.INSTANCE,
     HacknetPurchaseFeatureToggleStatusProperty.INSTANCE,
     HacknetMoneyFeatureToggleStatusProperty.INSTANCE,
     HacknetCorpoFeatureToggleStatusProperty.INSTANCE,
     HacknetResearchFeatureToggleStatusProperty.INSTANCE,
+    HacknetMaxCoreStatusProperty.INSTANCE,
+    HacknetMaxLevelStatusProperty.INSTANCE,
+    HacknetMaxServersStatusProperty.INSTANCE,
     HomeRamStatusProperty.INSTANCE,
     ProgramCountStatusProperty.INSTANCE,
     PservCountStatusProperty.INSTANCE,
@@ -94,9 +97,9 @@ const PROPERTIES: StatusProperty[] = [
     GangTerritoryStatusProperty.INSTANCE
 ]
 
-const MUTABLE_PROPERTIES: MutableStatusProperty[] = PROPERTIES
+const MUTABLE_PROPERTIES: MutableStatusProperty<PropertyType>[] = PROPERTIES
     .filter(it => it.isMutable())
-    .map(it => (it as MutableStatusProperty));
+    .map(it => (it as MutableStatusProperty<PropertyType>));
 
 type Action = "start" | "stop" | "restart" | "status" | "modules" | "property" | "execute";
 
@@ -195,7 +198,7 @@ export function autocomplete(data: any, args: string[]) : string[] {
             let mutableProperty = MUTABLE_PROPERTIES.find(it => it.name === propertyName);
 
             if(mutableProperty) {
-                let autosuggestValues = mutableProperty.getAutoSuggestValues();
+                let autosuggestValues = mutableProperty.getAutoSuggestValuesAsString();
 
                 if(autosuggestValues && autosuggestValues.length > 0) {
                     return autosuggestValues;

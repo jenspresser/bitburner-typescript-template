@@ -1,11 +1,12 @@
 import { NS } from "@ns";
 import { getAllTargetModes, setTargetMode } from "./hack/libhack";
 import { HackingStatusScript } from "./status/statusHacking";
-import { AbstractHacknetFeatureToggleStatusProperty, AbstractStringPropertyStatusProperty, StatusProperty } from "./libproperties";
+import { AbstractHacknetFeatureToggleStatusProperty, AbstractNumberPropertyStatusProperty, AbstractStringPropertyStatusProperty, StatusProperty } from "./libproperties";
 import { getPurchasedServerNames, getServerNames, getServersWithBackdoor, getServersWithRootAccess } from "./libserver";
 import { getKarma } from "./library";
 import { getProgramCount } from "./libprograms";
 import { getHomeMaxRam, getHomeUsedRam } from "./libram";
+import { HacknetStatusScript } from "./status/statusHacknet";
 
 export class TargetModeStatusProperty extends AbstractStringPropertyStatusProperty {
     static INSTANCE = new TargetModeStatusProperty();
@@ -30,10 +31,9 @@ export class TargetModeStatusProperty extends AbstractStringPropertyStatusProper
     isValidValue(ns: NS, value: string): boolean {
         return getAllTargetModes().includes(value);
     }
-
 }
 
-export class ProgramCountStatusProperty extends StatusProperty {
+export class ProgramCountStatusProperty extends StatusProperty<string> {
     static INSTANCE = new ProgramCountStatusProperty();
     static MAX_PROGRAMS = 5;
 
@@ -50,7 +50,7 @@ export class ProgramCountStatusProperty extends StatusProperty {
     }
 }
 
-export class PservCountStatusProperty extends StatusProperty {
+export class PservCountStatusProperty extends StatusProperty<string> {
     static INSTANCE = new PservCountStatusProperty();
 
     constructor() {
@@ -66,7 +66,7 @@ export class PservCountStatusProperty extends StatusProperty {
     }
 }
 
-export class ScriptGainMoneyStatusProperty extends StatusProperty {
+export class ScriptGainMoneyStatusProperty extends StatusProperty<string> {
     static INSTANCE = new ScriptGainMoneyStatusProperty();
 
     constructor() {
@@ -78,7 +78,7 @@ export class ScriptGainMoneyStatusProperty extends StatusProperty {
     }
 }
 
-export class ScriptGainExperienceStatusProperty extends StatusProperty {
+export class ScriptGainExperienceStatusProperty extends StatusProperty<string> {
     static INSTANCE = new ScriptGainExperienceStatusProperty();
 
     constructor() {
@@ -90,7 +90,7 @@ export class ScriptGainExperienceStatusProperty extends StatusProperty {
     }
 }
 
-export class KarmaStatusProperty extends StatusProperty {
+export class KarmaStatusProperty extends StatusProperty<string> {
     static INSTANCE = new KarmaStatusProperty();
 
     constructor() {
@@ -102,7 +102,7 @@ export class KarmaStatusProperty extends StatusProperty {
     }
 }
 
-export class RootServersStatusProperty extends StatusProperty {
+export class RootServersStatusProperty extends StatusProperty<string> {
     static INSTANCE = new RootServersStatusProperty();
 
     constructor() {
@@ -118,7 +118,7 @@ export class RootServersStatusProperty extends StatusProperty {
     }
 }
 
-export class HomeRamStatusProperty extends StatusProperty {
+export class HomeRamStatusProperty extends StatusProperty<string> {
     static INSTANCE = new HomeRamStatusProperty();
 
     constructor() {
@@ -130,7 +130,7 @@ export class HomeRamStatusProperty extends StatusProperty {
     }
 };
 
-export class GangMemberStatusProperty extends StatusProperty {
+export class GangMemberStatusProperty extends StatusProperty<string> {
     static INSTANCE = new GangMemberStatusProperty();
 
     MAX_GANG_MEMBERS = 12;
@@ -148,7 +148,7 @@ export class GangMemberStatusProperty extends StatusProperty {
     }
 }
 
-export class GangPowerStatusProperty extends StatusProperty {
+export class GangPowerStatusProperty extends StatusProperty<string> {
     static INSTANCE = new GangPowerStatusProperty();
 
     constructor() {
@@ -164,7 +164,7 @@ export class GangPowerStatusProperty extends StatusProperty {
     }
 }
 
-export class GangTerritoryStatusProperty extends StatusProperty {
+export class GangTerritoryStatusProperty extends StatusProperty<string> {
     static INSTANCE = new GangTerritoryStatusProperty();
 
     constructor() {
@@ -217,5 +217,41 @@ export class HacknetResearchFeatureToggleStatusProperty extends AbstractHacknetF
 
     constructor() {
         super("hacknet.research", "Hacknet Corpo Research", "hacknet_research");
+    }
+}
+
+export class HacknetMaxLevelStatusProperty extends AbstractNumberPropertyStatusProperty {
+    static INSTANCE = new HacknetMaxLevelStatusProperty();
+
+    constructor() {
+        super("hacknetMaxLevel", "Hacknet Max Level", "hacknetMaxLevel");
+    }
+
+    afterSet(ns: NS): void {
+        HacknetStatusScript.INSTANCE.restart(ns);
+    }
+}
+
+export class HacknetMaxCoreStatusProperty extends AbstractNumberPropertyStatusProperty {
+    static INSTANCE = new HacknetMaxCoreStatusProperty();
+
+    constructor() {
+        super("hacknetMaxCore", "Hacknet Max Cores", "hacknetMaxCores");
+    }
+
+    afterSet(ns: NS): void {
+        HacknetStatusScript.INSTANCE.restart(ns);
+    }
+}
+
+export class HacknetMaxServersStatusProperty extends AbstractNumberPropertyStatusProperty {
+    static INSTANCE = new HacknetMaxServersStatusProperty();
+
+    constructor() {
+        super("hacknetMaxServers", "Hacknet Max Servers", "hacknetMaxServers");
+    }
+
+    afterSet(ns: NS): void {
+        HacknetStatusScript.INSTANCE.restart(ns);
     }
 }
