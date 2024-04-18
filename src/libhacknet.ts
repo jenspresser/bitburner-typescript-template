@@ -8,7 +8,7 @@ export async function keepBuyingHacknet(ns: NS) {
 
     ns.print("Start keepBuyingHacknet");
 
-    while (canKeepUpgradingHacknet(ns, hacknet)) {
+    while (canKeepRunningHacknet(ns, hacknet)) {
         ns.print("  canKeepUpgradingHacknet ");
 
         if (isFeatureActive(ns, "hacknet_purchase")) {
@@ -82,12 +82,31 @@ function buyHashUpgrade(hacknet: Hacknet, upgradeName: UpgradeName) {
     }
 }
 
-export function canKeepUpgradingHacknet(ns: NS, hacknet: Hacknet) {
-    if (canBuyHacknetNode(ns, hacknet)) {
-        return true;
+export function canKeepPurchasingHacknet(ns: NS, hacknet: Hacknet) {
+    const purchaseActive = isFeatureActive(ns, "hacknet_purchase");
+
+    if(purchaseActive) {
+        if (canBuyHacknetNode(ns, hacknet)) {
+            return true;
+        }
+    
+        if (canUpgradeAnyHacknetNode(ns, hacknet)) {
+            return true;
+        }
     }
 
-    if (canUpgradeAnyHacknetNode(ns, hacknet)) {
+    return false;
+}
+
+export function canKeepRunningHacknet(ns: NS, hacknet: Hacknet) {
+    if(canKeepPurchasingHacknet(ns, hacknet)) {
+        return true;
+    }
+    
+    if(isFeatureActive(ns, "hacknet_money")
+        || isFeatureActive(ns, "hacknet_corpo")
+        || isFeatureActive(ns, "hacknet_research")
+    ) {
         return true;
     }
 
