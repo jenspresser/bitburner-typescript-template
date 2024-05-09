@@ -8,6 +8,13 @@ export function getDocument(): Document {
 }
 
 /**
+ * @returns {Window}
+ */
+export function getWindow(): Window {
+    return eval("window");
+}
+
+/**
  * @param {string|string[]} value
  */
 export function terminalOutput(value: string | string[]) {

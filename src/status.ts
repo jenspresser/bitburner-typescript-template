@@ -19,6 +19,7 @@ import { CorporationStatusScript } from "./status/statusCorporation";
 import { StatusAccess } from "./libstatus";
 import { ExecutableAction } from "./libaction";
 import { SaveMoneyExecutableAction, SpendMoneyExecutableAction } from "./actions";
+import { getDocument, getWindow } from './libterminal';
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -341,7 +342,9 @@ async function printSimple(ns: NS) {
 async function printTailStatus(ns: NS) {
     ns.disableLog('ALL');
     ns.tail();
-    ns.moveTail(1900, 10);
+
+    let pos = calcTailPosition(ns);
+    ns.moveTail(pos.x, pos.y);
 
     let intervalInSeconds = Number(getArgs(ns)[2]) || 1;
     let intervalInMillis = intervalInSeconds * 1000;
@@ -355,6 +358,31 @@ async function printTailStatus(ns: NS) {
 
         ns.clearLog();
     }
+}
+
+type Point = {x: number, y: number};
+
+function calcTailPosition(ns: NS) : Point {
+    const d = getDocument();
+    const w = getWindow();
+    const s = w.screen;
+    const screenWidth = s.availWidth;
+
+    const tailWindow = d?.querySelector("h6[title='status.js status tail")?.closest(".MuiBox-root");
+    const tailWindowWidth = tailWindow?.clientWidth || 450;
+
+    const hookElem = d.getElementById("overview-extra-hook-0");
+    const overviewPanel = hookElem?.closest(".MuiPaper-root");
+    const overviewPanelWidth = overviewPanel?.clientWidth || 200;
+
+    let rightMargin = overviewPanelWidth + tailWindowWidth + 40;
+
+    let x = screenWidth - rightMargin;
+
+    return {
+        x: x,
+        y: 10
+    };
 }
 
 class ModuleMatrix {
