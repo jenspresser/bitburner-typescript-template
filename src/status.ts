@@ -365,8 +365,7 @@ type Point = {x: number, y: number};
 function calcTailPosition(ns: NS) : Point {
     const d = getDocument();
     const w = getWindow();
-    const s = w.screen;
-    const screenWidth = s.availWidth;
+    const windowWidth = w.innerWidth;
 
     const tailWindow = d?.querySelector("h6[title='status.js status tail")?.closest(".MuiBox-root");
     const tailWindowWidth = tailWindow?.clientWidth || 450;
@@ -377,10 +376,10 @@ function calcTailPosition(ns: NS) : Point {
 
     let rightMargin = overviewPanelWidth + tailWindowWidth + 40;
 
-    let x = screenWidth - rightMargin;
+    let x = windowWidth - rightMargin;
 
     return {
-        x: x,
+        x: Math.max(0, x),
         y: 10
     };
 }
