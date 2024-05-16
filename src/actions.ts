@@ -4,6 +4,7 @@ import { HacknetPurchaseFeatureToggleStatusProperty } from "./properties";
 import { PservStatusScript } from "./status/statusPserv";
 import { BuyAugmentationsStatusScript } from "./status/statusBuyAugmentations";
 import { UpgradeHomeStatusScript } from "./status/statusUpgradeHome";
+import { SleeveStatusScript } from "./status/statusSleeves";
 
 export class SaveMoneyExecutableAction extends ExecutableAction {
     static INSTANCE = new SaveMoneyExecutableAction();
@@ -17,6 +18,7 @@ export class SaveMoneyExecutableAction extends ExecutableAction {
         PservStatusScript.INSTANCE.stop(ns);
         BuyAugmentationsStatusScript.INSTANCE.stop(ns);
         UpgradeHomeStatusScript.INSTANCE.stop(ns);
+        SleeveStatusScript.INSTANCE.stop(ns);
     }
 }
 
@@ -32,5 +34,6 @@ export class SpendMoneyExecutableAction extends ExecutableAction {
         PservStatusScript.INSTANCE.start(ns);
         BuyAugmentationsStatusScript.INSTANCE.start(ns);
         UpgradeHomeStatusScript.INSTANCE.start(ns);
+        SleeveStatusScript.INSTANCE.start(ns);
     }
 }

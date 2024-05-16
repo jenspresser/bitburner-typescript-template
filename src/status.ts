@@ -20,6 +20,7 @@ import { StatusAccess } from "./libstatus";
 import { ExecutableAction } from "./libaction";
 import { SaveMoneyExecutableAction, SpendMoneyExecutableAction } from "./actions";
 import { getDocument, getWindow } from './libterminal';
+import { SleeveStatusScript } from "./status/statusSleeves";
 
 const STATUS_SCRIPTS = [
     HackingStatusScript.INSTANCE,
@@ -32,6 +33,7 @@ const STATUS_SCRIPTS = [
     UpgradeHomeStatusScript.INSTANCE,
     JoiningFactionsStatusScript.INSTANCE,
     BuyAugmentationsStatusScript.INSTANCE,
+    SleeveStatusScript.INSTANCE,
     CorporationStatusScript.INSTANCE
 ]
 
@@ -47,19 +49,37 @@ const SPECIALS: SpecialModule[] = [
     },
     {
         name: new ModuleName("simple", "s"),
-        scriptFilter: () => [HackingStatusScript.INSTANCE, HacknetStatusScript.INSTANCE, PservStatusScript.INSTANCE]
+        scriptFilter: () => [
+            HackingStatusScript.INSTANCE, 
+            HacknetStatusScript.INSTANCE, 
+            PservStatusScript.INSTANCE
+        ]
     },
     {
         name: new ModuleName("simplegang", "sg"),
-        scriptFilter: () => [HackingStatusScript.INSTANCE, HacknetStatusScript.INSTANCE, PservStatusScript.INSTANCE, GangStatusScript.INSTANCE]
+        scriptFilter: () => [
+            HackingStatusScript.INSTANCE, 
+            HacknetStatusScript.INSTANCE, 
+            PservStatusScript.INSTANCE, 
+            GangStatusScript.INSTANCE
+        ]
     },
     {
         name: new ModuleName("hackandgang", "hg"),
-        scriptFilter: () => [HackingStatusScript.INSTANCE, GangStatusScript.INSTANCE]
+        scriptFilter: () => [
+            HackingStatusScript.INSTANCE,
+            GangStatusScript.INSTANCE
+        ]
     },
     {
         name: new ModuleName("singularity", "sin"),
-        scriptFilter: () => [BuyProgramsStatusScript.INSTANCE, UpgradeHomeStatusScript.INSTANCE, JoiningFactionsStatusScript.INSTANCE, BuyAugmentationsStatusScript.INSTANCE]
+        scriptFilter: () => [
+            BuyProgramsStatusScript.INSTANCE, 
+            UpgradeHomeStatusScript.INSTANCE, 
+            JoiningFactionsStatusScript.INSTANCE, 
+            BuyAugmentationsStatusScript.INSTANCE, 
+            SleeveStatusScript.INSTANCE
+        ]
     },
     {
         name: new ModuleName("advanced", "adv"),
@@ -71,7 +91,8 @@ const SPECIALS: SpecialModule[] = [
             BuyProgramsStatusScript.INSTANCE, 
             UpgradeHomeStatusScript.INSTANCE, 
             JoiningFactionsStatusScript.INSTANCE, 
-            BuyAugmentationsStatusScript.INSTANCE
+            BuyAugmentationsStatusScript.INSTANCE,
+            SleeveStatusScript.INSTANCE
         ]
     }
 ];

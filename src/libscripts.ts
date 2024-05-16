@@ -286,6 +286,8 @@ export const STOCK = new Script("stocks/stockTrader5.js");
 // Share Script
 export const SHARE = new Script("share/share.js");
 
+
+
 // Hack Scripts
 export const MASTERHACK = new Script("hack/masterHack.js");
 export const HACK = new HackScript("hack/hack.js");
@@ -312,6 +314,9 @@ export const BUY_PROGRAMS = new Script("singularity/keepBuyingPrograms.js");
 export const UPGRADE_HOME = new Script("singularity/keepUpgradingHome.js");
 export const JOINING_FACTIONS = new Script("singularity/keepJoiningFaction.js");
 export const BUY_AUGMENTATIONS = new Script("singularity/keepBuyingAugmentations.js");
+
+// Sleeve Script
+export const SLEEVE = new Script("singularity/sleeves.js");
 
 // Corporation Script
 export const CORPORATION = new Script("corporation/corporation.js");
